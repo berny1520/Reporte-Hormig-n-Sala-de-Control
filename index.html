@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Hormigón – Sala de Control</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #d9232d;  /* rojo Xtreme */
+      --primary-soft: #ffe5e7;
+      --dark: #222;
+      --bg: #f2f4f7;
+      --card-bg: #ffffff;
+      --text-main: #222;
+      --text-muted: #777;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    header {
+      background: var(--dark);
+      color: #fff;
+      padding: 10px 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    header > div {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    header img {
+      height: 55px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header .subtitle {
+      font-size: 13px;
+      color: #ccc;
+      margin-top: 3px;
+    }
+
+    .container {
+      max-width: 1500px;
+      margin: 15px auto 40px;
+      padding: 0 10px 20px;
+    }
+
+    /* Barra de filtros */
+    .filters-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 15px;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 12px 16px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+    .filters-bar .group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filters-bar label {
+      font-weight: bold;
+      margin-right: 2px;
+    }
+    .filters-bar input,
+    .filters-bar select {
+      padding: 5px 7px;
+      font-size: 13px;
+      border-radius: 5px;
+      border: 1px solid #d0d4da;
+      min-width: 140px;
+    }
+    .filters-bar button {
+      padding: 6px 11px;
+      font-size: 13px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.05s ease, box-shadow 0.1s ease;
+    }
+    .filters-bar button:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+    }
+    .btn-pdf {
+      background: #d9534f;
+      color: #fff;
+    }
+
+    .filters-bar .right {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* KPIs */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--primary);
+    }
+    .kpi-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .kpi-value {
+      font-size: 21px;
+      font-weight: bold;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .kpi-extra {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: bold;
+      position: absolute;
+      right: 10px;
+      top: 8px;
+    }
+
+    /* GRÁFICOS */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .chart-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-card.wide {
+      grid-column: 1 / -1;
+      height: 420px;
+    }
+
+    .chart-card h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .chart-card canvas {
+      width: 100% !important;
+      height: calc(100% - 20px) !important;
+    }
+
+    @media (max-width: 950px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .chart-card,
+      .chart-card.wide {
+        grid-column: 1 / -1;
+        height: 360px;
+      }
+    }
+
+    /* Tabla */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      font-size: 12px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    th, td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
+    }
+    th {
+      background: #f4f6f8;
+      text-align: left;
+    }
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+    tr:hover td {
+      background: #e9f3ff;
+    }
+
+    /* Impresión */
+    @media print {
+      body {
+        background: #fff;
+      }
+      header {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .filters-bar {
+        display: none;
+      }
+      button {
+        display: none;
+      }
+      .container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0 5mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <img src="logo_Xtreme.png" alt="Xtreme Mining" />
+    <div>
+      <h1>Dashboard Hormigón – Sala de Control</h1>
+      <div class="subtitle">
+        Reporte FECHA / TURNO / MINA / LABOR / GRADO
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- BARRA DE FILTROS -->
+  <div class="filters-bar">
+    <div class="group">
+      <label for="filtro-mes">Mes:</label>
+      <select id="filtro-mes" onchange="aplicarFiltros()">
+        <option value="TODOS">Todos</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label for="filtro-labor">Labor/Postura:</label>
+      <select id="filtro-labor" onchange="aplicarFiltros()">
+        <option value="TODOS">Todas</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label for="filtro-mina">Mina:</label>
+      <select id="filtro-mina" onchange="aplicarFiltros()">
+        <option value="TODOS">Todas</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label for="filtro-grado">Grado:</label>
+      <select id="filtro-grado" onchange="aplicarFiltros()">
+        <option value="TODOS">Todos</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label for="filtro-turno">Turno:</label>
+      <select id="filtro-turno" onchange="aplicarFiltros()">
+        <option value="TODOS">Todos</option>
+      </select>
+    </div>
+
+    <div class="right">
+      <button class="btn-secondary" onclick="limpiarFiltros()">Limpiar filtros</button>
+      <button class="btn-pdf" onclick="exportarPDF()">Exportar PDF</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-title">Total planificado (m³)</div>
+      <div class="kpi-value" id="kpi-planificado">0</div>
+      <div class="kpi-sub">Suma columna PLANIFICADO</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Total suministrado (m³)</div>
+      <div class="kpi-extra" id="kpi-cumplimiento-pct">0%</div>
+      <div class="kpi-value" id="kpi-suministrado">0</div>
+      <div class="kpi-sub">% sobre planificado</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Pendiente (m³)</div>
+      <div class="kpi-value" id="kpi-pendiente">0</div>
+      <div class="kpi-sub">Volumen pendiente</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Rechazado (m³)</div>
+      <div class="kpi-value" id="kpi-rechazado">0</div>
+      <div class="kpi-sub">Volumen rechazado</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Reagendado (m³)</div>
+      <div class="kpi-value" id="kpi-reagendado">0</div>
+      <div class="kpi-sub">Volumen reagendado</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Eliminado (m³)</div>
+      <div class="kpi-value" id="kpi-eliminado">0</div>
+      <div class="kpi-sub">Volumen eliminado</div>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="charts-grid">
+    <div class="chart-card wide">
+      <h3>Volumen por estado (m³)</h3>
+      <canvas id="chartEstadoVolumen"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Suministrado por mina (m³)</h3>
+      <canvas id="chartMina"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Suministrado por grado (m³)</h3>
+      <canvas id="chartGrado"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Suministrado por fecha</h3>
+      <canvas id="chartFecha"></canvas>
+    </div>
+  </div>
+
+  <!-- TABLA DETALLE -->
+  <table id="tabla-detalle">
+    <thead>
+      <tr>
+        <th>FECHA</th>
+        <th>Fecha turno</th>
+        <th>Turno</th>
+        <th>Labor/Postura</th>
+        <th>Mina</th>
+        <th>Grado</th>
+        <th>Planificado</th>
+        <th>Suministrado</th>
+        <th>Pendiente</th>
+        <th>Rechazado</th>
+        <th>Reagendado</th>
+        <th>Eliminado</th>
+        <th>N° Guía</th>
+        <th>Hora salida planta</th>
+        <th>Hora llegada obra</th>
+        <th>Hora inicio descarga</th>
+        <th>Hora término descarga</th>
+        <th>Observación</th>
+        <th>Sala de control</th>
+        <th>Mes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  // 👉 Reemplaza esta URL por la de tu hoja publicada como CSV
+  const CSV_URL = "AQUI_TU_URL_CSV";
+
+  let registrosBase = [];
+  let registrosActuales = [];
+
+  let chartEstadoVolumen, chartMina, chartGrado, chartFecha;
+
+  let lastCsvRaw = "";
+
+  // Configuración global Chart.js
+  Chart.defaults.maintainAspectRatio = false;
+  Chart.defaults.font.family = "Arial, sans-serif";
+  Chart.defaults.plugins.legend.position = "bottom";
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.pointStyle = "circle";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    cargarDatos(false);
+    iniciarAutoActualizacion();
+  });
+
+  function iniciarAutoActualizacion() {
+    const INTERVALO_MS = 60000; // 60 s
+    setInterval(() => {
+      cargarDatos(true);
+    }, INTERVALO_MS);
+  }
+
+  // Parser CSV simple con comillas
+  function parseCSV(text) {
+    const rows = [];
+    let current = [];
+    let value = "";
+    let insideQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const next = text[i + 1];
+
+      if (insideQuotes) {
+        if (ch === '"' && next === '"') {
+          value += '"';
+          i++;
+        } else if (ch === '"') {
+          insideQuotes = false;
+        } else {
+          value += ch;
+        }
+      } else {
+        if (ch === '"') {
+          insideQuotes = true;
+        } else if (ch === ",") {
+          current.push(value);
+          value = "";
+        } else if (ch === "\r") {
+          // nada
+        } else if (ch === "\n") {
+          current.push(value);
+          rows.push(current);
+          current = [];
+          value = "";
+        } else {
+          value += ch;
+        }
+      }
+    }
+    if (value.length > 0 || current.length > 0) {
+      current.push(value);
+      rows.push(current);
+    }
+    return rows;
+  }
+
+  async function cargarDatos(desdeAuto = false) {
+    try {
+      const res  = await fetch(CSV_URL);
+      const text = await res.text();
+
+      if (desdeAuto && text === lastCsvRaw) {
+        console.log("Sin cambios en la base, no se actualiza el dashboard.");
+        return;
+      }
+      lastCsvRaw = text;
+
+      const rows = parseCSV(text);
+      if (!rows.length) return;
+
+      const dataRows = rows.filter((c, i) => {
+        if (i === 0) return false; // encabezados
+        if (!c[0]) return false;   // sin FECHA
+        if (c[0].toString().toUpperCase() === "FECHA") return false;
+        return true;
+      });
+
+      // Mapeo columnas según tu planilla:
+      // 0 FECHA
+      // 1 Fecha turno
+      // 2 TURNO
+      // 3 LABOR/POSTURA
+      // 4 MINA
+      // 5 GRADO
+      // 6 PLANIFICADO
+      // 7 SUMINISTRADO
+      // 8 PENDIENTE
+      // 9 RECHAZADO
+      // 10 REAGENDADO
+      // 11 ELIMINADO
+      // 12 NÚMERO GUÍA
+      // 13 HORA SALIDA PLANTA
+      // 14 HORA LLEGADA OBRA
+      // 15 HORA INICIO DESCARGA
+      // 16 HORA TERMINO DESCARGA
+      // 17 OBSERVACIÓN
+      // 18 SALA DE CONTROL
+      // 19 Mes
+      registrosBase = dataRows.map(c => ({
+        fecha:              c[0]  || "",
+        fechaTurno:         c[1]  || "",
+        turno:              c[2]  || "",
+        labor:              c[3]  || "",
+        mina:               c[4]  || "",
+        grado:              c[5]  || "",
+        planificado:        Number(c[6]  || 0),
+        suministrado:       Number(c[7]  || 0),
+        pendiente:          Number(c[8]  || 0),
+        rechazado:          Number(c[9]  || 0),
+        reagendado:         Number(c[10] || 0),
+        eliminado:          Number(c[11] || 0),
+        numeroGuia:         c[12] || "",
+        horaSalidaPlanta:   c[13] || "",
+        horaLlegadaObra:    c[14] || "",
+        horaInicioDescarga: c[15] || "",
+        horaTerminoDescarga:c[16] || "",
+        observacion:        c[17] || "",
+        salaControl:        c[18] || "",
+        mes:                c[19] || ""
+      }));
+
+      console.log(
+        desdeAuto
+          ? "Registros recargados automáticamente: " + registrosBase.length
+          : "Registros cargados: " + registrosBase.length
+      );
+
+      poblarFiltros(registrosBase);
+      aplicarFiltros();
+
+    } catch (err) {
+      console.error("Error cargando datos:", err);
+      if (!desdeAuto) {
+        alert("No se pudo leer la base desde el CSV.");
+      }
+    }
+  }
+
+  function poblarFiltros(reg) {
+    const selMes   = document.getElementById("filtro-mes");
+    const selLabor = document.getElementById("filtro-labor");
+    const selMina  = document.getElementById("filtro-mina");
+    const selGrado = document.getElementById("filtro-grado");
+    const selTurno = document.getElementById("filtro-turno");
+
+    const keep = (sel) => sel.value || "TODOS";
+    const vMes   = keep(selMes);
+    const vLabor = keep(selLabor);
+    const vMina  = keep(selMina);
+    const vGrado = keep(selGrado);
+    const vTurno = keep(selTurno);
+
+    function llenarSelect(select, valores, labelTodos) {
+      const actual = select.value || "TODOS";
+      select.innerHTML = `<option value="TODOS">${labelTodos}</option>`;
+      Array.from(new Set(valores))
+        .filter(v => v && v.trim() !== "")
+        .sort()
+        .forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          select.appendChild(opt);
+        });
+      if ([...select.options].some(o => o.value === actual)) {
+        select.value = actual;
+      }
+    }
+
+    llenarSelect(selMes,   reg.map(r => r.mes),   "Todos");
+    llenarSelect(selLabor, reg.map(r => r.labor), "Todas");
+    llenarSelect(selMina,  reg.map(r => r.mina),  "Todas");
+    llenarSelect(selGrado, reg.map(r => r.grado), "Todos");
+    llenarSelect(selTurno, reg.map(r => r.turno),"Todos");
+
+    selMes.value   = vMes;
+    selLabor.value = vLabor;
+    selMina.value  = vMina;
+    selGrado.value = vGrado;
+    selTurno.value = vTurno;
+  }
+
+  function aplicarFiltros() {
+    if (!registrosBase.length) return;
+
+    const mesSel   = document.getElementById("filtro-mes").value;
+    const laborSel = document.getElementById("filtro-labor").value;
+    const minaSel  = document.getElementById("filtro-mina").value;
+    const gradoSel = document.getElementById("filtro-grado").value;
+    const turnoSel = document.getElementById("filtro-turno").value;
+
+    let datos = registrosBase.slice();
+
+    if (mesSel !== "TODOS") {
+      datos = datos.filter(r => r.mes === mesSel);
+    }
+    if (laborSel !== "TODOS") {
+      datos = datos.filter(r => r.labor === laborSel);
+    }
+    if (minaSel !== "TODOS") {
+      datos = datos.filter(r => r.mina === minaSel);
+    }
+    if (gradoSel !== "TODOS") {
+      datos = datos.filter(r => r.grado === gradoSel);
+    }
+    if (turnoSel !== "TODOS") {
+      datos = datos.filter(r => r.turno === turnoSel);
+    }
+
+    registrosActuales = datos;
+
+    actualizarKPIs(registrosActuales);
+    dibujarTabla(registrosActuales);
+    dibujarGraficos(registrosActuales);
+  }
+
+  function limpiarFiltros() {
+    document.getElementById("filtro-mes").value   = "TODOS";
+    document.getElementById("filtro-labor").value = "TODOS";
+    document.getElementById("filtro-mina").value  = "TODOS";
+    document.getElementById("filtro-grado").value = "TODOS";
+    document.getElementById("filtro-turno").value = "TODOS";
+    aplicarFiltros();
+  }
+
+  function exportarPDF() {
+    window.print();
+  }
+
+  function actualizarKPIs(reg) {
+    const sum = (campo) => reg.reduce((s, r) => s + (r[campo] || 0), 0);
+
+    const planificado  = sum("planificado");
+    const suministrado = sum("suministrado");
+    const pendiente    = sum("pendiente");
+    const rechazado    = sum("rechazado");
+    const reagendado   = sum("reagendado");
+    const eliminado    = sum("eliminado");
+
+    const pct = planificado ? ((suministrado / planificado) * 100).toFixed(1) + "%" : "0%";
+
+    document.getElementById("kpi-planificado").textContent   = planificado.toFixed(1);
+    document.getElementById("kpi-suministrado").textContent  = suministrado.toFixed(1);
+    document.getElementById("kpi-pendiente").textContent     = pendiente.toFixed(1);
+    document.getElementById("kpi-rechazado").textContent     = rechazado.toFixed(1);
+    document.getElementById("kpi-reagendado").textContent    = reagendado.toFixed(1);
+    document.getElementById("kpi-eliminado").textContent     = eliminado.toFixed(1);
+    document.getElementById("kpi-cumplimiento-pct").textContent = pct;
+  }
+
+  function dibujarTabla(reg) {
+    const tbody = document.querySelector("#tabla-detalle tbody");
+    tbody.innerHTML = "";
+    reg.forEach(r => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.fecha}</td>
+        <td>${r.fechaTurno}</td>
+        <td>${r.turno}</td>
+        <td>${r.labor}</td>
+        <td>${r.mina}</td>
+        <td>${r.grado}</td>
+        <td>${r.planificado}</td>
+        <td>${r.suministrado}</td>
+        <td>${r.pendiente}</td>
+        <td>${r.rechazado}</td>
+        <td>${r.reagendado}</td>
+        <td>${r.eliminado}</td>
+        <td>${r.numeroGuia}</td>
+        <td>${r.horaSalidaPlanta}</td>
+        <td>${r.horaLlegadaObra}</td>
+        <td>${r.horaInicioDescarga}</td>
+        <td>${r.horaTerminoDescarga}</td>
+        <td>${r.observacion}</td>
+        <td>${r.salaControl}</td>
+        <td>${r.mes}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function agruparSuma(reg, clave, campoSuma) {
+    const map = {};
+    reg.forEach(r => {
+      const key = r[clave] || "Sin dato";
+      if (!map[key]) map[key] = 0;
+      map[key] += (r[campoSuma] || 0);
+    });
+    const labels = Object.keys(map);
+    const values = labels.map(l => map[l]);
+    return { labels, values };
+  }
+
+  function dibujarGraficos(reg) {
+    const palette = {
+      primary: "#d9232d",
+      primaryLight: "#f7c1c4",
+      blue: "#3498db",
+      blueLight: "#d6e9f8",
+      orange: "#f5a623",
+      green: "#2ecc71"
+    };
+
+    // Volumen por estado
+    const sum = (campo) => reg.reduce((s, r) => s + (r[campo] || 0), 0);
+    const volEstados = {
+      labels: ["Planificado", "Suministrado", "Pendiente", "Rechazado", "Reagendado", "Eliminado"],
+      values: [
+        sum("planificado"),
+        sum("suministrado"),
+        sum("pendiente"),
+        sum("rechazado"),
+        sum("reagendado"),
+        sum("eliminado")
+      ]
+    };
+
+    const porMina  = agruparSuma(reg, "mina",  "suministrado");
+    const porGrado = agruparSuma(reg, "grado", "suministrado");
+    const porFecha = agruparSuma(reg, "fecha", "suministrado");
+
+    const ctxEstadoVolumen = document.getElementById("chartEstadoVolumen").getContext("2d");
+    const ctxMina          = document.getElementById("chartMina").getContext("2d");
+    const ctxGrado         = document.getElementById("chartGrado").getContext("2d");
+    const ctxFecha         = document.getElementById("chartFecha").getContext("2d");
+
+    if (chartEstadoVolumen) chartEstadoVolumen.destroy();
+    if (chartMina)          chartMina.destroy();
+    if (chartGrado)         chartGrado.destroy();
+    if (chartFecha)         chartFecha.destroy();
+
+    chartEstadoVolumen = new Chart(ctxEstadoVolumen, {
+      type: "bar",
+      data: {
+        labels: volEstados.labels,
+        datasets: [{
+          label: "m³",
+          data: volEstados.values,
+          backgroundColor: palette.blueLight,
+          borderColor: palette.blue,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    chartMina = new Chart(ctxMina, {
+      type: "bar",
+      data: {
+        labels: porMina.labels,
+        datasets: [{
+          label: "m³ suministrado",
+          data: porMina.values,
+          backgroundColor: palette.primarySoft,
+          borderColor: palette.primary,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        scales: {
+          x: { ticks: { maxRotation: 45, minRotation: 45 } },
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    chartGrado = new Chart(ctxGrado, {
+      type: "bar",
+      data: {
+        labels: porGrado.labels,
+        datasets: [{
+          label: "m³ suministrado",
+          data: porGrado.values,
+          backgroundColor: palette.green,
+          borderColor: "#1e874b",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        scales: {
+          x: { ticks: { maxRotation: 45, minRotation: 45 } },
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    chartFecha = new Chart(ctxFecha, {
+      type: "line",
+      data: {
+        labels: porFecha.labels,
+        datasets: [{
+          label: "m³ suministrado",
+          data: porFecha.values,
+          borderColor: palette.blue,
+          backgroundColor: palette.blueLight,
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
