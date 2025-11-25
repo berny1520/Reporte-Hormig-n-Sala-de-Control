@@ -216,6 +216,53 @@
       }
     }
 
+    /* FORMULARIO DE INGRESO */
+    .form-ingreso {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+    .form-ingreso-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .form-ingreso-title {
+      font-weight: bold;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+    .form-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 8px 12px;
+    }
+    .form-field label {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      padding: 5px 7px;
+      font-size: 12px;
+      border-radius: 5px;
+      border: 1px solid #d0d4da;
+    }
+    .form-field textarea {
+      resize: vertical;
+      min-height: 40px;
+    }
+
     /* Tabla */
     table {
       width: 100%;
@@ -243,6 +290,38 @@
       background: #e9f3ff;
     }
 
+    /* Botones de acción SVG */
+    .icon-btn {
+      background: transparent;
+      border: none;
+      padding: 2px 4px;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+    .icon-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      display: block;
+    }
+    .icon-btn.edit svg {
+      stroke: #444;
+    }
+    .icon-btn.delete svg {
+      stroke: #b00020;
+    }
+    .icon-btn:focus {
+      outline: none;
+    }
+    .icon-disabled {
+      opacity: 0.3;
+      font-size: 11px;
+      cursor: default;
+    }
+
     /* Impresión */
     @media print {
       body {
@@ -252,7 +331,8 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-      .filters-bar {
+      .filters-bar,
+      .form-ingreso {
         display: none;
       }
       button {
@@ -380,6 +460,109 @@
     </div>
   </div>
 
+  <!-- FORMULARIO NUEVO REGISTRO -->
+  <div class="form-ingreso">
+    <div class="form-ingreso-header">
+      <div class="form-ingreso-title">Ingreso de nuevos registros de hormigón</div>
+      <button id="btn-toggle-form" type="button" class="btn-primary">
+        ➕ Agregar nuevo registro
+      </button>
+    </div>
+    <div id="form-ingreso-wrapper" style="display: none; margin-top: 10px;">
+      <form id="form-nuevo-registro">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="form-fecha">Fecha</label>
+            <input type="date" id="form-fecha" required>
+          </div>
+          <div class="form-field">
+            <label for="form-fechaTurno">Fecha turno</label>
+            <input type="text" id="form-fechaTurno" placeholder="Fecha turno">
+          </div>
+          <div class="form-field">
+            <label for="form-turno">Turno</label>
+            <select id="form-turno">
+              <option value="">Seleccionar...</option>
+              <option value="Día">Día</option>
+              <option value="Noche">Noche</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="form-labor">Labor/Postura</label>
+            <input type="text" id="form-labor">
+          </div>
+          <div class="form-field">
+            <label for="form-mina">Mina</label>
+            <input type="text" id="form-mina">
+          </div>
+          <div class="form-field">
+            <label for="form-grado">Grado</label>
+            <input type="text" id="form-grado">
+          </div>
+          <div class="form-field">
+            <label for="form-planificado">Planificado (m³)</label>
+            <input type="number" step="0.1" id="form-planificado">
+          </div>
+          <div class="form-field">
+            <label for="form-suministrado">Suministrado (m³)</label>
+            <input type="number" step="0.1" id="form-suministrado">
+          </div>
+          <div class="form-field">
+            <label for="form-pendiente">Pendiente (m³)</label>
+            <input type="number" step="0.1" id="form-pendiente">
+          </div>
+          <div class="form-field">
+            <label for="form-rechazado">Rechazado (m³)</label>
+            <input type="number" step="0.1" id="form-rechazado">
+          </div>
+          <div class="form-field">
+            <label for="form-reagendado">Reagendado (m³)</label>
+            <input type="number" step="0.1" id="form-reagendado">
+          </div>
+          <div class="form-field">
+            <label for="form-eliminado">Eliminado (m³)</label>
+            <input type="number" step="0.1" id="form-eliminado">
+          </div>
+          <div class="form-field">
+            <label for="form-numeroGuia">N° Guía</label>
+            <input type="text" id="form-numeroGuia">
+          </div>
+          <div class="form-field">
+            <label for="form-horaSalidaPlanta">Hora salida planta</label>
+            <input type="text" id="form-horaSalidaPlanta" placeholder="HH:MM">
+          </div>
+          <div class="form-field">
+            <label for="form-horaLlegadaObra">Hora llegada obra</label>
+            <input type="text" id="form-horaLlegadaObra" placeholder="HH:MM">
+          </div>
+          <div class="form-field">
+            <label for="form-horaInicioDescarga">Hora inicio descarga</label>
+            <input type="text" id="form-horaInicioDescarga" placeholder="HH:MM">
+          </div>
+          <div class="form-field">
+            <label for="form-horaTerminoDescarga">Hora término descarga</label>
+            <input type="text" id="form-horaTerminoDescarga" placeholder="HH:MM">
+          </div>
+          <div class="form-field">
+            <label for="form-observacion">Observación</label>
+            <textarea id="form-observacion"></textarea>
+          </div>
+          <div class="form-field">
+            <label for="form-salaControl">Sala de control</label>
+            <input type="text" id="form-salaControl">
+          </div>
+          <div class="form-field">
+            <label for="form-mes">Mes</label>
+            <input type="text" id="form-mes" placeholder="Enero, Febrero...">
+          </div>
+        </div>
+        <div style="margin-top: 10px; text-align: right;">
+          <button type="submit" id="btn-submit-form" class="btn-primary">Guardar registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- TABLA DETALLE -->
   <table id="tabla-detalle">
     <thead>
@@ -404,6 +587,7 @@
         <th>Observación</th>
         <th>Sala de control</th>
         <th>Mes</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -415,11 +599,15 @@
   const CSV_URL = "AQUI_TU_URL_CSV";
 
   let registrosBase = [];
+  let registrosNuevos = [];
   let registrosActuales = [];
 
   let chartEstadoVolumen, chartMina, chartGrado, chartFecha;
 
   let lastCsvRaw = "";
+  const LS_KEY = "hormigon_registros_nuevos";
+
+  let editingId = null; // id del registro nuevo que se está editando
 
   // Configuración global Chart.js
   Chart.defaults.maintainAspectRatio = false;
@@ -429,8 +617,11 @@
   Chart.defaults.plugins.legend.labels.pointStyle = "circle";
 
   document.addEventListener("DOMContentLoaded", () => {
+    cargarRegistrosLocales();
     cargarDatos(false);
     iniciarAutoActualizacion();
+    inicializarFormulario();
+    inicializarTablaAcciones();
   });
 
   function iniciarAutoActualizacion() {
@@ -438,6 +629,42 @@
     setInterval(() => {
       cargarDatos(true);
     }, INTERVALO_MS);
+  }
+
+  function getRegistrosCombinados() {
+    return registrosBase.concat(registrosNuevos);
+  }
+
+  function cargarRegistrosLocales() {
+    try {
+      const data = localStorage.getItem(LS_KEY);
+      if (!data) {
+        registrosNuevos = [];
+        return;
+      }
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        registrosNuevos = parsed.map((r, i) => ({
+          ...r,
+          origen: r.origen || "nuevo",
+          id: r.id || ("nls-" + i)
+        }));
+      } else {
+        registrosNuevos = [];
+      }
+      console.log("Registros nuevos cargados desde localStorage:", registrosNuevos.length);
+    } catch (e) {
+      console.error("Error leyendo localStorage:", e);
+      registrosNuevos = [];
+    }
+  }
+
+  function guardarRegistrosLocales() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(registrosNuevos));
+    } catch (e) {
+      console.error("No se pudieron guardar los registros en localStorage:", e);
+    }
   }
 
   // Parser CSV simple con comillas
@@ -506,28 +733,9 @@
         return true;
       });
 
-      // Mapeo columnas según tu planilla:
-      // 0 FECHA
-      // 1 Fecha turno
-      // 2 TURNO
-      // 3 LABOR/POSTURA
-      // 4 MINA
-      // 5 GRADO
-      // 6 PLANIFICADO
-      // 7 SUMINISTRADO
-      // 8 PENDIENTE
-      // 9 RECHAZADO
-      // 10 REAGENDADO
-      // 11 ELIMINADO
-      // 12 NÚMERO GUÍA
-      // 13 HORA SALIDA PLANTA
-      // 14 HORA LLEGADA OBRA
-      // 15 HORA INICIO DESCARGA
-      // 16 HORA TERMINO DESCARGA
-      // 17 OBSERVACIÓN
-      // 18 SALA DE CONTROL
-      // 19 Mes
-      registrosBase = dataRows.map(c => ({
+      registrosBase = dataRows.map((c, index) => ({
+        id: "b-" + index,
+        origen: "base",
         fecha:              c[0]  || "",
         fechaTurno:         c[1]  || "",
         turno:              c[2]  || "",
@@ -556,7 +764,8 @@
           : "Registros cargados: " + registrosBase.length
       );
 
-      poblarFiltros(registrosBase);
+      const combinados = getRegistrosCombinados();
+      poblarFiltros(combinados);
       aplicarFiltros();
 
     } catch (err) {
@@ -612,7 +821,8 @@
   }
 
   function aplicarFiltros() {
-    if (!registrosBase.length) return;
+    const todos = getRegistrosCombinados();
+    if (!todos.length) return;
 
     const mesSel   = document.getElementById("filtro-mes").value;
     const laborSel = document.getElementById("filtro-labor").value;
@@ -620,7 +830,7 @@
     const gradoSel = document.getElementById("filtro-grado").value;
     const turnoSel = document.getElementById("filtro-turno").value;
 
-    let datos = registrosBase.slice();
+    let datos = todos.slice();
 
     if (mesSel !== "TODOS") {
       datos = datos.filter(r => r.mes === mesSel);
@@ -683,6 +893,26 @@
     const tbody = document.querySelector("#tabla-detalle tbody");
     tbody.innerHTML = "";
     reg.forEach(r => {
+      const accionesHtml =
+        r.origen === "nuevo"
+          ? `
+        <button class="icon-btn edit" data-action="edit" data-id="${r.id}" title="Editar">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 20h4l10.5-10.5-4-4L4 16v4z"></path>
+            <path d="M14.5 5.5l4 4"></path>
+          </svg>
+        </button>
+        <button class="icon-btn delete" data-action="delete" data-id="${r.id}" title="Eliminar">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 7h12"></path>
+            <path d="M9 7V5h6v2"></path>
+            <path d="M10 11v6"></path>
+            <path d="M14 11v6"></path>
+            <rect x="6" y="7" width="12" height="12" rx="1"></rect>
+          </svg>
+        </button>`
+          : `<span class="icon-disabled" title="Registro origen Excel">●</span>`;
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${r.fecha}</td>
@@ -705,6 +935,7 @@
         <td>${r.observacion}</td>
         <td>${r.salaControl}</td>
         <td>${r.mes}</td>
+        <td>${accionesHtml}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -732,7 +963,6 @@
       green: "#2ecc71"
     };
 
-    // Volumen por estado
     const sum = (campo) => reg.reduce((s, r) => s + (r[campo] || 0), 0);
     const volEstados = {
       labels: ["Planificado", "Suministrado", "Pendiente", "Rechazado", "Reagendado", "Eliminado"],
@@ -839,6 +1069,145 @@
         }
       }
     });
+  }
+
+  function inicializarFormulario() {
+    const btnToggle = document.getElementById("btn-toggle-form");
+    const wrapper = document.getElementById("form-ingreso-wrapper");
+    const form = document.getElementById("form-nuevo-registro");
+    const btnSubmit = document.getElementById("btn-submit-form");
+
+    if (!btnToggle || !wrapper || !form || !btnSubmit) return;
+
+    wrapper.style.display = "none";
+
+    btnToggle.addEventListener("click", () => {
+      const visible = wrapper.style.display !== "none";
+      wrapper.style.display = visible ? "none" : "block";
+      btnToggle.textContent = visible ? "➕ Agregar nuevo registro" : "✖ Cerrar formulario";
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const nuevo = {
+        fecha:              document.getElementById("form-fecha").value || "",
+        fechaTurno:         document.getElementById("form-fechaTurno").value || "",
+        turno:              document.getElementById("form-turno").value || "",
+        labor:              document.getElementById("form-labor").value || "",
+        mina:               document.getElementById("form-mina").value || "",
+        grado:              document.getElementById("form-grado").value || "",
+        planificado:        Number(document.getElementById("form-planificado").value || 0),
+        suministrado:       Number(document.getElementById("form-suministrado").value || 0),
+        pendiente:          Number(document.getElementById("form-pendiente").value || 0),
+        rechazado:          Number(document.getElementById("form-rechazado").value || 0),
+        reagendado:         Number(document.getElementById("form-reagendado").value || 0),
+        eliminado:          Number(document.getElementById("form-eliminado").value || 0),
+        numeroGuia:         document.getElementById("form-numeroGuia").value || "",
+        horaSalidaPlanta:   document.getElementById("form-horaSalidaPlanta").value || "",
+        horaLlegadaObra:    document.getElementById("form-horaLlegadaObra").value || "",
+        horaInicioDescarga: document.getElementById("form-horaInicioDescarga").value || "",
+        horaTerminoDescarga:document.getElementById("form-horaTerminoDescarga").value || "",
+        observacion:        document.getElementById("form-observacion").value || "",
+        salaControl:        document.getElementById("form-salaControl").value || "",
+        mes:                document.getElementById("form-mes").value || ""
+      };
+
+      if (editingId) {
+        const idx = registrosNuevos.findIndex(r => r.id === editingId);
+        if (idx !== -1) {
+          registrosNuevos[idx] = {
+            ...registrosNuevos[idx],
+            ...nuevo
+          };
+        }
+        editingId = null;
+        btnSubmit.textContent = "Guardar registro";
+      } else {
+        nuevo.id = "n-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+        nuevo.origen = "nuevo";
+        registrosNuevos.push(nuevo);
+      }
+
+      guardarRegistrosLocales();
+      aplicarFiltros();
+      form.reset();
+    });
+  }
+
+  function inicializarTablaAcciones() {
+    const tbody = document.querySelector("#tabla-detalle tbody");
+    if (!tbody) return;
+
+    tbody.addEventListener("click", (e) => {
+      const btn = e.target.closest("button.icon-btn");
+      if (!btn) return;
+      const id = btn.getAttribute("data-id");
+      const action = btn.getAttribute("data-action");
+      if (!id || !action) return;
+
+      if (action === "edit") {
+        iniciarEdicion(id);
+      } else if (action === "delete") {
+        eliminarRegistro(id);
+      }
+    });
+  }
+
+  function iniciarEdicion(id) {
+    const reg = registrosNuevos.find(r => r.id === id);
+    if (!reg) {
+      alert("Solo se pueden editar registros ingresados desde este formulario (no los de Excel).");
+      return;
+    }
+
+    editingId = id;
+
+    document.getElementById("form-fecha").value              = reg.fecha || "";
+    document.getElementById("form-fechaTurno").value         = reg.fechaTurno || "";
+    document.getElementById("form-turno").value              = reg.turno || "";
+    document.getElementById("form-labor").value              = reg.labor || "";
+    document.getElementById("form-mina").value               = reg.mina || "";
+    document.getElementById("form-grado").value              = reg.grado || "";
+    document.getElementById("form-planificado").value        = reg.planificado || "";
+    document.getElementById("form-suministrado").value       = reg.suministrado || "";
+    document.getElementById("form-pendiente").value          = reg.pendiente || "";
+    document.getElementById("form-rechazado").value          = reg.rechazado || "";
+    document.getElementById("form-reagendado").value         = reg.reagendado || "";
+    document.getElementById("form-eliminado").value          = reg.eliminado || "";
+    document.getElementById("form-numeroGuia").value         = reg.numeroGuia || "";
+    document.getElementById("form-horaSalidaPlanta").value   = reg.horaSalidaPlanta || "";
+    document.getElementById("form-horaLlegadaObra").value    = reg.horaLlegadaObra || "";
+    document.getElementById("form-horaInicioDescarga").value = reg.horaInicioDescarga || "";
+    document.getElementById("form-horaTerminoDescarga").value= reg.horaTerminoDescarga || "";
+    document.getElementById("form-observacion").value        = reg.observacion || "";
+    document.getElementById("form-salaControl").value        = reg.salaControl || "";
+    document.getElementById("form-mes").value                = reg.mes || "";
+
+    const wrapper = document.getElementById("form-ingreso-wrapper");
+    const btnToggle = document.getElementById("btn-toggle-form");
+    const btnSubmit = document.getElementById("btn-submit-form");
+
+    if (wrapper && btnToggle) {
+      wrapper.style.display = "block";
+      btnToggle.textContent = "✖ Cerrar formulario";
+    }
+    if (btnSubmit) {
+      btnSubmit.textContent = "💾 Guardar cambios";
+    }
+  }
+
+  function eliminarRegistro(id) {
+    const idx = registrosNuevos.findIndex(r => r.id === id);
+    if (idx === -1) {
+      alert("Solo se pueden eliminar registros ingresados desde este formulario (no los de Excel).");
+      return;
+    }
+    if (!confirm("¿Eliminar este registro ingresado manualmente?")) return;
+
+    registrosNuevos.splice(idx, 1);
+    guardarRegistrosLocales();
+    aplicarFiltros();
   }
 </script>
 
