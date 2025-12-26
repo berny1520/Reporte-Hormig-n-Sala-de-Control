@@ -211,6 +211,57 @@
   ]);
 
   let modalOptions = {};
+// ====== CATALOGO FIJO (para llenar desplegables aunque no haya registros) ======
+const CATALOG = {
+  GRADO: [
+    "SH-22,5 NORMAL","SH-22,5 FIBRA","SH-300","HN-70","HN-30","HN-40","HN-50","HB-30","HB-40","HB-50","GN-25","HB-70","GN-65"
+  ],
+  SUMINISTRO: ["En Planta","En Obra",""],
+  TURNO: ["1","2","A","B","C",""],
+  GRUPO: ["Grupo_1","Grupo_2","Grupo_3","Grupo_4",""],
+  SALA_DE_CONTROL: [
+    "Carlos Salazar Rodriguez","Martin Arriaza Vidal","Alvaro Coloma Toledo","Marcelo Henriquez Ortiz",""
+  ],
+  MINA: [
+    "ESMERALDA","ESMERALDA_ACARREO","ESMERALDA_PANEL_1","ESMERALDA_PANEL_2",
+    "DIABLO_REGIMIENTO","PACIFICO_SUPERIOR","PILAR_NORTE","PANEL_RENO","RENO",
+    "RRNN","DACITA","PANEL_INVARIANTE","TENIENTE_6","TENIENTE_7","TENIENTE_8",
+    "ANDESITA","COLÓN","ADIT_71"
+  ],
+  LABOR_POSTURA: [
+    "C-49 IZ","C-55 IZ","C-25 Z-44 HW","C-25 Z-45 HW","C-49 OP-48","C-23 Z-0",
+    "C-23 Z-42 FW","C-23 Z-42 HW","C-2 Z-10/9","C-2 Z-5/6","C-0 SOC. SUR A Z-10",
+    "OP-27 UH","OP-26 Pto 22-A","OP-26 Pto 22-B","OP-26 Pto 24","OP-26 Pto 23",
+    "OP-27 Pto 20-A","OP-27 Pto 20-B","OP-27 Pto 21-A","OP-27 Pto 21-B","OP-27 Pto 22-A",
+    "Pilar Bz 24-1S (Pto 1)","Soc. Hw 1 (Pto 2)","Soc. Hw 1 / Acceso Sur Loop (Pto 3)",
+    "Acceso Sur Loop (Pto 4)","Soc. Hw 1 / Loop Norte (Pto 5)","Loop Fw A (Pto 6)","Loop Fw B (Pto 7)",
+    "CX 1S/2S con Loop 1S (Pto 8)","Loop Hw / CX Loop 1S/2S (Pto 9)","Loop Hw / Adit 65 (Pto 10)",
+    "Loop Hw entre P4 y P5 (Pto 11)","Fr Inv descarga Dacita (Pto 12)","CAV acceso descarga CH DT (Pto 13)",
+    "Galería curva CH DT (Pto 14)","OP 24","EDIFICIO 132"
+  ],
+  CNC_NIVEL_2: [
+    "Interferencia por derrumbe","Comunicación","Trabajos en ruta","Traslado personal DET",
+    "ruta no apta para el ingreso de mixer","Simulacros","Ventana horaria","Restricción por evento climatico",
+    "Movilizaciones","Visita Gerencia GSYS","Cambio de prioridad","Sin Autorizacion DET","APP no disponible",
+    "Planta sin comunicación","Sismología","Ruta marina","Cenefa","Trabajo otras empresas","Equipos en área",
+    "Marina en postura","Liberación de gases","Energía","Agua","Cancha no lista","Trabajos otras disciplinas",
+    "Cancelacion Suministro","Pedido Fuera de Programa","Confirmacion fuera de horario",
+    "Indisponibilidad de mixer propio","Falta operador","Falta personal OOCC","Equipo shortcrete F/S","Bomba F/S",
+    "Problemas con escolta","Lento retorno de equipos","Mixer Retrasado","Sin retorno de mixer a planta",
+    "Capacidad maxima equipo","Mezcladores","Postura rematada con menos m3","Cambio de Postura",
+    "Suspension Administrativa","Planificación errónea","Problemas en la calidad","Falta suministros","Falla planta",
+    "Incumplimiento horario APP","Equipo F/S Xtreme","Tarjeta Verde","Somnolencia",
+    "Proceso de carguío tarda mas de lo programado","Espera equipo en planta"
+  ],
+  CNC_NIVEL_1: [
+    "Ruta Codelco","Clima","Personal","Prioridades","APP no disponible","Comunicación","Sismología","Ruta",
+    "Interferencia empresas","Liberación de gases","Servicios","Frente no preparada","Pedido",
+    "Indisponibilidad de mixer propio","Dotación no disponible","Equipos","Postura","Suministro",
+    "Planificación errónea","Calidad","Indisponibilidad de planta","Incumplimiento horario APP","Equipo F/S",
+    "Planta","Falla operacional","Espera equipo en planta"
+  ],
+  RESPONSABLE_CNC: ["CODELCO","INTERNA","SUMINISTRO"]
+};
 
   // ====== Helpers ======
   function csvParse(text){
@@ -423,14 +474,30 @@
 
   // ====== Modal (Nuevo Registro) con DESPLEGABLES ======
   function buildModalOptions(){
-    const pick = (k) => uniq(rawRows.map(r => (r[k] ?? "").toString().trim()));
-    modalOptions = {
-      MES: pick("MES"), SEMANA: pick("SEMANA"), TURNO: pick("TURNO"), GRUPO: pick("GRUPO"),
-      MINA: pick("MINA"), LABOR_POSTURA: pick("LABOR_POSTURA"), GRADO: pick("GRADO"), SUMINISTRO: pick("SUMINISTRO"),
-      CNC_NIVEL_2: pick("CNC_NIVEL_2"), CNC_NIVEL_1: pick("CNC_NIVEL_1"),
-      RESPONSABLE_CNC: pick("RESPONSABLE_CNC"), SALA_DE_CONTROL: pick("SALA_DE_CONTROL"),
-    };
-  }
+  const pick = (k) => uniq(rawRows.map(r => (r[k] ?? "").toString().trim()));
+
+  // Si hay datos reales en el CSV, usa esos. Si no, usa el CATALOG fijo.
+  const fromDataOrCatalog = (k) => {
+    const fromData = pick(k);
+    if (fromData.length) return fromData;
+    return (CATALOG[k] || []).filter(v => String(v).trim() !== "");
+  };
+
+  modalOptions = {
+    MES: fromDataOrCatalog("MES"),
+    SEMANA: fromDataOrCatalog("SEMANA"),
+    TURNO: fromDataOrCatalog("TURNO"),
+    GRUPO: fromDataOrCatalog("GRUPO"),
+    MINA: fromDataOrCatalog("MINA"),
+    LABOR_POSTURA: fromDataOrCatalog("LABOR_POSTURA"),
+    GRADO: fromDataOrCatalog("GRADO"),
+    SUMINISTRO: fromDataOrCatalog("SUMINISTRO"),
+    CNC_NIVEL_2: fromDataOrCatalog("CNC_NIVEL_2"),
+    CNC_NIVEL_1: fromDataOrCatalog("CNC_NIVEL_1"),
+    RESPONSABLE_CNC: fromDataOrCatalog("RESPONSABLE_CNC"),
+    SALA_DE_CONTROL: fromDataOrCatalog("SALA_DE_CONTROL"),
+  };
+}
 
   function buildModalForm(){
     const grid = document.getElementById("modalGrid");
