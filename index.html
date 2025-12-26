@@ -172,7 +172,7 @@
 <script>
   // ====== CONFIG ======
   const CSV_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
-  const POST_URL = "https://script.google.com/macros/s/AKfycbwUcRcUiuiTa1J9V9irJdsjaQAcmU84GyADIRVDxEHrBf44psNU02TdTj22S1VFAhC5/exec"; // URL /exec de Apps Script
+  const POST_URL = "https://script.google.com/macros/s/AKfycbzdvlAA2h5RkQ9HAfC_L9gKqza89PqJhfWNuZjxdHshA6NBMXL9DHNI-ZtI7pMnqQlB/exec"; // URL /exec de Apps Script
 
   // Encabezados EXACTOS del CSV (como en tu sheet)
   const RAW_COLS = [
@@ -262,42 +262,6 @@ const CATALOG = {
   ],
   RESPONSABLE_CNC: ["CODELCO","INTERNA","SUMINISTRO"]
 };
-
-function autoFillDateFields(dateStr){
-  if (!dateStr) return;
-
-  const d = new Date(dateStr + "T00:00:00");
-
-  // MES (nombre)
-  const meses = [
-    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
-  ];
-  const mes = meses[d.getMonth()];
-
-  // SEMANA ISO
-  const week = getISOWeek(d);
-
-  // Setear valores si existen
-  const mesInput = document.getElementById("i_MES");
-  const semanaInput = document.getElementById("i_SEMANA");
-
-  if (mesInput) mesInput.value = mes;
-  if (semanaInput) semanaInput.value = week;
-}
-
-// Semana ISO (estándar)
-function getISOWeek(date) {
-  const tmp = new Date(date.valueOf());
-  const dayNr = (date.getDay() + 6) % 7;
-  tmp.setDate(tmp.getDate() - dayNr + 3);
-  const firstThursday = tmp.valueOf();
-  tmp.setMonth(0, 1);
-  if (tmp.getDay() !== 4) {
-    tmp.setMonth(0, 1 + ((4 - tmp.getDay()) + 7) % 7);
-  }
-  return 1 + Math.ceil((firstThursday - tmp) / 604800000);
-}
 
   // ====== Helpers ======
   function csvParse(text){
@@ -598,23 +562,24 @@ function openModal(){
 
     try{
       const res = await fetch(POST_URL, {
-  method: "POST",
-  mode: "cors",
-  headers: { "Content-Type": "text/plain;charset=utf-8" }, // <- clave
-  body: JSON.stringify(payload)
-})
-.then(r => r.json())
-.then(res => {
-  if (!res.ok) throw new Error(res.error || "Error al guardar");
-  // éxito:
-  showSaveOk("Guardado OK ✅");
-  closeModal();
-  loadData(); // recarga
-})
-.catch(err => {
-  console.error(err);
-  showSaveError("Error de red o CORS (bloqueo del navegador / permisos).");
-});
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      const t = await res.text();
+      if (!res.ok){
+        msgEl.textContent = "❌ Error al guardar. Revisa permisos Web App.";
+        console.error("POST error:", res.status, t);
+        return;
+      }
+      msgEl.textContent = "✅ Guardado. Actualizando…";
+      closeModal();
+      await loadData();
+    }catch(err){
+      msgEl.textContent = "❌ Error de red o CORS.";
+      console.error(err);
+    }
+  }
 
   // ====== Carga ======
   async function loadData(){
