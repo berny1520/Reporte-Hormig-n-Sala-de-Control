@@ -449,7 +449,19 @@
     }).join("");
   }
 
-  function openModal(){ document.getElementById("saveMsg").textContent=""; document.getElementById("modal").style.display="block"; }
+function openModal(){
+  const grid = document.getElementById("modalGrid");
+
+  // Si por cualquier motivo el CSV no cargó, igual arma el formulario
+  if (!grid.innerHTML || grid.innerHTML.trim() === "") {
+    try { buildModalOptions(); } catch(e) {}
+    buildModalForm();
+  }
+
+  document.getElementById("saveMsg").textContent = "";
+  document.getElementById("modal").style.display = "block";
+}
+
   function closeModal(){ document.getElementById("modal").style.display="none"; }
 
   function getFormPayload(){
@@ -499,7 +511,15 @@
     if (!res.ok) throw new Error("No se pudo cargar el CSV.");
     const text = await res.text();
     const grid = csvParse(text);
-    if (grid.length < 2) throw new Error("CSV sin datos.");
+    if (grid.length < 2) {
+  rawRows = [];
+  fillDropdowns();
+  buildModalOptions();
+  buildModalForm();
+  applyFilters();
+  document.getElementById("note").textContent = "CSV sin filas (solo encabezados). Igual puedes ingresar registros con 'Nuevo registro'.";
+  return;
+}
 
     const header = grid[0].map(h => h.trim());
     const missing = RAW_COLS.filter(c => !header.includes(c));
