@@ -505,6 +505,16 @@ const CATALOG = {
       const internal = MAP[c] || c;
       const id = "i_" + internal.replace(/[^A-Z0-9_]/gi,"_");
 
+// FECHA como selector calendario
+if (internal === "FECHA") {
+  return `
+    <div class="field">
+      <label>FECHA</label>
+      <input id="${id}" type="date" onchange="autoFillDateFields(this.value)" />
+    </div>
+  `;
+}
+
       if (MODAL_DROPDOWNS.has(internal)){
         const opts = (modalOptions[internal] || []);
         const optionsHtml = `<option value="">Seleccione…</option>` +
