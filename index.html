@@ -1,1220 +1,678 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard Hormigón – Sala de Control</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Hormigón / CNC</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
   <style>
-    :root {
-      --primary: #d9232d;  /* rojo Xtreme */
-      --primary-soft: #ffe5e7;
-      --dark: #222;
-      --bg: #f2f4f7;
-      --card-bg: #ffffff;
-      --text-main: #222;
-      --text-muted: #777;
+    :root{
+      --bg:#f4f6f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --dark:#0f172a;
+      --accent:#ef4444; /* rojo */
+      --accent2:#334155; /* gris oscuro */
+      --shadow: 0 10px 25px rgba(0,0,0,.06);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .topbar{
+      background: linear-gradient(90deg, #0b1020, #111827);
+      color:#fff;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      position:sticky;
+      top:0;
+      z-index:10;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:260px;
+    }
+    .logo{
+      width:52px;height:34px;
+      border-radius:8px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#111827;
+      font-weight:800;
+      letter-spacing:.5px;
+    }
+    .titles .h1{
+      font-weight:800;
+      font-size:14px;
+      line-height:1.15;
+    }
+    .titles .h2{
+      font-size:11px;
+      color: rgba(255,255,255,.75);
+      margin-top:2px;
+      line-height:1.1;
+    }
+    .container{
+      max-width: 1320px;
+      margin: 16px auto 40px;
+      padding: 0 14px;
     }
 
-    * {
-      box-sizing: border-box;
+    .filters{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr auto auto;
+      gap: 10px;
+      align-items:end;
     }
+    .field label{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    input[type="text"], select{
+      width:100%;
+      height:36px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      padding:0 10px;
+      outline:none;
+      background:#fff;
+      font-size:13px;
+    }
+    input[type="text"]:focus, select:focus{
+      border-color:#c7cdd6;
+      box-shadow: 0 0 0 3px rgba(148,163,184,.25);
+    }
+    .btn{
+      height:36px;
+      padding: 0 12px;
+      border-radius:10px;
+      border:1px solid transparent;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .btn.secondary{
+      background: var(--accent2);
+      color:#fff;
+    }
+    .btn.danger{
+      background: var(--accent);
+      color:#fff;
+    }
+    .btn:active{ transform: translateY(1px); }
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text-main);
-    }
-
-    header {
-      background: var(--dark);
-      color: #fff;
-      padding: 10px 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    header > div {
-      max-width: 1500px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    header img {
-      height: 55px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    header .subtitle {
-      font-size: 13px;
-      color: #ccc;
-      margin-top: 3px;
-    }
-
-    .container {
-      max-width: 1500px;
-      margin: 15px auto 40px;
-      padding: 0 10px 20px;
-    }
-
-    /* Barra de filtros */
-    .filters-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 15px;
-      align-items: center;
-      background: var(--card-bg);
-      padding: 12px 16px;
-      border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      margin-bottom: 18px;
-      font-size: 13px;
-    }
-    .filters-bar .group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .filters-bar label {
-      font-weight: bold;
-      margin-right: 2px;
-    }
-    .filters-bar input,
-    .filters-bar select {
-      padding: 5px 7px;
-      font-size: 13px;
-      border-radius: 5px;
-      border: 1px solid #d0d4da;
-      min-width: 140px;
-    }
-    .filters-bar button {
-      padding: 6px 11px;
-      font-size: 13px;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.05s ease, box-shadow 0.1s ease;
-    }
-    .filters-bar button:active {
-      transform: translateY(1px);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-    }
-    .btn-secondary {
-      background: #6c757d;
-      color: #fff;
-    }
-    .btn-pdf {
-      background: #d9534f;
-      color: #fff;
-    }
-
-    .filters-bar .right {
-      margin-left: auto;
-      display: flex;
-      gap: 8px;
-    }
-
-    /* KPIs */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .kpi-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 10px 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    .kpi-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: var(--primary);
-    }
-    .kpi-title {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .kpi-value {
-      font-size: 21px;
-      font-weight: bold;
-    }
-    .kpi-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .kpi-extra {
-      font-size: 11px;
-      color: var(--primary);
-      font-weight: bold;
-      position: absolute;
-      right: 10px;
-      top: 8px;
-    }
-
-    /* GRÁFICOS */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-    }
-
-    .chart-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 16px 18px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      height: 400px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chart-card.wide {
-      grid-column: 1 / -1;
-      height: 420px;
-    }
-
-    .chart-card h3 {
-      margin: 0 0 12px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .chart-card canvas {
-      width: 100% !important;
-      height: calc(100% - 20px) !important;
-    }
-
-    @media (max-width: 950px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
-      .chart-card,
-      .chart-card.wide {
-        grid-column: 1 / -1;
-        height: 360px;
-      }
-    }
-
-    /* FORMULARIO DE INGRESO */
-    .form-ingreso {
-      background: var(--card-bg);
-      border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      padding: 12px 16px;
-      margin-bottom: 18px;
-      font-size: 13px;
-    }
-    .form-ingreso-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .grid-kpis{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
       gap: 10px;
     }
-    .form-ingreso-title {
-      font-weight: bold;
-      font-size: 14px;
-      color: var(--text-main);
+    .kpi{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+      position:relative;
+      overflow:hidden;
+      min-height:76px;
     }
-    .form-grid {
-      margin-top: 10px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 8px 12px;
+    .kpi .label{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:800;
+      letter-spacing:.2px;
     }
-    .form-field label {
-      font-size: 11px;
-      font-weight: bold;
-      color: var(--text-muted);
-      display: block;
-      margin-bottom: 2px;
+    .kpi .value{
+      font-size:22px;
+      font-weight:900;
+      margin-top:6px;
     }
-    .form-field input,
-    .form-field select,
-    .form-field textarea {
-      width: 100%;
-      padding: 5px 7px;
-      font-size: 12px;
-      border-radius: 5px;
-      border: 1px solid #d0d4da;
+    .kpi .sub{
+      font-size:10px;
+      color:var(--muted);
+      margin-top:2px;
     }
-    .form-field textarea {
-      resize: vertical;
-      min-height: 40px;
-    }
-
-    /* Tabla */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 5px;
-      font-size: 12px;
-      background: var(--card-bg);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    }
-    th, td {
-      padding: 6px 8px;
-      border-bottom: 1px solid #eee;
-      white-space: nowrap;
-    }
-    th {
-      background: #f4f6f8;
-      text-align: left;
-    }
-    tr:nth-child(even) td {
-      background: #fafafa;
-    }
-    tr:hover td {
-      background: #e9f3ff;
+    .kpi::after{
+      content:"";
+      position:absolute;
+      right:-40px; top:-40px;
+      width:100px;height:100px;
+      border-radius:50%;
+      background: rgba(239,68,68,.08);
     }
 
-    /* Botones de acción SVG */
-    .icon-btn {
-      background: transparent;
-      border: none;
-      padding: 2px 4px;
-      cursor: pointer;
-      vertical-align: middle;
+    .grid-charts{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
     }
-    .icon-btn svg {
-      width: 16px;
-      height: 16px;
-      stroke-width: 1.7;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
-      display: block;
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
     }
-    .icon-btn.edit svg {
-      stroke: #444;
+    .card h3{
+      margin:0 0 8px;
+      font-size:12px;
+      letter-spacing:.2px;
+      color:#0f172a;
+      font-weight:900;
     }
-    .icon-btn.delete svg {
-      stroke: #b00020;
-    }
-    .icon-btn:focus {
-      outline: none;
-    }
-    .icon-disabled {
-      opacity: 0.3;
-      font-size: 11px;
-      cursor: default;
+    .chartbox{
+      height: 280px;
     }
 
-    /* Impresión */
-    @media print {
-      body {
-        background: #fff;
-      }
-      header {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .filters-bar,
-      .form-ingreso {
-        display: none;
-      }
-      button {
-        display: none;
-      }
-      .container {
-        max-width: 100%;
-        margin: 0;
-        padding: 0 5mm;
-      }
+    .grid-charts-2{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .table-wrap{
+      margin-top:12px;
+      overflow:auto;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 980px;
+      background: #fff;
+    }
+    thead th{
+      position:sticky;
+      top:0;
+      background:#0f172a;
+      color:#fff;
+      font-size:11px;
+      text-align:left;
+      padding:10px;
+      z-index:1;
+      white-space:nowrap;
+    }
+    tbody td{
+      font-size:12px;
+      padding:9px 10px;
+      border-bottom:1px solid var(--line);
+      white-space:nowrap;
+    }
+    tbody tr:nth-child(even){
+      background:#fafafa;
+    }
+    .pill{
+      display:inline-block;
+      padding: 3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      border:1px solid var(--line);
+    }
+    .pill.CODELCO{ background: rgba(59,130,246,.12); }
+    .pill.INTERNA{ background: rgba(148,163,184,.18); }
+    .pill.SUMINISTRO{ background: rgba(249,115,22,.14); }
+
+    .footer-note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    /* Responsive */
+    @media (max-width:1200px){
+      .filters{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+      .grid-kpis{ grid-template-columns: repeat(3, 1fr); }
+      .grid-charts{ grid-template-columns: 1fr; }
+      .grid-charts-2{ grid-template-columns: 1fr; }
+    }
+
+    /* Print (Export PDF) */
+    @media print{
+      .topbar{ position:static; box-shadow:none; }
+      .btn, .footer-note{ display:none !important; }
+      body{ background:#fff; }
+      .container{ max-width:none; margin:0; }
+      .filters{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+      .card, .kpi{ box-shadow:none; }
+      .chartbox{ height: 240px; }
     }
   </style>
 </head>
-<body>
 
-<header>
-  <div>
-    <img src="logo_Xtreme.png" alt="Xtreme Mining" />
-    <div>
-      <h1>Dashboard Hormigón – Sala de Control</h1>
-      <div class="subtitle">
-        Reporte FECHA / TURNO / MINA / LABOR / GRADO
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">XT</div>
+      <div class="titles">
+        <div class="h1">Dashboard Hormigón / CNC – Seguimiento</div>
+        <div class="h2">Datos desde Google Sheets (CSV) • Vista ejecutiva</div>
       </div>
     </div>
   </div>
-</header>
 
-<div class="container">
+  <div class="container">
+    <!-- FILTROS -->
+    <div class="filters">
+      <div class="field">
+        <label>Buscar (RUT / texto)</label>
+        <input id="q" type="text" placeholder="Ej: 12.345.678-9 o 'Interferencia'..." />
+      </div>
 
-  <!-- BARRA DE FILTROS -->
-  <div class="filters-bar">
-    <div class="group">
-      <label for="filtro-mes">Mes:</label>
-      <select id="filtro-mes" onchange="aplicarFiltros()">
-        <option value="TODOS">Todos</option>
-      </select>
+      <div class="field">
+        <label>GRADO</label>
+        <select id="f_grado"><option value="">Todos</option></select>
+      </div>
+      <div class="field">
+        <label>SUMINISTRO</label>
+        <select id="f_suministro"><option value="">Todos</option></select>
+      </div>
+      <div class="field">
+        <label>TURNO</label>
+        <select id="f_turno"><option value="">Todos</option></select>
+      </div>
+      <div class="field">
+        <label>GRUPO</label>
+        <select id="f_grupo"><option value="">Todos</option></select>
+      </div>
+      <div class="field">
+        <label>MINA</label>
+        <select id="f_mina"><option value="">Todos</option></select>
+      </div>
+      <div class="field">
+        <label>RESPONSABLE</label>
+        <select id="f_responsable"><option value="">Todos</option></select>
+      </div>
+
+      <button class="btn secondary" id="btnReset">🧹 Limpiar filtros</button>
+      <button class="btn danger" id="btnPdf">⬇ Exportar PDF</button>
     </div>
 
-    <div class="group">
-      <label for="filtro-labor">Labor/Postura:</label>
-      <select id="filtro-labor" onchange="aplicarFiltros()">
-        <option value="TODOS">Todas</option>
-      </select>
+    <!-- KPIs -->
+    <div class="grid-kpis">
+      <div class="kpi">
+        <div class="label">REGISTROS FILTRADOS</div>
+        <div class="value" id="k_total">0</div>
+        <div class="sub">Total visible según filtros</div>
+      </div>
+      <div class="kpi">
+        <div class="label">MINAS ÚNICAS</div>
+        <div class="value" id="k_minas">0</div>
+        <div class="sub">Diversidad de frentes</div>
+      </div>
+      <div class="kpi">
+        <div class="label">CNC NIVEL 1 (TOP)</div>
+        <div class="value" id="k_top_cnc1">-</div>
+        <div class="sub">Causa principal</div>
+      </div>
+      <div class="kpi">
+        <div class="label">CODELCO</div>
+        <div class="value" id="k_codelco">0</div>
+        <div class="sub">Responsable CNC</div>
+      </div>
+      <div class="kpi">
+        <div class="label">INTERNA</div>
+        <div class="value" id="k_interna">0</div>
+        <div class="sub">Responsable CNC</div>
+      </div>
+      <div class="kpi">
+        <div class="label">SUMINISTRO</div>
+        <div class="value" id="k_sum">0</div>
+        <div class="sub">Responsable CNC</div>
+      </div>
     </div>
 
-    <div class="group">
-      <label for="filtro-mina">Mina:</label>
-      <select id="filtro-mina" onchange="aplicarFiltros()">
-        <option value="TODOS">Todas</option>
-      </select>
+    <!-- CHARTS -->
+    <div class="grid-charts">
+      <div class="card">
+        <h3>Incidentes por CNC NIVEL 1</h3>
+        <div class="chartbox"><canvas id="chCnc1"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h3>Distribución por Responsable</h3>
+        <div class="chartbox"><canvas id="chResp"></canvas></div>
+      </div>
     </div>
 
-    <div class="group">
-      <label for="filtro-grado">Grado:</label>
-      <select id="filtro-grado" onchange="aplicarFiltros()">
-        <option value="TODOS">Todos</option>
-      </select>
+    <div class="grid-charts-2">
+      <div class="card">
+        <h3>Incidentes por Mina</h3>
+        <div class="chartbox"><canvas id="chMina"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h3>Incidentes por Turno</h3>
+        <div class="chartbox"><canvas id="chTurno"></canvas></div>
+      </div>
     </div>
 
-    <div class="group">
-      <label for="filtro-turno">Turno:</label>
-      <select id="filtro-turno" onchange="aplicarFiltros()">
-        <option value="TODOS">Todos</option>
-      </select>
-    </div>
-
-    <div class="right">
-      <button class="btn-secondary" onclick="limpiarFiltros()">Limpiar filtros</button>
-      <button class="btn-pdf" onclick="exportarPDF()">Exportar PDF</button>
+    <!-- TABLA -->
+    <div class="card" style="margin-top:12px;">
+      <h3>Detalle de Registros</h3>
+      <div class="table-wrap">
+        <table id="tbl">
+          <thead>
+            <tr id="tblHead"></tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+      <div class="footer-note" id="note">Cargando datos…</div>
     </div>
   </div>
-
-  <!-- KPIs -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-title">Total planificado (m³)</div>
-      <div class="kpi-value" id="kpi-planificado">0</div>
-      <div class="kpi-sub">Suma columna PLANIFICADO</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Total suministrado (m³)</div>
-      <div class="kpi-extra" id="kpi-cumplimiento-pct">0%</div>
-      <div class="kpi-value" id="kpi-suministrado">0</div>
-      <div class="kpi-sub">% sobre planificado</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Pendiente (m³)</div>
-      <div class="kpi-value" id="kpi-pendiente">0</div>
-      <div class="kpi-sub">Volumen pendiente</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Rechazado (m³)</div>
-      <div class="kpi-value" id="kpi-rechazado">0</div>
-      <div class="kpi-sub">Volumen rechazado</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Reagendado (m³)</div>
-      <div class="kpi-value" id="kpi-reagendado">0</div>
-      <div class="kpi-sub">Volumen reagendado</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Eliminado (m³)</div>
-      <div class="kpi-value" id="kpi-eliminado">0</div>
-      <div class="kpi-sub">Volumen eliminado</div>
-    </div>
-  </div>
-
-  <!-- GRÁFICOS -->
-  <div class="charts-grid">
-    <div class="chart-card wide">
-      <h3>Volumen por estado (m³)</h3>
-      <canvas id="chartEstadoVolumen"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Suministrado por mina (m³)</h3>
-      <canvas id="chartMina"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Suministrado por grado (m³)</h3>
-      <canvas id="chartGrado"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Suministrado por fecha</h3>
-      <canvas id="chartFecha"></canvas>
-    </div>
-  </div>
-
-  <!-- FORMULARIO NUEVO REGISTRO -->
-  <div class="form-ingreso">
-    <div class="form-ingreso-header">
-      <div class="form-ingreso-title">Ingreso de nuevos registros de hormigón</div>
-      <button id="btn-toggle-form" type="button" class="btn-primary">
-        ➕ Agregar nuevo registro
-      </button>
-    </div>
-    <div id="form-ingreso-wrapper" style="display: none; margin-top: 10px;">
-      <form id="form-nuevo-registro">
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="form-fecha">Fecha</label>
-            <input type="date" id="form-fecha" required>
-          </div>
-          <div class="form-field">
-            <label for="form-fechaTurno">Fecha turno</label>
-            <input type="text" id="form-fechaTurno" placeholder="Fecha turno">
-          </div>
-          <div class="form-field">
-            <label for="form-turno">Turno</label>
-            <select id="form-turno">
-              <option value="">Seleccionar...</option>
-              <option value="Día">Día</option>
-              <option value="Noche">Noche</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="form-labor">Labor/Postura</label>
-            <input type="text" id="form-labor">
-          </div>
-          <div class="form-field">
-            <label for="form-mina">Mina</label>
-            <input type="text" id="form-mina">
-          </div>
-          <div class="form-field">
-            <label for="form-grado">Grado</label>
-            <input type="text" id="form-grado">
-          </div>
-          <div class="form-field">
-            <label for="form-planificado">Planificado (m³)</label>
-            <input type="number" step="0.1" id="form-planificado">
-          </div>
-          <div class="form-field">
-            <label for="form-suministrado">Suministrado (m³)</label>
-            <input type="number" step="0.1" id="form-suministrado">
-          </div>
-          <div class="form-field">
-            <label for="form-pendiente">Pendiente (m³)</label>
-            <input type="number" step="0.1" id="form-pendiente">
-          </div>
-          <div class="form-field">
-            <label for="form-rechazado">Rechazado (m³)</label>
-            <input type="number" step="0.1" id="form-rechazado">
-          </div>
-          <div class="form-field">
-            <label for="form-reagendado">Reagendado (m³)</label>
-            <input type="number" step="0.1" id="form-reagendado">
-          </div>
-          <div class="form-field">
-            <label for="form-eliminado">Eliminado (m³)</label>
-            <input type="number" step="0.1" id="form-eliminado">
-          </div>
-          <div class="form-field">
-            <label for="form-numeroGuia">N° Guía</label>
-            <input type="text" id="form-numeroGuia">
-          </div>
-          <div class="form-field">
-            <label for="form-horaSalidaPlanta">Hora salida planta</label>
-            <input type="text" id="form-horaSalidaPlanta" placeholder="HH:MM">
-          </div>
-          <div class="form-field">
-            <label for="form-horaLlegadaObra">Hora llegada obra</label>
-            <input type="text" id="form-horaLlegadaObra" placeholder="HH:MM">
-          </div>
-          <div class="form-field">
-            <label for="form-horaInicioDescarga">Hora inicio descarga</label>
-            <input type="text" id="form-horaInicioDescarga" placeholder="HH:MM">
-          </div>
-          <div class="form-field">
-            <label for="form-horaTerminoDescarga">Hora término descarga</label>
-            <input type="text" id="form-horaTerminoDescarga" placeholder="HH:MM">
-          </div>
-          <div class="form-field">
-            <label for="form-observacion">Observación</label>
-            <textarea id="form-observacion"></textarea>
-          </div>
-          <div class="form-field">
-            <label for="form-salaControl">Sala de control</label>
-            <input type="text" id="form-salaControl">
-          </div>
-          <div class="form-field">
-            <label for="form-mes">Mes</label>
-            <input type="text" id="form-mes" placeholder="Enero, Febrero...">
-          </div>
-        </div>
-        <div style="margin-top: 10px; text-align: right;">
-          <button type="submit" id="btn-submit-form" class="btn-primary">Guardar registro</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- TABLA DETALLE -->
-  <table id="tabla-detalle">
-    <thead>
-      <tr>
-        <th>FECHA</th>
-        <th>Fecha turno</th>
-        <th>Turno</th>
-        <th>Labor/Postura</th>
-        <th>Mina</th>
-        <th>Grado</th>
-        <th>Planificado</th>
-        <th>Suministrado</th>
-        <th>Pendiente</th>
-        <th>Rechazado</th>
-        <th>Reagendado</th>
-        <th>Eliminado</th>
-        <th>N° Guía</th>
-        <th>Hora salida planta</th>
-        <th>Hora llegada obra</th>
-        <th>Hora inicio descarga</th>
-        <th>Hora término descarga</th>
-        <th>Observación</th>
-        <th>Sala de control</th>
-        <th>Mes</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
 
 <script>
-  // URL correcta de tu hoja publicada como CSV
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQz3J9VJZcs5JbAsW1FUZ5lx8TlMi6z2U30ELO86sECEWx1gCgkvNJ11dUcmajYRQ/pub?gid=217982411&single=true&output=csv";
+  // ====== CONFIG ======
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
 
-  let registrosBase = [];
-  let registrosNuevos = [];
-  let registrosActuales = [];
+  // Columnas esperadas (para filtros y vistas)
+  const COLS = [
+    "GRADO","SUMINISTRO","TURNO","GRUPO","SALA_CONTROL","MINA",
+    "LABORPOSTURA","CNC_NIVEL_2","CNC_NIVEL_1","RESPONSABLE_CNC"
+  ];
 
-  let chartEstadoVolumen, chartMina, chartGrado, chartFecha;
+  // ====== STATE ======
+  let rawRows = [];     // [{col:val,...}]
+  let viewRows = [];    // filtered rows
+  let charts = {};      // Chart instances
 
-  let lastCsvRaw = "";
-  const LS_KEY = "hormigon_registros_nuevos";
-
-  let editingId = null; // id del registro nuevo que se está editando
-
-  // Configuración global Chart.js
-  Chart.defaults.maintainAspectRatio = false;
-  Chart.defaults.font.family = "Arial, sans-serif";
-  Chart.defaults.plugins.legend.position = "bottom";
-  Chart.defaults.plugins.legend.labels.usePointStyle = true;
-  Chart.defaults.plugins.legend.labels.pointStyle = "circle";
-
-  document.addEventListener("DOMContentLoaded", () => {
-    cargarRegistrosLocales();
-    cargarDatos(false);
-    iniciarAutoActualizacion();
-    inicializarFormulario();
-    inicializarTablaAcciones();
-  });
-
-  function iniciarAutoActualizacion() {
-    const INTERVALO_MS = 60000; // 60 s
-    setInterval(() => {
-      cargarDatos(true);
-    }, INTERVALO_MS);
-  }
-
-  function getRegistrosCombinados() {
-    return registrosBase.concat(registrosNuevos);
-  }
-
-  function cargarRegistrosLocales() {
-    try {
-      const data = localStorage.getItem(LS_KEY);
-      if (!data) {
-        registrosNuevos = [];
-        return;
-      }
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
-        registrosNuevos = parsed.map((r, i) => ({
-          ...r,
-          origen: r.origen || "nuevo",
-          id: r.id || ("nls-" + i)
-        }));
-      } else {
-        registrosNuevos = [];
-      }
-      console.log("Registros nuevos cargados desde localStorage:", registrosNuevos.length);
-    } catch (e) {
-      console.error("Error leyendo localStorage:", e);
-      registrosNuevos = [];
-    }
-  }
-
-  function guardarRegistrosLocales() {
-    try {
-      localStorage.setItem(LS_KEY, JSON.stringify(registrosNuevos));
-    } catch (e) {
-      console.error("No se pudieron guardar los registros en localStorage:", e);
-    }
-  }
-
-  // Parser CSV simple con comillas
-  function parseCSV(text) {
+  // ====== HELPERS ======
+  function csvParse(text){
+    // Parser simple (soporta comillas)
     const rows = [];
-    let current = [];
-    let value = "";
-    let insideQuotes = false;
-
-    for (let i = 0; i < text.length; i++) {
+    let cur = "", inQ = false;
+    const out = [[]];
+    for (let i=0;i<text.length;i++){
       const ch = text[i];
-      const next = text[i + 1];
-
-      if (insideQuotes) {
-        if (ch === '"' && next === '"') {
-          value += '"';
-          i++;
-        } else if (ch === '"') {
-          insideQuotes = false;
-        } else {
-          value += ch;
-        }
-      } else {
-        if (ch === '"') {
-          insideQuotes = true;
-        } else if (ch === ",") {
-          current.push(value);
-          value = "";
-        } else if (ch === "\r") {
-          // nada
-        } else if (ch === "\n") {
-          current.push(value);
-          rows.push(current);
-          current = [];
-          value = "";
-        } else {
-          value += ch;
-        }
+      const nxt = text[i+1];
+      if (ch === '"' && nxt === '"'){ cur += '"'; i++; continue; }
+      if (ch === '"'){ inQ = !inQ; continue; }
+      if (!inQ && ch === ','){ out[out.length-1].push(cur); cur=""; continue; }
+      if (!inQ && (ch === '\n' || ch === '\r')){
+        if (ch === '\r' && nxt === '\n') i++;
+        out[out.length-1].push(cur); cur="";
+        out.push([]);
+        continue;
       }
+      cur += ch;
     }
-    if (value.length > 0 || current.length > 0) {
-      current.push(value);
-      rows.push(current);
-    }
-    return rows;
+    out[out.length-1].push(cur);
+
+    // remove trailing empty line
+    const cleaned = out.filter(r => r.length > 1 || (r[0] && r[0].trim() !== ""));
+    return cleaned;
   }
 
-  async function cargarDatos(desdeAuto = false) {
-    try {
-      const res  = await fetch(CSV_URL);
-      const text = await res.text();
+  function uniq(arr){
+    return [...new Set(arr.filter(v => v !== null && v !== undefined && String(v).trim() !== ""))]
+      .map(v => String(v).trim())
+      .sort((a,b)=>a.localeCompare(b, "es"));
+  }
 
-      if (desdeAuto && text === lastCsvRaw) {
-        console.log("Sin cambios en la base, no se actualiza el dashboard.");
-        return;
+  function countBy(rows, key){
+    const m = new Map();
+    rows.forEach(r=>{
+      const v = (r[key] ?? "").toString().trim() || "(vacío)";
+      m.set(v, (m.get(v)||0)+1);
+    });
+    return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+  }
+
+  function topLabel(countPairs){
+    if (!countPairs.length) return "-";
+    return countPairs[0][0];
+  }
+
+  function setOptions(selectEl, values){
+    const current = selectEl.value;
+    selectEl.innerHTML = `<option value="">Todos</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+    // try keep selected if still exists
+    if (values.includes(current)) selectEl.value = current;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  function getFilters(){
+    return {
+      q: document.getElementById("q").value.trim().toLowerCase(),
+      GRADO: document.getElementById("f_grado").value,
+      SUMINISTRO: document.getElementById("f_suministro").value,
+      TURNO: document.getElementById("f_turno").value,
+      GRUPO: document.getElementById("f_grupo").value,
+      MINA: document.getElementById("f_mina").value,
+      RESPONSABLE_CNC: document.getElementById("f_responsable").value,
+    };
+  }
+
+  function applyFilters(){
+    const f = getFilters();
+    viewRows = rawRows.filter(r=>{
+      // dropdown filters
+      for (const k of ["GRADO","SUMINISTRO","TURNO","GRUPO","MINA","RESPONSABLE_CNC"]){
+        if (f[k] && String(r[k] ?? "").trim() !== f[k]) return false;
       }
-      lastCsvRaw = text;
+      // search
+      if (f.q){
+        const blob = COLS.map(c => (r[c] ?? "")).join(" ").toLowerCase();
+        if (!blob.includes(f.q)) return false;
+      }
+      return true;
+    });
 
-      const rows = parseCSV(text);
-      if (!rows.length) return;
+    renderKPIs();
+    renderCharts();
+    renderTable();
+    document.getElementById("note").textContent = `Registros: ${viewRows.length.toLocaleString("es-CL")} (filtrados)`;
+  }
 
-      const dataRows = rows.filter((c, i) => {
-        if (i === 0) return false; // encabezados
-        if (!c[0]) return false;   // sin FECHA
-        if (c[0].toString().toUpperCase() === "FECHA") return false;
-        return true;
+  function renderKPIs(){
+    const total = viewRows.length;
+    const minas = uniq(viewRows.map(r=>r.MINA)).length;
+    const cnc1 = countBy(viewRows, "CNC_NIVEL_1");
+    const respPairs = countBy(viewRows, "RESPONSABLE_CNC");
+
+    const codelco = respPairs.find(([k])=>k==="CODELCO")?.[1] ?? 0;
+    const interna = respPairs.find(([k])=>k==="INTERNA")?.[1] ?? 0;
+    const sum = respPairs.find(([k])=>k==="SUMINISTRO")?.[1] ?? 0;
+
+    document.getElementById("k_total").textContent = total.toLocaleString("es-CL");
+    document.getElementById("k_minas").textContent = minas.toLocaleString("es-CL");
+    document.getElementById("k_top_cnc1").textContent = topLabel(cnc1);
+    document.getElementById("k_codelco").textContent = codelco.toLocaleString("es-CL");
+    document.getElementById("k_interna").textContent = interna.toLocaleString("es-CL");
+    document.getElementById("k_sum").textContent = sum.toLocaleString("es-CL");
+  }
+
+  function renderCharts(){
+    // CNC NIVEL 1 (bar)
+    const cnc1 = countBy(viewRows, "CNC_NIVEL_1").slice(0, 10);
+    const cncLabels = cnc1.map(x=>x[0]);
+    const cncVals = cnc1.map(x=>x[1]);
+
+    charts.cnc1 = makeOrUpdateChart("chCnc1", charts.cnc1, {
+      type: "bar",
+      data: { labels: cncLabels, datasets: [{ label: "Cantidad", data: cncVals }] },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ x:{ ticks:{ maxRotation:45, minRotation:20 } }, y:{ beginAtZero:true } }
+      }
+    });
+
+    // Responsable (doughnut)
+    const resp = countBy(viewRows, "RESPONSABLE_CNC").slice(0, 8);
+    charts.resp = makeOrUpdateChart("chResp", charts.resp, {
+      type:"doughnut",
+      data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
+    });
+
+    // Mina (bar)
+    const mina = countBy(viewRows, "MINA").slice(0, 12);
+    charts.mina = makeOrUpdateChart("chMina", charts.mina, {
+      type:"bar",
+      data:{ labels: mina.map(x=>x[0]), datasets:[{ label:"Cantidad", data: mina.map(x=>x[1]) }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ y:{ beginAtZero:true } }
+      }
+    });
+
+    // Turno (bar)
+    const turno = countBy(viewRows, "TURNO");
+    charts.turno = makeOrUpdateChart("chTurno", charts.turno, {
+      type:"bar",
+      data:{ labels: turno.map(x=>x[0]), datasets:[{ label:"Cantidad", data: turno.map(x=>x[1]) }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ y:{ beginAtZero:true } }
+      }
+    });
+  }
+
+  function makeOrUpdateChart(canvasId, chartInstance, config){
+    const ctx = document.getElementById(canvasId);
+    if (chartInstance){
+      chartInstance.config.type = config.type;
+      chartInstance.data = config.data;
+      chartInstance.options = config.options;
+      chartInstance.update();
+      return chartInstance;
+    }
+    return new Chart(ctx, config);
+  }
+
+  function renderTable(){
+    const head = document.getElementById("tblHead");
+    const body = document.getElementById("tblBody");
+
+    // Header
+    head.innerHTML = COLS.map(c=>`<th>${escapeHtml(c)}</th>`).join("");
+
+    // Body (limit for performance)
+    const maxRows = 600;
+    const rows = viewRows.slice(0, maxRows);
+    body.innerHTML = rows.map(r=>{
+      return `<tr>` + COLS.map(c=>{
+        const val = (r[c] ?? "").toString().trim();
+        if (c === "RESPONSABLE_CNC"){
+          const klass = val || "";
+          return `<td><span class="pill ${escapeHtml(klass)}">${escapeHtml(val || "-")}</span></td>`;
+        }
+        return `<td title="${escapeHtml(val)}">${escapeHtml(val)}</td>`;
+      }).join("") + `</tr>`;
+    }).join("");
+
+    if (viewRows.length > maxRows){
+      const note = document.getElementById("note");
+      note.textContent += ` • Mostrando ${maxRows} de ${viewRows.length}`;
+    }
+  }
+
+  function fillDropdownsFromRaw(){
+    setOptions(document.getElementById("f_grado"), uniq(rawRows.map(r=>r.GRADO)));
+    setOptions(document.getElementById("f_suministro"), uniq(rawRows.map(r=>r.SUMINISTRO)));
+    setOptions(document.getElementById("f_turno"), uniq(rawRows.map(r=>r.TURNO)));
+    setOptions(document.getElementById("f_grupo"), uniq(rawRows.map(r=>r.GRUPO)));
+    setOptions(document.getElementById("f_mina"), uniq(rawRows.map(r=>r.MINA)));
+    setOptions(document.getElementById("f_responsable"), uniq(rawRows.map(r=>r.RESPONSABLE_CNC)));
+  }
+
+  function resetFilters(){
+    document.getElementById("q").value = "";
+    document.getElementById("f_grado").value = "";
+    document.getElementById("f_suministro").value = "";
+    document.getElementById("f_turno").value = "";
+    document.getElementById("f_grupo").value = "";
+    document.getElementById("f_mina").value = "";
+    document.getElementById("f_responsable").value = "";
+    applyFilters();
+  }
+
+  async function loadData(){
+    const note = document.getElementById("note");
+    note.textContent = "Cargando CSV…";
+
+    const res = await fetch(CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("No se pudo cargar el CSV.");
+    const text = await res.text();
+    const grid = csvParse(text);
+    if (grid.length < 2) throw new Error("CSV sin datos.");
+
+    const header = grid[0].map(h => h.trim());
+    const missing = COLS.filter(c => !header.includes(c));
+    if (missing.length){
+      note.textContent = `Faltan columnas en CSV: ${missing.join(", ")}`;
+      console.warn("Header CSV:", header);
+      return;
+    }
+
+    rawRows = grid.slice(1)
+      .filter(r => r.some(x => String(x ?? "").trim() !== ""))
+      .map(r=>{
+        const obj = {};
+        header.forEach((h,i)=> obj[h] = (r[i] ?? "").toString().trim());
+        return obj;
       });
 
-      registrosBase = dataRows.map((c, index) => ({
-        id: "b-" + index,
-        origen: "base",
-        fecha:              c[0]  || "",
-        fechaTurno:         c[1]  || "",
-        turno:              c[2]  || "",
-        labor:              c[3]  || "",
-        mina:               c[4]  || "",
-        grado:              c[5]  || "",
-        planificado:        Number(c[6]  || 0),
-        suministrado:       Number(c[7]  || 0),
-        pendiente:          Number(c[8]  || 0),
-        rechazado:          Number(c[9]  || 0),
-        reagendado:         Number(c[10] || 0),
-        eliminado:          Number(c[11] || 0),
-        numeroGuia:         c[12] || "",
-        horaSalidaPlanta:   c[13] || "",
-        horaLlegadaObra:    c[14] || "",
-        horaInicioDescarga: c[15] || "",
-        horaTerminoDescarga:c[16] || "",
-        observacion:        c[17] || "",
-        salaControl:        c[18] || "",
-        mes:                c[19] || ""
-      }));
-
-      console.log(
-        desdeAuto
-          ? "Registros recargados automáticamente: " + registrosBase.length
-          : "Registros cargados: " + registrosBase.length
-      );
-
-      const combinados = getRegistrosCombinados();
-      poblarFiltros(combinados);
-      aplicarFiltros();
-
-    } catch (err) {
-      console.error("Error cargando datos:", err);
-      if (!desdeAuto) {
-        alert("No se pudo leer la base desde el CSV.");
-      }
-    }
+    fillDropdownsFromRaw();
+    applyFilters();
   }
 
-  function poblarFiltros(reg) {
-    const selMes   = document.getElementById("filtro-mes");
-    const selLabor = document.getElementById("filtro-labor");
-    const selMina  = document.getElementById("filtro-mina");
-    const selGrado = document.getElementById("filtro-grado");
-    const selTurno = document.getElementById("filtro-turno");
-
-    const keep = (sel) => sel.value || "TODOS";
-    const vMes   = keep(selMes);
-    const vLabor = keep(selLabor);
-    const vMina  = keep(selMina);
-    const vGrado = keep(selGrado);
-    const vTurno = keep(selTurno);
-
-    function llenarSelect(select, valores, labelTodos) {
-      const actual = select.value || "TODOS";
-      select.innerHTML = `<option value="TODOS">${labelTodos}</option>`;
-      Array.from(new Set(valores))
-        .filter(v => v && v.trim() !== "")
-        .sort()
-        .forEach(v => {
-          const opt = document.createElement("option");
-          opt.value = v;
-          opt.textContent = v;
-          select.appendChild(opt);
-        });
-      if ([...select.options].some(o => o.value === actual)) {
-        select.value = actual;
-      }
-    }
-
-    llenarSelect(selMes,   reg.map(r => r.mes),   "Todos");
-    llenarSelect(selLabor, reg.map(r => r.labor), "Todas");
-    llenarSelect(selMina,  reg.map(r => r.mina),  "Todas");
-    llenarSelect(selGrado, reg.map(r => r.grado), "Todos");
-    llenarSelect(selTurno, reg.map(r => r.turno),"Todos");
-
-    selMes.value   = vMes;
-    selLabor.value = vLabor;
-    selMina.value  = vMina;
-    selGrado.value = vGrado;
-    selTurno.value = vTurno;
+  function wireEvents(){
+    const ids = ["q","f_grado","f_suministro","f_turno","f_grupo","f_mina","f_responsable"];
+    ids.forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+    document.getElementById("btnReset").addEventListener("click", resetFilters);
+    document.getElementById("btnPdf").addEventListener("click", () => window.print());
   }
 
-  function aplicarFiltros() {
-    const todos = getRegistrosCombinados();
-    if (!todos.length) return;
-
-    const mesSel   = document.getElementById("filtro-mes").value;
-    const laborSel = document.getElementById("filtro-labor").value;
-    const minaSel  = document.getElementById("filtro-mina").value;
-    const gradoSel = document.getElementById("filtro-grado").value;
-    const turnoSel = document.getElementById("filtro-turno").value;
-
-    let datos = todos.slice();
-
-    if (mesSel !== "TODOS") {
-      datos = datos.filter(r => r.mes === mesSel);
-    }
-    if (laborSel !== "TODOS") {
-      datos = datos.filter(r => r.labor === laborSel);
-    }
-    if (minaSel !== "TODOS") {
-      datos = datos.filter(r => r.mina === minaSel);
-    }
-    if (gradoSel !== "TODOS") {
-      datos = datos.filter(r => r.grado === gradoSel);
-    }
-    if (turnoSel !== "TODOS") {
-      datos = datos.filter(r => r.turno === turnoSel);
-    }
-
-    registrosActuales = datos;
-
-    actualizarKPIs(registrosActuales);
-    dibujarTabla(registrosActuales);
-    dibujarGraficos(registrosActuales);
-  }
-
-  function limpiarFiltros() {
-    document.getElementById("filtro-mes").value   = "TODOS";
-    document.getElementById("filtro-labor").value = "TODOS";
-    document.getElementById("filtro-mina").value  = "TODOS";
-    document.getElementById("filtro-grado").value = "TODOS";
-    document.getElementById("filtro-turno").value = "TODOS";
-    aplicarFiltros();
-  }
-
-  function exportarPDF() {
-    window.print();
-  }
-
-  function actualizarKPIs(reg) {
-    const sum = (campo) => reg.reduce((s, r) => s + (r[campo] || 0), 0);
-
-    const planificado  = sum("planificado");
-    const suministrado = sum("suministrado");
-    const pendiente    = sum("pendiente");
-    const rechazado    = sum("rechazado");
-    const reagendado   = sum("reagendado");
-    const eliminado    = sum("eliminado");
-
-    const pct = planificado ? ((suministrado / planificado) * 100).toFixed(1) + "%" : "0%";
-
-    document.getElementById("kpi-planificado").textContent   = planificado.toFixed(1);
-    document.getElementById("kpi-suministrado").textContent  = suministrado.toFixed(1);
-    document.getElementById("kpi-pendiente").textContent     = pendiente.toFixed(1);
-    document.getElementById("kpi-rechazado").textContent     = rechazado.toFixed(1);
-    document.getElementById("kpi-reagendado").textContent    = reagendado.toFixed(1);
-    document.getElementById("kpi-eliminado").textContent     = eliminado.toFixed(1);
-    document.getElementById("kpi-cumplimiento-pct").textContent = pct;
-  }
-
-  function dibujarTabla(reg) {
-    const tbody = document.querySelector("#tabla-detalle tbody");
-    tbody.innerHTML = "";
-    reg.forEach(r => {
-      const accionesHtml =
-        r.origen === "nuevo"
-          ? `
-        <button class="icon-btn edit" data-action="edit" data-id="${r.id}" title="Editar">
-          <svg viewBox="0 0 24 24">
-            <path d="M4 20h4l10.5-10.5-4-4L4 16v4z"></path>
-            <path d="M14.5 5.5l4 4"></path>
-          </svg>
-        </button>
-        <button class="icon-btn delete" data-action="delete" data-id="${r.id}" title="Eliminar">
-          <svg viewBox="0 0 24 24">
-            <path d="M6 7h12"></path>
-            <path d="M9 7V5h6v2"></path>
-            <path d="M10 11v6"></path>
-            <path d="M14 11v6"></path>
-            <rect x="6" y="7" width="12" height="12" rx="1"></rect>
-          </svg>
-        </button>`
-          : `<span class="icon-disabled" title="Registro origen Excel">●</span>`;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.fecha}</td>
-        <td>${r.fechaTurno}</td>
-        <td>${r.turno}</td>
-        <td>${r.labor}</td>
-        <td>${r.mina}</td>
-        <td>${r.grado}</td>
-        <td>${r.planificado}</td>
-        <td>${r.suministrado}</td>
-        <td>${r.pendiente}</td>
-        <td>${r.rechazado}</td>
-        <td>${r.reagendado}</td>
-        <td>${r.eliminado}</td>
-        <td>${r.numeroGuia}</td>
-        <td>${r.horaSalidaPlanta}</td>
-        <td>${r.horaLlegadaObra}</td>
-        <td>${r.horaInicioDescarga}</td>
-        <td>${r.horaTerminoDescarga}</td>
-        <td>${r.observacion}</td>
-        <td>${r.salaControl}</td>
-        <td>${r.mes}</td>
-        <td>${accionesHtml}</td>
-      `;
-      tbody.appendChild(tr);
+  (function init(){
+    wireEvents();
+    loadData().catch(err=>{
+      document.getElementById("note").textContent = "Error: " + err.message;
+      console.error(err);
     });
-  }
-
-  function agruparSuma(reg, clave, campoSuma) {
-    const map = {};
-    reg.forEach(r => {
-      const key = r[clave] || "Sin dato";
-      if (!map[key]) map[key] = 0;
-      map[key] += (r[campoSuma] || 0);
-    });
-    const labels = Object.keys(map);
-    const values = labels.map(l => map[l]);
-    return { labels, values };
-  }
-
-  function dibujarGraficos(reg) {
-    const palette = {
-      primary: "#d9232d",
-      primaryLight: "#f7c1c4",
-      blue: "#3498db",
-      blueLight: "#d6e9f8",
-      orange: "#f5a623",
-      green: "#2ecc71"
-    };
-
-    const sum = (campo) => reg.reduce((s, r) => s + (r[campo] || 0), 0);
-    const volEstados = {
-      labels: ["Planificado", "Suministrado", "Pendiente", "Rechazado", "Reagendado", "Eliminado"],
-      values: [
-        sum("planificado"),
-        sum("suministrado"),
-        sum("pendiente"),
-        sum("rechazado"),
-        sum("reagendado"),
-        sum("eliminado")
-      ]
-    };
-
-    const porMina  = agruparSuma(reg, "mina",  "suministrado");
-    const porGrado = agruparSuma(reg, "grado", "suministrado");
-    const porFecha = agruparSuma(reg, "fecha", "suministrado");
-
-    const ctxEstadoVolumen = document.getElementById("chartEstadoVolumen").getContext("2d");
-    const ctxMina          = document.getElementById("chartMina").getContext("2d");
-    const ctxGrado         = document.getElementById("chartGrado").getContext("2d");
-    const ctxFecha         = document.getElementById("chartFecha").getContext("2d");
-
-    if (chartEstadoVolumen) chartEstadoVolumen.destroy();
-    if (chartMina)          chartMina.destroy();
-    if (chartGrado)         chartGrado.destroy();
-    if (chartFecha)         chartFecha.destroy();
-
-    chartEstadoVolumen = new Chart(ctxEstadoVolumen, {
-      type: "bar",
-      data: {
-        labels: volEstados.labels,
-        datasets: [{
-          label: "m³",
-          data: volEstados.values,
-          backgroundColor: palette.blueLight,
-          borderColor: palette.blue,
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-
-    chartMina = new Chart(ctxMina, {
-      type: "bar",
-      data: {
-        labels: porMina.labels,
-        datasets: [{
-          label: "m³ suministrado",
-          data: porMina.values,
-          backgroundColor: palette.primarySoft,
-          borderColor: palette.primary,
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          x: { ticks: { maxRotation: 45, minRotation: 45 } },
-          y: { beginAtZero: true }
-        }
-      }
-    });
-
-    chartGrado = new Chart(ctxGrado, {
-      type: "bar",
-      data: {
-        labels: porGrado.labels,
-        datasets: [{
-          label: "m³ suministrado",
-          data: porGrado.values,
-          backgroundColor: palette.green,
-          borderColor: "#1e874b",
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          x: { ticks: { maxRotation: 45, minRotation: 45 } },
-          y: { beginAtZero: true }
-        }
-      }
-    });
-
-    chartFecha = new Chart(ctxFecha, {
-      type: "line",
-      data: {
-        labels: porFecha.labels,
-        datasets: [{
-          label: "m³ suministrado",
-          data: porFecha.values,
-          borderColor: palette.blue,
-          backgroundColor: palette.blueLight,
-          borderWidth: 2,
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  }
-
-  function inicializarFormulario() {
-    const btnToggle = document.getElementById("btn-toggle-form");
-    const wrapper = document.getElementById("form-ingreso-wrapper");
-    const form = document.getElementById("form-nuevo-registro");
-    const btnSubmit = document.getElementById("btn-submit-form");
-
-    if (!btnToggle || !wrapper || !form || !btnSubmit) return;
-
-    wrapper.style.display = "none";
-
-    btnToggle.addEventListener("click", () => {
-      const visible = wrapper.style.display !== "none";
-      wrapper.style.display = visible ? "none" : "block";
-      btnToggle.textContent = visible ? "➕ Agregar nuevo registro" : "✖ Cerrar formulario";
-      if (!visible) {
-        editingId = null;
-        btnSubmit.textContent = "Guardar registro";
-        form.reset();
-      }
-    });
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const nuevo = {
-        fecha:              document.getElementById("form-fecha").value || "",
-        fechaTurno:         document.getElementById("form-fechaTurno").value || "",
-        turno:              document.getElementById("form-turno").value || "",
-        labor:              document.getElementById("form-labor").value || "",
-        mina:               document.getElementById("form-mina").value || "",
-        grado:              document.getElementById("form-grado").value || "",
-        planificado:        Number(document.getElementById("form-planificado").value || 0),
-        suministrado:       Number(document.getElementById("form-suministrado").value || 0),
-        pendiente:          Number(document.getElementById("form-pendiente").value || 0),
-        rechazado:          Number(document.getElementById("form-rechazado").value || 0),
-        reagendado:         Number(document.getElementById("form-reagendado").value || 0),
-        eliminado:          Number(document.getElementById("form-eliminado").value || 0),
-        numeroGuia:         document.getElementById("form-numeroGuia").value || "",
-        horaSalidaPlanta:   document.getElementById("form-horaSalidaPlanta").value || "",
-        horaLlegadaObra:    document.getElementById("form-horaLlegadaObra").value || "",
-        horaInicioDescarga: document.getElementById("form-horaInicioDescarga").value || "",
-        horaTerminoDescarga:document.getElementById("form-horaTerminoDescarga").value || "",
-        observacion:        document.getElementById("form-observacion").value || "",
-        salaControl:        document.getElementById("form-salaControl").value || "",
-        mes:                document.getElementById("form-mes").value || ""
-      };
-
-      if (editingId) {
-        const idx = registrosNuevos.findIndex(r => r.id === editingId);
-        if (idx !== -1) {
-          registrosNuevos[idx] = {
-            ...registrosNuevos[idx],
-            ...nuevo
-          };
-        }
-        editingId = null;
-        btnSubmit.textContent = "Guardar registro";
-      } else {
-        nuevo.id = "n-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
-        nuevo.origen = "nuevo";
-        registrosNuevos.push(nuevo);
-      }
-
-      guardarRegistrosLocales();
-      aplicarFiltros();
-      form.reset();
-    });
-  }
-
-  function inicializarTablaAcciones() {
-    const tbody = document.querySelector("#tabla-detalle tbody");
-    if (!tbody) return;
-
-    tbody.addEventListener("click", (e) => {
-      const btn = e.target.closest("button.icon-btn");
-      if (!btn) return;
-      const id = btn.getAttribute("data-id");
-      const action = btn.getAttribute("data-action");
-      if (!id || !action) return;
-
-      if (action === "edit") {
-        iniciarEdicion(id);
-      } else if (action === "delete") {
-        eliminarRegistro(id);
-      }
-    });
-  }
-
-  function iniciarEdicion(id) {
-    const reg = registrosNuevos.find(r => r.id === id);
-    if (!reg) {
-      alert("Solo se pueden editar registros ingresados desde este formulario (no los de Excel).");
-      return;
-    }
-
-    editingId = id;
-
-    document.getElementById("form-fecha").value              = reg.fecha || "";
-    document.getElementById("form-fechaTurno").value         = reg.fechaTurno || "";
-    document.getElementById("form-turno").value              = reg.turno || "";
-    document.getElementById("form-labor").value              = reg.labor || "";
-    document.getElementById("form-mina").value               = reg.mina || "";
-    document.getElementById("form-grado").value              = reg.grado || "";
-    document.getElementById("form-planificado").value        = reg.planificado || "";
-    document.getElementById("form-suministrado").value       = reg.suministrado || "";
-    document.getElementById("form-pendiente").value          = reg.pendiente || "";
-    document.getElementById("form-rechazado").value          = reg.rechazado || "";
-    document.getElementById("form-reagendado").value         = reg.reagendado || "";
-    document.getElementById("form-eliminado").value          = reg.eliminado || "";
-    document.getElementById("form-numeroGuia").value         = reg.numeroGuia || "";
-    document.getElementById("form-horaSalidaPlanta").value   = reg.horaSalidaPlanta || "";
-    document.getElementById("form-horaLlegadaObra").value    = reg.horaLlegadaObra || "";
-    document.getElementById("form-horaInicioDescarga").value = reg.horaInicioDescarga || "";
-    document.getElementById("form-horaTerminoDescarga").value= reg.horaTerminoDescarga || "";
-    document.getElementById("form-observacion").value        = reg.observacion || "";
-    document.getElementById("form-salaControl").value        = reg.salaControl || "";
-    document.getElementById("form-mes").value                = reg.mes || "";
-
-    const wrapper = document.getElementById("form-ingreso-wrapper");
-    const btnToggle = document.getElementById("btn-toggle-form");
-    const btnSubmit = document.getElementById("btn-submit-form");
-
-    if (wrapper && btnToggle) {
-      wrapper.style.display = "block";
-      btnToggle.textContent = "✖ Cerrar formulario";
-    }
-    if (btnSubmit) {
-      btnSubmit.textContent = "💾 Guardar cambios";
-    }
-  }
-
-  function eliminarRegistro(id) {
-    const idx = registrosNuevos.findIndex(r => r.id === id);
-    if (idx === -1) {
-      alert("Solo se pueden eliminar registros ingresados desde este formulario (no los de Excel).");
-      return;
-    }
-    if (!confirm("¿Eliminar este registro ingresado manualmente?")) return;
-
-    registrosNuevos.splice(idx, 1);
-    guardarRegistrosLocales();
-    aplicarFiltros();
-  }
+  })();
 </script>
-
 </body>
 </html>
