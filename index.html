@@ -270,18 +270,54 @@
       font-size:11px;
     }
 
+    /* MODAL */
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:9999;
+      padding:20px;
+    }
+    .modalCard{
+      max-width: 980px;
+      margin: 40px auto;
+      background:#fff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.22);
+    }
+    .modalGrid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .modalActions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top: 14px;
+    }
+    .msg{
+      margin-top:10px;
+      font-size:12px;
+      color:#374151;
+    }
+
     @media (max-width:1250px){
       .filters{ grid-template-columns: 1fr 1fr 1fr 1fr; }
       .filters2{ grid-template-columns: 1fr 1fr; }
       .grid-kpis{ grid-template-columns: repeat(3, 1fr); }
       .grid-charts{ grid-template-columns: 1fr; }
       .grid-charts-2{ grid-template-columns: 1fr; }
+      .modalGrid{ grid-template-columns: 1fr; }
     }
 
     /* Print (Export PDF) */
     @media print{
       .topbar{ position:static; box-shadow:none; }
-      .btn, .footer-note{ display:none !important; }
+      .btn, .footer-note, .modal{ display:none !important; }
       body{ background:#fff; }
       .container{ max-width:none; margin:0; }
       .card, .kpi{ box-shadow:none; }
@@ -294,7 +330,6 @@
   <div class="topbar">
     <div class="brand">
       <div class="logoWrap">
-        <!-- ✅ pon tu logo en la misma carpeta como: logo_Xtreme.png -->
         <img src="logo_Xtreme.png" alt="Xtreme Mining" />
       </div>
       <div class="titles">
@@ -304,13 +339,13 @@
     </div>
 
     <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn secondary" id="btnNew">➕ Nuevo registro</button>
       <button class="btn secondary" id="btnReset">🧹 Limpiar filtros</button>
       <button class="btn danger" id="btnPdf">⬇ Exportar PDF</button>
     </div>
   </div>
 
   <div class="container">
-    <!-- FILTROS (fila 1) -->
     <div class="filters">
       <div class="field">
         <label>Buscar (texto libre)</label>
@@ -324,7 +359,6 @@
       <div class="field"><label>MINA</label><select id="f_mina"><option value="">Todos</option></select></div>
     </div>
 
-    <!-- FILTROS (fila 2) -->
     <div class="filters2">
       <div class="field"><label>SALA_CONTROL</label><select id="f_sala"><option value="">Todos</option></select></div>
       <div class="field"><label>LABORPOSTURA</label><select id="f_labor"><option value="">Todos</option></select></div>
@@ -333,64 +367,25 @@
       <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"><option value="">Todos</option></select></div>
     </div>
 
-    <!-- KPIs -->
     <div class="grid-kpis">
-      <div class="kpi">
-        <div class="label">REGISTROS FILTRADOS</div>
-        <div class="value" id="k_total">0</div>
-        <div class="sub">Total visible según filtros</div>
-      </div>
-      <div class="kpi">
-        <div class="label">MINAS ÚNICAS</div>
-        <div class="value" id="k_minas">0</div>
-        <div class="sub">Diversidad operacional</div>
-      </div>
-      <div class="kpi">
-        <div class="label">CNC NIVEL 1 (TOP)</div>
-        <div class="value" id="k_top_cnc1">-</div>
-        <div class="sub">Causa principal</div>
-      </div>
-      <div class="kpi">
-        <div class="label">CODELCO</div>
-        <div class="value" id="k_codelco">0</div>
-        <div class="sub">Responsable CNC</div>
-      </div>
-      <div class="kpi">
-        <div class="label">INTERNA</div>
-        <div class="value" id="k_interna">0</div>
-        <div class="sub">Responsable CNC</div>
-      </div>
-      <div class="kpi">
-        <div class="label">SUMINISTRO</div>
-        <div class="value" id="k_sum">0</div>
-        <div class="sub">Responsable CNC</div>
-      </div>
+      <div class="kpi"><div class="label">REGISTROS FILTRADOS</div><div class="value" id="k_total">0</div><div class="sub">Total visible según filtros</div></div>
+      <div class="kpi"><div class="label">MINAS ÚNICAS</div><div class="value" id="k_minas">0</div><div class="sub">Diversidad operacional</div></div>
+      <div class="kpi"><div class="label">CNC NIVEL 1 (TOP)</div><div class="value" id="k_top_cnc1">-</div><div class="sub">Causa principal</div></div>
+      <div class="kpi"><div class="label">CODELCO</div><div class="value" id="k_codelco">0</div><div class="sub">Responsable CNC</div></div>
+      <div class="kpi"><div class="label">INTERNA</div><div class="value" id="k_interna">0</div><div class="sub">Responsable CNC</div></div>
+      <div class="kpi"><div class="label">SUMINISTRO</div><div class="value" id="k_sum">0</div><div class="sub">Responsable CNC</div></div>
     </div>
 
-    <!-- CHARTS -->
     <div class="grid-charts">
-      <div class="card">
-        <h3>Incidentes por CNC NIVEL 1</h3>
-        <div class="chartbox"><canvas id="chCnc1"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Distribución por Responsable CNC</h3>
-        <div class="chartbox"><canvas id="chResp"></canvas></div>
-      </div>
+      <div class="card"><h3>Incidentes por CNC NIVEL 1</h3><div class="chartbox"><canvas id="chCnc1"></canvas></div></div>
+      <div class="card"><h3>Distribución por Responsable CNC</h3><div class="chartbox"><canvas id="chResp"></canvas></div></div>
     </div>
 
     <div class="grid-charts-2">
-      <div class="card">
-        <h3>Incidentes por Mina</h3>
-        <div class="chartbox"><canvas id="chMina"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Incidentes por Turno</h3>
-        <div class="chartbox"><canvas id="chTurno"></canvas></div>
-      </div>
+      <div class="card"><h3>Incidentes por Mina</h3><div class="chartbox"><canvas id="chMina"></canvas></div></div>
+      <div class="card"><h3>Incidentes por Turno</h3><div class="chartbox"><canvas id="chTurno"></canvas></div></div>
     </div>
 
-    <!-- TABLA -->
     <div class="card" style="margin-top:12px;">
       <h3>Detalle (igual a tu base)</h3>
       <div class="table-wrap">
@@ -403,9 +398,43 @@
     </div>
   </div>
 
+  <!-- MODAL NUEVO REGISTRO -->
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h3 style="margin:0;">➕ Nuevo Registro (A:J)</h3>
+        <button class="btn danger" id="btnClose">Cerrar</button>
+      </div>
+
+      <div class="modalGrid">
+        <div class="field"><label>GRADO</label><input id="i_grado" type="text" placeholder="Ej: SH-22,5 NORMAL"></div>
+        <div class="field"><label>SUMINISTRO</label><input id="i_suministro" type="text" placeholder="Ej: En Planta"></div>
+        <div class="field"><label>TURNO</label><input id="i_turno" type="text" placeholder="Ej: 1 / A / B"></div>
+
+        <div class="field"><label>GRUPO</label><input id="i_grupo" type="text" placeholder="Ej: Grupo_1"></div>
+        <div class="field"><label>SALA_CONTROL</label><input id="i_sala" type="text" placeholder="Ej: Carlos Salazar Rodriguez"></div>
+        <div class="field"><label>MINA</label><input id="i_mina" type="text" placeholder="Ej: ESMERALDA"></div>
+
+        <div class="field"><label>LABORPOSTURA</label><input id="i_labor" type="text" placeholder="Ej: C-49 IZ"></div>
+        <div class="field"><label>CNC_NIVEL_2</label><input id="i_cnc2" type="text" placeholder="Ej: Interferencia por derrumbe"></div>
+        <div class="field"><label>CNC_NIVEL_1</label><input id="i_cnc1" type="text" placeholder="Ej: Ruta Codelco"></div>
+
+        <div class="field"><label>RESPONSABLE_CNC</label><input id="i_resp" type="text" placeholder="Ej: CODELCO"></div>
+      </div>
+
+      <div class="modalActions">
+        <button class="btn secondary" id="btnSave">💾 Guardar</button>
+      </div>
+      <div class="msg" id="saveMsg"></div>
+    </div>
+  </div>
+
 <script>
   // ====== CONFIG ======
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
+
+  // ✅ PEGA AQUÍ TU URL del Apps Script Web App (POST)
+  const POST_URL = "PEGA_AQUI_TU_WEB_APP_URL";
 
   const COLS = [
     "GRADO","SUMINISTRO","TURNO","GRUPO","SALA_CONTROL","MINA",
@@ -416,7 +445,7 @@
   let viewRows = [];
   let charts = {};
 
-  // ====== CSV PARSER (con comillas) ======
+  // ====== CSV PARSER ======
   function csvParse(text){
     let cur = "", inQ = false;
     const out = [[]];
@@ -435,20 +464,17 @@
       cur += ch;
     }
     out[out.length-1].push(cur);
-
     return out.filter(r => r.length > 1 || (r[0] && r[0].trim() !== ""));
   }
 
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   }
-
   function uniq(arr){
     return [...new Set(arr.filter(v => v !== null && v !== undefined && String(v).trim() !== ""))]
       .map(v => String(v).trim())
       .sort((a,b)=>a.localeCompare(b,"es"));
   }
-
   function countBy(rows, key){
     const m = new Map();
     rows.forEach(r=>{
@@ -457,12 +483,7 @@
     });
     return [...m.entries()].sort((a,b)=>b[1]-a[1]);
   }
-
-  function topLabel(pairs){
-    if (!pairs.length) return "-";
-    return pairs[0][0];
-  }
-
+  function topLabel(pairs){ return pairs.length ? pairs[0][0] : "-"; }
   function setOptions(selectEl, values){
     const current = selectEl.value;
     selectEl.innerHTML = `<option value="">Todos</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
@@ -552,22 +573,13 @@
   }
 
   function renderCharts(){
-    // CNC NIVEL 1 (TOP 10)
     const cnc1 = countBy(viewRows, "CNC_NIVEL_1").slice(0, 10);
     charts.cnc1 = makeOrUpdateChart("chCnc1", charts.cnc1, {
       type:"bar",
       data:{ labels: cnc1.map(x=>x[0]), datasets:[{ label:"Cantidad", data: cnc1.map(x=>x[1]) }] },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{
-          x:{ ticks:{ maxRotation:45, minRotation:20 } },
-          y:{ beginAtZero:true }
-        }
-      }
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ x:{ ticks:{ maxRotation:45, minRotation:20 } }, y:{ beginAtZero:true } } }
     });
 
-    // Responsable (donut)
     const resp = countBy(viewRows, "RESPONSABLE_CNC");
     charts.resp = makeOrUpdateChart("chResp", charts.resp, {
       type:"doughnut",
@@ -575,28 +587,18 @@
       options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
     });
 
-    // Mina (TOP 12)
     const mina = countBy(viewRows, "MINA").slice(0, 12);
     charts.mina = makeOrUpdateChart("chMina", charts.mina, {
       type:"bar",
       data:{ labels: mina.map(x=>x[0]), datasets:[{ label:"Cantidad", data: mina.map(x=>x[1]) }] },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{ y:{ beginAtZero:true } }
-      }
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
     });
 
-    // Turno
     const turno = countBy(viewRows, "TURNO");
     charts.turno = makeOrUpdateChart("chTurno", charts.turno, {
       type:"bar",
       data:{ labels: turno.map(x=>x[0]), datasets:[{ label:"Cantidad", data: turno.map(x=>x[1]) }] },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{ y:{ beginAtZero:true } }
-      }
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
     });
   }
 
@@ -640,6 +642,47 @@
     applyFilters();
   }
 
+  // ====== MODAL / FORM ======
+  function openModal(){ document.getElementById("modal").style.display = "block"; document.getElementById("saveMsg").textContent=""; }
+  function closeModal(){ document.getElementById("modal").style.display = "none"; }
+
+  async function saveRecord(){
+    if (!POST_URL || POST_URL.includes("PEGA_AQUI")){
+      document.getElementById("saveMsg").textContent = "⚠️ Falta configurar POST_URL (Apps Script Web App).";
+      return;
+    }
+
+    const payload = {
+      GRADO: document.getElementById("i_grado").value.trim(),
+      SUMINISTRO: document.getElementById("i_suministro").value.trim(),
+      TURNO: document.getElementById("i_turno").value.trim(),
+      GRUPO: document.getElementById("i_grupo").value.trim(),
+      SALA_CONTROL: document.getElementById("i_sala").value.trim(),
+      MINA: document.getElementById("i_mina").value.trim(),
+      LABORPOSTURA: document.getElementById("i_labor").value.trim(),
+      CNC_NIVEL_2: document.getElementById("i_cnc2").value.trim(),
+      CNC_NIVEL_1: document.getElementById("i_cnc1").value.trim(),
+      RESPONSABLE_CNC: document.getElementById("i_resp").value.trim(),
+    };
+
+    document.getElementById("saveMsg").textContent = "Guardando…";
+
+    const res = await fetch(POST_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok){
+      document.getElementById("saveMsg").textContent = "❌ Error al guardar. Revisa permisos del Web App.";
+      return;
+    }
+
+    document.getElementById("saveMsg").textContent = "✅ Guardado. Actualizando…";
+    closeModal();
+    await loadData();
+  }
+
   async function loadData(){
     const note = document.getElementById("note");
     note.textContent = "Cargando CSV…";
@@ -673,8 +716,19 @@
   function wireEvents(){
     const ids = ["q","f_grado","f_suministro","f_turno","f_grupo","f_mina","f_sala","f_labor","f_cnc2","f_cnc1","f_resp"];
     ids.forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+
     document.getElementById("btnReset").addEventListener("click", resetFilters);
     document.getElementById("btnPdf").addEventListener("click", () => window.print());
+
+    // NUEVO REGISTRO
+    document.getElementById("btnNew").addEventListener("click", openModal);
+    document.getElementById("btnClose").addEventListener("click", closeModal);
+    document.getElementById("btnSave").addEventListener("click", saveRecord);
+
+    // cerrar al hacer clic fuera
+    document.getElementById("modal").addEventListener("click", (e)=>{
+      if (e.target && e.target.id === "modal") closeModal();
+    });
   }
 
   (function init(){
