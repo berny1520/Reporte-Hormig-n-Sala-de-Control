@@ -263,6 +263,42 @@ const CATALOG = {
   RESPONSABLE_CNC: ["CODELCO","INTERNA","SUMINISTRO"]
 };
 
+function autoFillDateFields(dateStr){
+  if (!dateStr) return;
+
+  const d = new Date(dateStr + "T00:00:00");
+
+  // MES (nombre)
+  const meses = [
+    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+  ];
+  const mes = meses[d.getMonth()];
+
+  // SEMANA ISO
+  const week = getISOWeek(d);
+
+  // Setear valores si existen
+  const mesInput = document.getElementById("i_MES");
+  const semanaInput = document.getElementById("i_SEMANA");
+
+  if (mesInput) mesInput.value = mes;
+  if (semanaInput) semanaInput.value = week;
+}
+
+// Semana ISO (estándar)
+function getISOWeek(date) {
+  const tmp = new Date(date.valueOf());
+  const dayNr = (date.getDay() + 6) % 7;
+  tmp.setDate(tmp.getDate() - dayNr + 3);
+  const firstThursday = tmp.valueOf();
+  tmp.setMonth(0, 1);
+  if (tmp.getDay() !== 4) {
+    tmp.setMonth(0, 1 + ((4 - tmp.getDay()) + 7) % 7);
+  }
+  return 1 + Math.ceil((firstThursday - tmp) / 604800000);
+}
+
   // ====== Helpers ======
   function csvParse(text){
     let cur="", inQ=false;
