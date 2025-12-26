@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard Hormigón / CNC</title>
+  <title>Dashboard Xtreme – Hormigón / CNC</title>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -15,9 +15,10 @@
       --text:#1f2937;
       --muted:#6b7280;
       --line:#e5e7eb;
-      --dark:#0f172a;
-      --accent:#ef4444; /* rojo */
-      --accent2:#334155; /* gris oscuro */
+      --dark:#0b1020;
+      --dark2:#111827;
+      --accent:#ef4444;  /* rojo */
+      --accent2:#334155; /* gris */
       --shadow: 0 10px 25px rgba(0,0,0,.06);
       --radius: 14px;
     }
@@ -28,13 +29,15 @@
       background:var(--bg);
       color:var(--text);
     }
+
+    /* HEADER */
     .topbar{
-      background: linear-gradient(90deg, #0b1020, #111827);
+      background: linear-gradient(90deg, var(--dark), var(--dark2));
       color:#fff;
-      padding: 14px 18px;
+      padding: 12px 16px;
       display:flex;
       align-items:center;
-      gap:14px;
+      justify-content:space-between;
       position:sticky;
       top:0;
       z-index:10;
@@ -44,23 +47,29 @@
       display:flex;
       align-items:center;
       gap:12px;
-      min-width:260px;
+      min-width: 320px;
     }
-    .logo{
-      width:52px;height:34px;
-      border-radius:8px;
-      background:#fff;
+    .logoWrap{
+      width: 190px;
+      height: 46px;
       display:flex;
       align-items:center;
-      justify-content:center;
-      color:#111827;
-      font-weight:800;
-      letter-spacing:.5px;
+      justify-content:flex-start;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 10px;
+      padding: 6px 10px;
+    }
+    .logoWrap img{
+      max-height: 34px;
+      max-width: 170px;
+      display:block;
     }
     .titles .h1{
-      font-weight:800;
+      font-weight:900;
       font-size:14px;
       line-height:1.15;
+      letter-spacing:.2px;
     }
     .titles .h2{
       font-size:11px;
@@ -68,12 +77,14 @@
       margin-top:2px;
       line-height:1.1;
     }
+
     .container{
-      max-width: 1320px;
-      margin: 16px auto 40px;
+      max-width: 1400px;
+      margin: 14px auto 40px;
       padding: 0 14px;
     }
 
+    /* FILTERS */
     .filters{
       background: var(--card);
       border: 1px solid var(--line);
@@ -81,8 +92,20 @@
       box-shadow: var(--shadow);
       padding: 12px;
       display:grid;
-      grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr auto auto;
+      grid-template-columns: 1.4fr repeat(5, 1fr) auto auto;
       gap: 10px;
+      align-items:end;
+    }
+    .filters2{
+      margin-top:10px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap:10px;
       align-items:end;
     }
     .field label{
@@ -90,7 +113,7 @@
       font-size:11px;
       color:var(--muted);
       margin-bottom:6px;
-      font-weight:700;
+      font-weight:800;
       letter-spacing:.2px;
     }
     input[type="text"], select{
@@ -113,7 +136,7 @@
       border-radius:10px;
       border:1px solid transparent;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       font-size:12px;
       display:inline-flex;
       align-items:center;
@@ -121,18 +144,13 @@
       gap:8px;
       white-space:nowrap;
     }
-    .btn.secondary{
-      background: var(--accent2);
-      color:#fff;
-    }
-    .btn.danger{
-      background: var(--accent);
-      color:#fff;
-    }
+    .btn.secondary{ background: var(--accent2); color:#fff; }
+    .btn.danger{ background: var(--accent); color:#fff; }
     .btn:active{ transform: translateY(1px); }
 
+    /* KPI */
     .grid-kpis{
-      margin-top: 14px;
+      margin-top: 12px;
       display:grid;
       grid-template-columns: repeat(6, 1fr);
       gap: 10px;
@@ -145,18 +163,19 @@
       padding: 10px 12px;
       position:relative;
       overflow:hidden;
-      min-height:76px;
+      min-height:78px;
     }
     .kpi .label{
       font-size:11px;
       color:var(--muted);
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.2px;
     }
     .kpi .value{
       font-size:22px;
       font-weight:900;
       margin-top:6px;
+      line-height:1.05;
     }
     .kpi .sub{
       font-size:10px;
@@ -167,15 +186,22 @@
       content:"";
       position:absolute;
       right:-40px; top:-40px;
-      width:100px;height:100px;
+      width:110px;height:110px;
       border-radius:50%;
       background: rgba(239,68,68,.08);
     }
 
+    /* CHARTS */
     .grid-charts{
       margin-top: 12px;
       display:grid;
       grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+    }
+    .grid-charts-2{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
     .card{
@@ -192,19 +218,11 @@
       color:#0f172a;
       font-weight:900;
     }
-    .chartbox{
-      height: 280px;
-    }
+    .chartbox{ height: 280px; }
 
-    .grid-charts-2{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
+    /* TABLE */
     .table-wrap{
-      margin-top:12px;
+      margin-top:10px;
       overflow:auto;
       border-radius: var(--radius);
       border:1px solid var(--line);
@@ -212,7 +230,7 @@
     table{
       width:100%;
       border-collapse:collapse;
-      min-width: 980px;
+      min-width: 1120px;
       background: #fff;
     }
     thead th{
@@ -232,15 +250,14 @@
       border-bottom:1px solid var(--line);
       white-space:nowrap;
     }
-    tbody tr:nth-child(even){
-      background:#fafafa;
-    }
+    tbody tr:nth-child(even){ background:#fafafa; }
+
     .pill{
       display:inline-block;
       padding: 3px 8px;
       border-radius:999px;
       font-size:11px;
-      font-weight:800;
+      font-weight:900;
       border:1px solid var(--line);
     }
     .pill.CODELCO{ background: rgba(59,130,246,.12); }
@@ -253,9 +270,9 @@
       font-size:11px;
     }
 
-    /* Responsive */
-    @media (max-width:1200px){
+    @media (max-width:1250px){
       .filters{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+      .filters2{ grid-template-columns: 1fr 1fr; }
       .grid-kpis{ grid-template-columns: repeat(3, 1fr); }
       .grid-charts{ grid-template-columns: 1fr; }
       .grid-charts-2{ grid-template-columns: 1fr; }
@@ -267,7 +284,6 @@
       .btn, .footer-note{ display:none !important; }
       body{ background:#fff; }
       .container{ max-width:none; margin:0; }
-      .filters{ grid-template-columns: 1fr 1fr 1fr 1fr; }
       .card, .kpi{ box-shadow:none; }
       .chartbox{ height: 240px; }
     }
@@ -277,49 +293,44 @@
 <body>
   <div class="topbar">
     <div class="brand">
-      <div class="logo">XT</div>
-      <div class="titles">
-        <div class="h1">Dashboard Hormigón / CNC – Seguimiento</div>
-        <div class="h2">Datos desde Google Sheets (CSV) • Vista ejecutiva</div>
+      <div class="logoWrap">
+        <!-- ✅ pon tu logo en la misma carpeta como: logo_Xtreme.png -->
+        <img src="logo_Xtreme.png" alt="Xtreme Mining" />
       </div>
+      <div class="titles">
+        <div class="h1">Dashboard Seguimiento – Hormigón / CNC</div>
+        <div class="h2">Xtreme Mining • Datos desde Google Sheets (CSV)</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn secondary" id="btnReset">🧹 Limpiar filtros</button>
+      <button class="btn danger" id="btnPdf">⬇ Exportar PDF</button>
     </div>
   </div>
 
   <div class="container">
-    <!-- FILTROS -->
+    <!-- FILTROS (fila 1) -->
     <div class="filters">
       <div class="field">
-        <label>Buscar (RUT / texto)</label>
-        <input id="q" type="text" placeholder="Ej: 12.345.678-9 o 'Interferencia'..." />
+        <label>Buscar (texto libre)</label>
+        <input id="q" type="text" placeholder="Ej: 'Interferencia', 'Ruta', 'C-23'..." />
       </div>
 
-      <div class="field">
-        <label>GRADO</label>
-        <select id="f_grado"><option value="">Todos</option></select>
-      </div>
-      <div class="field">
-        <label>SUMINISTRO</label>
-        <select id="f_suministro"><option value="">Todos</option></select>
-      </div>
-      <div class="field">
-        <label>TURNO</label>
-        <select id="f_turno"><option value="">Todos</option></select>
-      </div>
-      <div class="field">
-        <label>GRUPO</label>
-        <select id="f_grupo"><option value="">Todos</option></select>
-      </div>
-      <div class="field">
-        <label>MINA</label>
-        <select id="f_mina"><option value="">Todos</option></select>
-      </div>
-      <div class="field">
-        <label>RESPONSABLE</label>
-        <select id="f_responsable"><option value="">Todos</option></select>
-      </div>
+      <div class="field"><label>GRADO</label><select id="f_grado"><option value="">Todos</option></select></div>
+      <div class="field"><label>SUMINISTRO</label><select id="f_suministro"><option value="">Todos</option></select></div>
+      <div class="field"><label>TURNO</label><select id="f_turno"><option value="">Todos</option></select></div>
+      <div class="field"><label>GRUPO</label><select id="f_grupo"><option value="">Todos</option></select></div>
+      <div class="field"><label>MINA</label><select id="f_mina"><option value="">Todos</option></select></div>
+    </div>
 
-      <button class="btn secondary" id="btnReset">🧹 Limpiar filtros</button>
-      <button class="btn danger" id="btnPdf">⬇ Exportar PDF</button>
+    <!-- FILTROS (fila 2) -->
+    <div class="filters2">
+      <div class="field"><label>SALA_CONTROL</label><select id="f_sala"><option value="">Todos</option></select></div>
+      <div class="field"><label>LABORPOSTURA</label><select id="f_labor"><option value="">Todos</option></select></div>
+      <div class="field"><label>CNC_NIVEL_2</label><select id="f_cnc2"><option value="">Todos</option></select></div>
+      <div class="field"><label>CNC_NIVEL_1</label><select id="f_cnc1"><option value="">Todos</option></select></div>
+      <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"><option value="">Todos</option></select></div>
     </div>
 
     <!-- KPIs -->
@@ -332,7 +343,7 @@
       <div class="kpi">
         <div class="label">MINAS ÚNICAS</div>
         <div class="value" id="k_minas">0</div>
-        <div class="sub">Diversidad de frentes</div>
+        <div class="sub">Diversidad operacional</div>
       </div>
       <div class="kpi">
         <div class="label">CNC NIVEL 1 (TOP)</div>
@@ -362,9 +373,8 @@
         <h3>Incidentes por CNC NIVEL 1</h3>
         <div class="chartbox"><canvas id="chCnc1"></canvas></div>
       </div>
-
       <div class="card">
-        <h3>Distribución por Responsable</h3>
+        <h3>Distribución por Responsable CNC</h3>
         <div class="chartbox"><canvas id="chResp"></canvas></div>
       </div>
     </div>
@@ -374,7 +384,6 @@
         <h3>Incidentes por Mina</h3>
         <div class="chartbox"><canvas id="chMina"></canvas></div>
       </div>
-
       <div class="card">
         <h3>Incidentes por Turno</h3>
         <div class="chartbox"><canvas id="chTurno"></canvas></div>
@@ -383,12 +392,10 @@
 
     <!-- TABLA -->
     <div class="card" style="margin-top:12px;">
-      <h3>Detalle de Registros</h3>
+      <h3>Detalle (igual a tu base)</h3>
       <div class="table-wrap">
         <table id="tbl">
-          <thead>
-            <tr id="tblHead"></tr>
-          </thead>
+          <thead><tr id="tblHead"></tr></thead>
           <tbody id="tblBody"></tbody>
         </table>
       </div>
@@ -400,21 +407,17 @@
   // ====== CONFIG ======
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
 
-  // Columnas esperadas (para filtros y vistas)
   const COLS = [
     "GRADO","SUMINISTRO","TURNO","GRUPO","SALA_CONTROL","MINA",
     "LABORPOSTURA","CNC_NIVEL_2","CNC_NIVEL_1","RESPONSABLE_CNC"
   ];
 
-  // ====== STATE ======
-  let rawRows = [];     // [{col:val,...}]
-  let viewRows = [];    // filtered rows
-  let charts = {};      // Chart instances
+  let rawRows = [];
+  let viewRows = [];
+  let charts = {};
 
-  // ====== HELPERS ======
+  // ====== CSV PARSER (con comillas) ======
   function csvParse(text){
-    // Parser simple (soporta comillas)
-    const rows = [];
     let cur = "", inQ = false;
     const out = [[]];
     for (let i=0;i<text.length;i++){
@@ -433,15 +436,17 @@
     }
     out[out.length-1].push(cur);
 
-    // remove trailing empty line
-    const cleaned = out.filter(r => r.length > 1 || (r[0] && r[0].trim() !== ""));
-    return cleaned;
+    return out.filter(r => r.length > 1 || (r[0] && r[0].trim() !== ""));
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   }
 
   function uniq(arr){
     return [...new Set(arr.filter(v => v !== null && v !== undefined && String(v).trim() !== ""))]
       .map(v => String(v).trim())
-      .sort((a,b)=>a.localeCompare(b, "es"));
+      .sort((a,b)=>a.localeCompare(b,"es"));
   }
 
   function countBy(rows, key){
@@ -453,20 +458,28 @@
     return [...m.entries()].sort((a,b)=>b[1]-a[1]);
   }
 
-  function topLabel(countPairs){
-    if (!countPairs.length) return "-";
-    return countPairs[0][0];
+  function topLabel(pairs){
+    if (!pairs.length) return "-";
+    return pairs[0][0];
   }
 
   function setOptions(selectEl, values){
     const current = selectEl.value;
     selectEl.innerHTML = `<option value="">Todos</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
-    // try keep selected if still exists
     if (values.includes(current)) selectEl.value = current;
   }
 
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  function fillDropdowns(){
+    setOptions(document.getElementById("f_grado"), uniq(rawRows.map(r=>r.GRADO)));
+    setOptions(document.getElementById("f_suministro"), uniq(rawRows.map(r=>r.SUMINISTRO)));
+    setOptions(document.getElementById("f_turno"), uniq(rawRows.map(r=>r.TURNO)));
+    setOptions(document.getElementById("f_grupo"), uniq(rawRows.map(r=>r.GRUPO)));
+    setOptions(document.getElementById("f_mina"), uniq(rawRows.map(r=>r.MINA)));
+    setOptions(document.getElementById("f_sala"), uniq(rawRows.map(r=>r.SALA_CONTROL)));
+    setOptions(document.getElementById("f_labor"), uniq(rawRows.map(r=>r.LABORPOSTURA)));
+    setOptions(document.getElementById("f_cnc2"), uniq(rawRows.map(r=>r.CNC_NIVEL_2)));
+    setOptions(document.getElementById("f_cnc1"), uniq(rawRows.map(r=>r.CNC_NIVEL_1)));
+    setOptions(document.getElementById("f_resp"), uniq(rawRows.map(r=>r.RESPONSABLE_CNC)));
   }
 
   function getFilters(){
@@ -477,18 +490,22 @@
       TURNO: document.getElementById("f_turno").value,
       GRUPO: document.getElementById("f_grupo").value,
       MINA: document.getElementById("f_mina").value,
-      RESPONSABLE_CNC: document.getElementById("f_responsable").value,
+      SALA_CONTROL: document.getElementById("f_sala").value,
+      LABORPOSTURA: document.getElementById("f_labor").value,
+      CNC_NIVEL_2: document.getElementById("f_cnc2").value,
+      CNC_NIVEL_1: document.getElementById("f_cnc1").value,
+      RESPONSABLE_CNC: document.getElementById("f_resp").value,
     };
   }
 
   function applyFilters(){
     const f = getFilters();
+    const keys = ["GRADO","SUMINISTRO","TURNO","GRUPO","MINA","SALA_CONTROL","LABORPOSTURA","CNC_NIVEL_2","CNC_NIVEL_1","RESPONSABLE_CNC"];
+
     viewRows = rawRows.filter(r=>{
-      // dropdown filters
-      for (const k of ["GRADO","SUMINISTRO","TURNO","GRUPO","MINA","RESPONSABLE_CNC"]){
+      for (const k of keys){
         if (f[k] && String(r[k] ?? "").trim() !== f[k]) return false;
       }
-      // search
       if (f.q){
         const blob = COLS.map(c => (r[c] ?? "")).join(" ").toLowerCase();
         if (!blob.includes(f.q)) return false;
@@ -499,75 +516,27 @@
     renderKPIs();
     renderCharts();
     renderTable();
-    document.getElementById("note").textContent = `Registros: ${viewRows.length.toLocaleString("es-CL")} (filtrados)`;
+
+    document.getElementById("note").textContent =
+      `Registros: ${viewRows.length.toLocaleString("es-CL")} (filtrados) • Fuente: Google Sheets (CSV)`;
   }
 
   function renderKPIs(){
     const total = viewRows.length;
     const minas = uniq(viewRows.map(r=>r.MINA)).length;
-    const cnc1 = countBy(viewRows, "CNC_NIVEL_1");
-    const respPairs = countBy(viewRows, "RESPONSABLE_CNC");
+    const cnc1Pairs = countBy(viewRows, "CNC_NIVEL_1");
 
+    const respPairs = countBy(viewRows, "RESPONSABLE_CNC");
     const codelco = respPairs.find(([k])=>k==="CODELCO")?.[1] ?? 0;
     const interna = respPairs.find(([k])=>k==="INTERNA")?.[1] ?? 0;
     const sum = respPairs.find(([k])=>k==="SUMINISTRO")?.[1] ?? 0;
 
     document.getElementById("k_total").textContent = total.toLocaleString("es-CL");
     document.getElementById("k_minas").textContent = minas.toLocaleString("es-CL");
-    document.getElementById("k_top_cnc1").textContent = topLabel(cnc1);
+    document.getElementById("k_top_cnc1").textContent = topLabel(cnc1Pairs);
     document.getElementById("k_codelco").textContent = codelco.toLocaleString("es-CL");
     document.getElementById("k_interna").textContent = interna.toLocaleString("es-CL");
     document.getElementById("k_sum").textContent = sum.toLocaleString("es-CL");
-  }
-
-  function renderCharts(){
-    // CNC NIVEL 1 (bar)
-    const cnc1 = countBy(viewRows, "CNC_NIVEL_1").slice(0, 10);
-    const cncLabels = cnc1.map(x=>x[0]);
-    const cncVals = cnc1.map(x=>x[1]);
-
-    charts.cnc1 = makeOrUpdateChart("chCnc1", charts.cnc1, {
-      type: "bar",
-      data: { labels: cncLabels, datasets: [{ label: "Cantidad", data: cncVals }] },
-      options: {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{ x:{ ticks:{ maxRotation:45, minRotation:20 } }, y:{ beginAtZero:true } }
-      }
-    });
-
-    // Responsable (doughnut)
-    const resp = countBy(viewRows, "RESPONSABLE_CNC").slice(0, 8);
-    charts.resp = makeOrUpdateChart("chResp", charts.resp, {
-      type:"doughnut",
-      data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
-    });
-
-    // Mina (bar)
-    const mina = countBy(viewRows, "MINA").slice(0, 12);
-    charts.mina = makeOrUpdateChart("chMina", charts.mina, {
-      type:"bar",
-      data:{ labels: mina.map(x=>x[0]), datasets:[{ label:"Cantidad", data: mina.map(x=>x[1]) }] },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{ y:{ beginAtZero:true } }
-      }
-    });
-
-    // Turno (bar)
-    const turno = countBy(viewRows, "TURNO");
-    charts.turno = makeOrUpdateChart("chTurno", charts.turno, {
-      type:"bar",
-      data:{ labels: turno.map(x=>x[0]), datasets:[{ label:"Cantidad", data: turno.map(x=>x[1]) }] },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{ y:{ beginAtZero:true } }
-      }
-    });
   }
 
   function makeOrUpdateChart(canvasId, chartInstance, config){
@@ -582,16 +551,64 @@
     return new Chart(ctx, config);
   }
 
+  function renderCharts(){
+    // CNC NIVEL 1 (TOP 10)
+    const cnc1 = countBy(viewRows, "CNC_NIVEL_1").slice(0, 10);
+    charts.cnc1 = makeOrUpdateChart("chCnc1", charts.cnc1, {
+      type:"bar",
+      data:{ labels: cnc1.map(x=>x[0]), datasets:[{ label:"Cantidad", data: cnc1.map(x=>x[1]) }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{
+          x:{ ticks:{ maxRotation:45, minRotation:20 } },
+          y:{ beginAtZero:true }
+        }
+      }
+    });
+
+    // Responsable (donut)
+    const resp = countBy(viewRows, "RESPONSABLE_CNC");
+    charts.resp = makeOrUpdateChart("chResp", charts.resp, {
+      type:"doughnut",
+      data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
+    });
+
+    // Mina (TOP 12)
+    const mina = countBy(viewRows, "MINA").slice(0, 12);
+    charts.mina = makeOrUpdateChart("chMina", charts.mina, {
+      type:"bar",
+      data:{ labels: mina.map(x=>x[0]), datasets:[{ label:"Cantidad", data: mina.map(x=>x[1]) }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ y:{ beginAtZero:true } }
+      }
+    });
+
+    // Turno
+    const turno = countBy(viewRows, "TURNO");
+    charts.turno = makeOrUpdateChart("chTurno", charts.turno, {
+      type:"bar",
+      data:{ labels: turno.map(x=>x[0]), datasets:[{ label:"Cantidad", data: turno.map(x=>x[1]) }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ y:{ beginAtZero:true } }
+      }
+    });
+  }
+
   function renderTable(){
     const head = document.getElementById("tblHead");
     const body = document.getElementById("tblBody");
 
-    // Header
     head.innerHTML = COLS.map(c=>`<th>${escapeHtml(c)}</th>`).join("");
 
-    // Body (limit for performance)
-    const maxRows = 600;
+    const maxRows = 700;
     const rows = viewRows.slice(0, maxRows);
+
     body.innerHTML = rows.map(r=>{
       return `<tr>` + COLS.map(c=>{
         const val = (r[c] ?? "").toString().trim();
@@ -604,18 +621,8 @@
     }).join("");
 
     if (viewRows.length > maxRows){
-      const note = document.getElementById("note");
-      note.textContent += ` • Mostrando ${maxRows} de ${viewRows.length}`;
+      document.getElementById("note").textContent += ` • Mostrando ${maxRows} de ${viewRows.length}`;
     }
-  }
-
-  function fillDropdownsFromRaw(){
-    setOptions(document.getElementById("f_grado"), uniq(rawRows.map(r=>r.GRADO)));
-    setOptions(document.getElementById("f_suministro"), uniq(rawRows.map(r=>r.SUMINISTRO)));
-    setOptions(document.getElementById("f_turno"), uniq(rawRows.map(r=>r.TURNO)));
-    setOptions(document.getElementById("f_grupo"), uniq(rawRows.map(r=>r.GRUPO)));
-    setOptions(document.getElementById("f_mina"), uniq(rawRows.map(r=>r.MINA)));
-    setOptions(document.getElementById("f_responsable"), uniq(rawRows.map(r=>r.RESPONSABLE_CNC)));
   }
 
   function resetFilters(){
@@ -625,7 +632,11 @@
     document.getElementById("f_turno").value = "";
     document.getElementById("f_grupo").value = "";
     document.getElementById("f_mina").value = "";
-    document.getElementById("f_responsable").value = "";
+    document.getElementById("f_sala").value = "";
+    document.getElementById("f_labor").value = "";
+    document.getElementById("f_cnc2").value = "";
+    document.getElementById("f_cnc1").value = "";
+    document.getElementById("f_resp").value = "";
     applyFilters();
   }
 
@@ -643,7 +654,7 @@
     const missing = COLS.filter(c => !header.includes(c));
     if (missing.length){
       note.textContent = `Faltan columnas en CSV: ${missing.join(", ")}`;
-      console.warn("Header CSV:", header);
+      console.warn("Encabezado CSV detectado:", header);
       return;
     }
 
@@ -655,12 +666,12 @@
         return obj;
       });
 
-    fillDropdownsFromRaw();
+    fillDropdowns();
     applyFilters();
   }
 
   function wireEvents(){
-    const ids = ["q","f_grado","f_suministro","f_turno","f_grupo","f_mina","f_responsable"];
+    const ids = ["q","f_grado","f_suministro","f_turno","f_grupo","f_mina","f_sala","f_labor","f_cnc2","f_cnc1","f_resp"];
     ids.forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
     document.getElementById("btnReset").addEventListener("click", resetFilters);
     document.getElementById("btnPdf").addEventListener("click", () => window.print());
