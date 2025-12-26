@@ -4,127 +4,79 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Dashboard Seguimiento – Hormigón / CNC</title>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    :root{
-      --bg:#0b1220;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --ink:#0f172a;
-      --line:#e5e7eb;
-      --accent:#ef4444;
-      --accent2:#111827;
-      --shadow: 0 10px 30px rgba(0,0,0,.18);
-      --radius:18px;
-    }
+    :root{--bg:#0b1220;--card:#fff;--muted:#6b7280;--ink:#0f172a;--line:#e5e7eb;--accent:#ef4444;--shadow:0 10px 30px rgba(0,0,0,.18);--radius:18px}
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#0f172a;color:#111}
-    .topbar{
-      background: linear-gradient(90deg,#0b1220,#111827);
-      color:#fff; padding:14px 18px; position:sticky; top:0; z-index:10;
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
-    }
+    .topbar{background:linear-gradient(90deg,#0b1220,#111827);color:#fff;padding:14px 18px;position:sticky;top:0;z-index:10;box-shadow:0 8px 20px rgba(0,0,0,.25)}
     .topwrap{display:flex;align-items:center;gap:14px;justify-content:space-between;max-width:1250px;margin:0 auto}
     .brand{display:flex;gap:12px;align-items:center}
-    .logo{
-      width:170px;height:46px;border-radius:12px;background:#fff1;
-      display:flex;align-items:center;justify-content:center;border:1px solid #ffffff22;
-      overflow:hidden;
-    }
+    .logo{width:170px;height:46px;border-radius:12px;background:#fff1;display:flex;align-items:center;justify-content:center;border:1px solid #ffffff22;overflow:hidden}
     .logo img{width:100%;height:100%;object-fit:contain;background:#f8fafc}
     .titleblock{line-height:1.15}
     .titleblock h1{margin:0;font-size:16px;font-weight:800}
     .titleblock p{margin:4px 0 0;font-size:12px;color:#cbd5e1}
     .actions{display:flex;gap:10px;align-items:center}
-    .btn{
-      border:0; padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer;
-      background:#1f2937;color:#fff; display:flex; gap:8px; align-items:center;
-    }
+    .btn{border:0;padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer;background:#1f2937;color:#fff;display:flex;gap:8px;align-items:center}
     .btn.red{background:var(--accent)}
     .btn.outline{background:transparent;border:1px solid #ffffff33}
     .wrap{max-width:1250px;margin:18px auto;padding:0 14px}
-    .panel{background:#ffffff10;border:1px solid #ffffff18;border-radius:var(--radius);padding:14px; color:#fff}
-    .filters{display:grid;grid-template-columns: 1.2fr repeat(5,1fr);gap:10px}
-    .filters2{margin-top:10px;display:grid;grid-template-columns: repeat(6,1fr);gap:10px}
-    .filters3{margin-top:10px;display:grid;grid-template-columns: repeat(6,1fr);gap:10px}
-
+    .panel{background:#ffffff10;border:1px solid #ffffff18;border-radius:var(--radius);padding:14px;color:#fff}
+    .filters{display:grid;grid-template-columns:1.2fr repeat(5,1fr);gap:10px}
+    .filters2{margin-top:10px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    .filters3{margin-top:10px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
     .fbox label{display:block;font-size:11px;color:#cbd5e1;font-weight:800;margin:0 0 6px}
-    input, select{
-      width:100%; padding:10px 10px;border-radius:12px;border:1px solid #ffffff22;
-      background:#0b1220;color:#fff;outline:none;
-    }
+    input,select{width:100%;padding:10px 10px;border-radius:12px;border:1px solid #ffffff22;background:#0b1220;color:#fff;outline:none}
     input::placeholder{color:#94a3b8}
-    .grid{
-      margin-top:14px;
-      display:grid;gap:12px;
-      grid-template-columns: repeat(12,1fr);
-    }
-    .card{
-      background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
-      padding:14px;border:1px solid var(--line);
-    }
-    .metric{grid-column: span 2}
+    .grid{margin-top:14px;display:grid;gap:12px;grid-template-columns:repeat(12,1fr)}
+    .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;border:1px solid var(--line)}
+    .metric{grid-column:span 2}
     .metric h3{margin:0;font-size:11px;color:#6b7280;font-weight:900}
     .metric .v{margin-top:8px;font-size:26px;font-weight:900;color:#0f172a}
     .metric .s{margin-top:3px;font-size:11px;color:#6b7280}
-    .big{grid-column: span 7; min-height:340px}
-    .big2{grid-column: span 5; min-height:340px}
-    .row2{grid-column: span 6; min-height:320px}
-    .table{grid-column: span 12}
+    .big{grid-column:span 7;min-height:340px}
+    .big2{grid-column:span 5;min-height:340px}
+    .row2{grid-column:span 6;min-height:320px}
+    .table{grid-column:span 12}
     .card h2{margin:0 0 10px;font-size:13px;font-weight:900;color:#0f172a}
-    canvas{width:100% !important;height:260px !important}
+    canvas{width:100%!important;height:260px!important}
     .subnote{margin-top:8px;color:#6b7280;font-size:12px}
     .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
     table{border-collapse:collapse;width:100%;min-width:1100px;background:#fff}
     th,td{padding:10px;border-bottom:1px solid var(--line);font-size:12px;text-align:left}
     th{background:#0f172a;color:#fff;position:sticky;top:0}
-    .muted{color:#6b7280}
-    .pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#f1f5f9;font-weight:800;font-size:11px}
     .warn{color:#ef4444;font-weight:800;margin-top:8px}
-    /* Modal */
-    .modalBackdrop{
-      position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;
-      z-index:50;
-    }
-    .modal{
-      width:min(980px,92vw);background:#fff;border-radius:22px;box-shadow:var(--shadow);
-      border:1px solid var(--line);overflow:hidden;
-    }
-    .modalHead{
-      padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
-    }
+    .ok{color:#16a34a;font-weight:900;margin-top:8px}
+    .modalBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal{width:min(980px,92vw);background:#fff;border-radius:22px;box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden}
+    .modalHead{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
     .modalHead h3{margin:0;font-size:18px;font-weight:900;color:#0f172a}
     .modalBody{padding:14px 16px}
-    .formGrid{display:grid;grid-template-columns: repeat(4,1fr);gap:10px}
-    .formGrid .full{grid-column: span 2}
+    .formGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .modalFoot{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
     .btn2{border:0;padding:10px 14px;border-radius:12px;font-weight:900;cursor:pointer}
     .btn2.red{background:#ef4444;color:#fff}
     .btn2.dark{background:#0f172a;color:#fff}
     @media(max-width:1000px){
-      .filters{grid-template-columns: 1fr 1fr}
-      .filters2,.filters3{grid-template-columns: 1fr 1fr}
-      .metric{grid-column: span 6}
-      .big,.big2,.row2{grid-column: span 12}
-      .formGrid{grid-template-columns: 1fr 1fr}
-      .formGrid .full{grid-column: span 2}
+      .filters{grid-template-columns:1fr 1fr}
+      .filters2,.filters3{grid-template-columns:1fr 1fr}
+      .metric{grid-column:span 6}
+      .big,.big2,.row2{grid-column:span 12}
+      .formGrid{grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
-
 <body>
   <div class="topbar">
     <div class="topwrap">
       <div class="brand">
         <div class="logo">
-          <!-- Si quieres tu logo local, reemplaza src por "logo_Xtreme.png" -->
           <img src="https://i.imgur.com/5bRjQz2.png" alt="Xtreme Logo"/>
         </div>
         <div class="titleblock">
           <h1>Dashboard Seguimiento – Hormigón / CNC</h1>
-          <p>Xtreme Mining · Datos desde Google Sheets (CSV)</p>
+          <p>Xtreme Mining · Google Sheets (CSV)</p>
         </div>
       </div>
       <div class="actions">
@@ -154,8 +106,8 @@
         <div class="fbox"><label>SUMINISTRO</label><select id="f_SUMINISTRO"></select></div>
         <div class="fbox"><label>SALA DE CONTROL</label><select id="f_SALA"></select></div>
         <div class="fbox"><label>LABOR_POSTURA</label><select id="f_LABOR"></select></div>
-        <div class="fbox"><label>CNC _NIVEL 2</label><select id="f_CNC2"></select></div>
-        <div class="fbox"><label>CNC _NIVEL 1</label><select id="f_CNC1"></select></div>
+        <div class="fbox"><label>CNC_NIVEL 2</label><select id="f_CNC2"></select></div>
+        <div class="fbox"><label>CNC_NIVEL 1</label><select id="f_CNC1"></select></div>
       </div>
 
       <div class="filters3">
@@ -177,15 +129,15 @@
       <div class="card metric"><h3>CNC NIVEL 1 (TOP)</h3><div class="v" id="m_top">-</div><div class="s">Causa principal</div></div>
 
       <div class="card big">
-        <h2>Incidentes por CNC _NIVEL 1 (TOP 10)</h2>
+        <h2>Incidentes por CNC_NIVEL 1 (TOP 10)</h2>
         <canvas id="chTop"></canvas>
-        <div class="subnote muted" id="noteTop"></div>
+        <div class="subnote" id="noteTop"></div>
       </div>
 
       <div class="card big2">
         <h2>Distribución por RESPONSABLE_CNC</h2>
         <canvas id="chResp"></canvas>
-        <div class="subnote muted" id="noteResp"></div>
+        <div class="subnote" id="noteResp"></div>
       </div>
 
       <div class="card row2">
@@ -200,16 +152,16 @@
 
       <div class="card table">
         <h2>Detalle (todas las columnas)</h2>
-        <div class="tblwrap">
-          <table id="tbl"></table>
-        </div>
-        <div class="subnote muted" id="noteTbl"></div>
-        <div class="warn" id="netErr" style="display:none">❌ Error de red. Revisa tus links CSV y permisos.</div>
+        <div class="tblwrap"><table id="tbl"></table></div>
+        <div class="subnote" id="noteTbl"></div>
+        <div class="warn" id="netErr" style="display:none">❌ Error de red: no se pudo leer el CSV.</div>
+        <div class="warn" id="saveErr" style="display:none">❌ No se pudo guardar: revisa permisos del WebApp.</div>
+        <div class="ok" id="saveOk" style="display:none">✅ Registro enviado. Recargando…</div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL NUEVO REGISTRO -->
+  <!-- MODAL -->
   <div class="modalBackdrop" id="modalBg">
     <div class="modal">
       <div class="modalHead">
@@ -218,8 +170,7 @@
       </div>
       <div class="modalBody">
         <div class="formGrid">
-          <div class="fbox"><label>FECHA</label><input id="n_FECHA" type="date"></div>
-
+          <div class="fbox"><label>FECHA (calendario)</label><input id="n_FECHA" type="date"></div>
           <div class="fbox"><label>MES</label><select id="n_MES"></select></div>
           <div class="fbox"><label>SEMANA</label><select id="n_SEMANA"></select></div>
           <div class="fbox"><label>TURNO</label><select id="n_TURNO"></select></div>
@@ -237,20 +188,18 @@
           <div class="fbox"><label>RECHAZADO</label><input id="n_RECHAZADO" placeholder="0"></div>
           <div class="fbox"><label>REAGENDADO</label><input id="n_REAGENDADO" placeholder="0"></div>
           <div class="fbox"><label>ELIMINADO</label><input id="n_ELIMINADO" placeholder="0"></div>
-          <div class="fbox"><label>NÚMERO GUÍA</label><input id="n_GUIA" placeholder=""></div>
+          <div class="fbox"><label>NÚMERO GUÍA</label><input id="n_GUIA"></div>
 
           <div class="fbox"><label>HORA SALIDA PLANTA</label><input id="n_HSAL" placeholder="HH:MM"></div>
           <div class="fbox"><label>HORA LLEGADA OBRA</label><input id="n_HLLE" placeholder="HH:MM"></div>
           <div class="fbox"><label>HORA INICIO DESCARGA</label><input id="n_HINI" placeholder="HH:MM"></div>
           <div class="fbox"><label>HORA TERMINO DESCARGA</label><input id="n_HTER" placeholder="HH:MM"></div>
 
-          <div class="fbox"><label>CNC _NIVEL 2</label><select id="n_CNC2"></select></div>
-          <div class="fbox"><label>CNC _NIVEL 1</label><select id="n_CNC1"></select></div>
+          <div class="fbox"><label>CNC_NIVEL 2</label><select id="n_CNC2"></select></div>
+          <div class="fbox"><label>CNC_NIVEL 1</label><select id="n_CNC1"></select></div>
           <div class="fbox"><label>RESPONSABLE_CNC</label><select id="n_RESP"></select></div>
           <div class="fbox"><label>SALA DE CONTROL</label><select id="n_SALA"></select></div>
         </div>
-        <div class="warn" id="saveErr" style="display:none">❌ Error de red o CORS.</div>
-        <div class="subnote" id="saveOk" style="display:none;color:#16a34a;font-weight:900">✅ Enviado. Actualizando…</div>
       </div>
       <div class="modalFoot">
         <button class="btn2 dark" id="btnSave">💾 Guardar</button>
@@ -260,98 +209,75 @@
 
 <script>
 /** =======================
- *  CONFIG (TU CASO REAL)
+ *  CONFIGURA AQUÍ
  *  ======================= */
-const SHEET_ID = "1nzr-ErhyIda2Di1zYQEQmGveyhBzg6xJkQTcLoDHOi4";
-const DATA_GID = 1538363274;      // HORMIGONES (tu gid confirmado)
-const CATALOG_GID = 1538363274;   // si tienes hoja "DATOS" con otro gid, cámbialo aquí
+const SPREADSHEET_ID = "1nzr-ErhyIda2Di1zYQEQmGveyhBzg6xJkQTcLoDHOi4";
+const HORMIGONES_GID = 1538363274;
+const DATOS_GID     = 0; // <-- CAMBIA si tu hoja "DATOS" tiene otro gid
 
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
-const CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/1nzr-ErhyIda2Di1zYQEQmGveyhBzg6xJkQTcLoDHOi4/edit?gid=1538363274#gid=1538363274";
+// CSV robusto (requiere compartir el Sheet: "Cualquiera con el enlace - Lector")
+const CSV_URL         = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${HORMIGONES_GID}`;
+const CATALOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${DATOS_GID}`;
 
-// TU WEBAPP /exec
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxME6F9APLeHBS4HHtA7Kmhx4MmBmcd3M4vqR9O4aAKW1CLe-yIoz7XwCR9EnEUbV2A/exec";
+// Pega aquí TU /exec real:
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw-eKZNw8nnpJ4bmHeG7EhTiLUFWYn4g6i_qUA0j5ylHHgvHfpblW5YN8L_BztjRKs/exec";
 
-/** Encabezados del registro (deben coincidir con Apps Script) */
 const HEADERS = [
-  "FECHA", "MES", "SEMANA", "TURNO", "GRUPO", "MINA", "LABOR_POSTURA", "GRADO", "SUMINISTRO",
-  "PLANIFICADO", "SUMINISTRADO", "PENDIENTE", "RECHAZADO", "REAGENDADO", "ELIMINADO",
-  "NÚMERO GUÍA", "HORA SALIDA PLANTA", "HORA LLEGADA OBRA", "HORA INICIO DESCARGA", "HORA TERMINO DESCARGA",
-  "CNC _NIVEL 2", "CNC _NIVEL 1", "RESPONSABLE_CNC", "SALA DE CONTROL"
+  "FECHA","MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
+  "PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO",
+  "NÚMERO GUÍA","HORA SALIDA PLANTA","HORA LLEGADA OBRA","HORA INICIO DESCARGA","HORA TERMINO DESCARGA",
+  "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
 ];
 
-/** =======================
- *  UTIL
- *  ======================= */
 function parseCSV(text){
-  const rows = [];
-  let cur = "", inQ = false;
-  const out = [];
-  for (let i=0;i<text.length;i++){
+  const rows=[]; let row=[], cell="", q=false;
+  for(let i=0;i<text.length;i++){
     const c=text[i], n=text[i+1];
-    if (c === '"' && n === '"'){ cur+='"'; i++; continue; }
-    if (c === '"'){ inQ = !inQ; continue; }
-    if (c === '\n' && !inQ){ out.push(cur); cur=""; continue; }
-    cur += c;
-  }
-  out.push(cur);
-  for (const line of out){
-    if (!line.trim()) continue;
-    const cols = [];
-    let s="", q=false;
-    for (let i=0;i<line.length;i++){
-      const ch=line[i], nx=line[i+1];
-      if (ch === '"' && nx === '"'){ s+='"'; i++; continue; }
-      if (ch === '"'){ q=!q; continue; }
-      if (ch === ',' && !q){ cols.push(s); s=""; continue; }
-      s+=ch;
+    if(c==='\"' && n==='\"'){ cell+='\"'; i++; continue; }
+    if(c==='\"'){ q=!q; continue; }
+    if(c===',' && !q){ row.push(cell); cell=""; continue; }
+    if((c==='\n' || c==='\r') && !q){
+      if(c==='\r' && n==='\n') i++;
+      row.push(cell); cell="";
+      if(row.some(x=>String(x).trim()!=="")) rows.push(row);
+      row=[]; continue;
     }
-    cols.push(s);
-    rows.push(cols);
+    cell+=c;
   }
+  row.push(cell);
+  if(row.some(x=>String(x).trim()!=="")) rows.push(row);
   return rows;
 }
 const uniq = arr => Array.from(new Set(arr.filter(v=>v!=="" && v!=null))).sort((a,b)=>String(a).localeCompare(String(b)));
 const num = v => {
-  if (v===null||v===undefined) return 0;
-  const s = String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"");
-  const n = parseFloat(s);
+  if(v===null||v===undefined) return 0;
+  const s=String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"");
+  const n=parseFloat(s);
   return isNaN(n)?0:n;
 };
-const by = (arr, key) => {
-  const m = new Map();
-  for (const r of arr){
-    const k = (r[key] ?? "").trim();
-    if (!m.has(k)) m.set(k, []);
+function by(arr,key){
+  const m=new Map();
+  for(const r of arr){
+    const k=(r[key]??"").trim();
+    if(!m.has(k)) m.set(k,[]);
     m.get(k).push(r);
   }
   return m;
-};
-function topCount(arr, key, topN=10){
-  const m = new Map();
-  for (const r of arr){
-    const k = (r[key]??"").trim();
-    if (!k) continue;
-    m.set(k, (m.get(k)||0)+1);
+}
+function topCount(arr,key,topN=10){
+  const m=new Map();
+  for(const r of arr){
+    const k=(r[key]??"").trim();
+    if(!k) continue;
+    m.set(k,(m.get(k)||0)+1);
   }
   return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]).slice(0,topN);
 }
 
-/** =======================
- *  STATE
- *  ======================= */
-let allRows = [];
-let filtered = [];
-let catalog = []; // para desplegables
+let allRows=[], filtered=[], catalog=[];
+let charts={};
 
-let charts = {};
-
-/** =======================
- *  DOM
- *  ======================= */
-const $ = (id)=>document.getElementById(id);
-const netErr = $("netErr");
-
+const $ = id => document.getElementById(id);
 const filterMap = [
   ["f_MES","MES"],["f_SEMANA","SEMANA"],["f_TURNO","TURNO"],["f_GRUPO","GRUPO"],["f_MINA","MINA"],
   ["f_GRADO","GRADO"],["f_SUMINISTRO","SUMINISTRO"],["f_SALA","SALA DE CONTROL"],["f_LABOR","LABOR_POSTURA"],
@@ -360,68 +286,60 @@ const filterMap = [
 ];
 
 function fillSelect(selId, values, allLabel="Todos"){
-  const sel = $(selId);
-  sel.innerHTML = "";
-  const opt0 = document.createElement("option");
-  opt0.value=""; opt0.textContent=allLabel;
-  sel.appendChild(opt0);
-  for (const v of values){
-    const opt = document.createElement("option");
-    opt.value=v; opt.textContent=v;
-    sel.appendChild(opt);
-  }
+  const sel=$(selId); sel.innerHTML="";
+  const o0=document.createElement("option"); o0.value=""; o0.textContent=allLabel; sel.appendChild(o0);
+  for(const v of values){ const o=document.createElement("option"); o.value=v; o.textContent=v; sel.appendChild(o); }
 }
 
-/** =======================
- *  LOAD DATA
- *  ======================= */
 async function loadCSV(url){
   const res = await fetch(url, { cache:"no-store" });
-  if (!res.ok) throw new Error("CSV fetch failed: " + res.status);
+  if(!res.ok) throw new Error("CSV fetch failed: "+res.status);
   const text = await res.text();
   const rows = parseCSV(text);
-  const headers = rows[0].map(h=>h.trim());
+  if(!rows.length) return { headers:[], data:[] };
+  const headers = rows[0].map(h=>String(h||"").trim());
   const data = rows.slice(1).map(cols=>{
-    const obj = {};
-    headers.forEach((h,i)=>obj[h]= (cols[i]??"").trim());
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());
     return obj;
   });
   return { headers, data };
 }
 
 async function boot(){
-  try{
-    netErr.style.display="none";
+  $("netErr").style.display="none";
+  $("saveErr").style.display="none";
+  $("saveOk").style.display="none";
 
-    // 1) Catálogo (para desplegables)
+  try{
     const cat = await loadCSV(CATALOG_CSV_URL);
     catalog = cat.data;
+  }catch(e){
+    console.warn("No pude leer DATOS (catálogo). Revisa gid/permiso.", e);
+    catalog = [];
+  }
 
-    // 2) Registros
+  try{
     const reg = await loadCSV(CSV_URL);
     allRows = reg.data;
-
-    // Si la hoja tiene solo encabezados (sin filas), igual tendremos catálogo para desplegables:
-    buildFiltersFromCatalog();
-    applyFilters();
-  }catch(err){
-    console.error(err);
-    netErr.style.display="block";
-    // Aun así intenta catálogo para que se vean desplegables
-    try{
-      const cat = await loadCSV(CATALOG_CSV_URL);
-      catalog = cat.data;
-      buildFiltersFromCatalog();
-      allRows = []; filtered = [];
-      renderAll();
-    }catch(e2){
-      console.error(e2);
-    }
+  }catch(e){
+    console.error(e);
+    $("netErr").style.display="block";
+    allRows = [];
   }
+
+  buildDropdowns();
+  applyFilters();
+
+  // Fecha por defecto: hoy
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,"0");
+  const d = String(today.getDate()).padStart(2,"0");
+  $("n_FECHA").value = `${y}-${m}-${d}`;
 }
 
-/** Desplegables desde CATÁLOGO (aunque HORMIGONES esté vacío) */
-function buildFiltersFromCatalog(){
+function buildDropdowns(){
   const src = (catalog && catalog.length) ? catalog : allRows;
 
   fillSelect("f_MES", uniq(src.map(r=>r["MES"])));
@@ -429,12 +347,10 @@ function buildFiltersFromCatalog(){
   fillSelect("f_TURNO", uniq(src.map(r=>r["TURNO"])));
   fillSelect("f_GRUPO", uniq(src.map(r=>r["GRUPO"])));
   fillSelect("f_MINA", uniq(src.map(r=>r["MINA"])));
-
   fillSelect("f_GRADO", uniq(src.map(r=>r["GRADO"])));
   fillSelect("f_SUMINISTRO", uniq(src.map(r=>r["SUMINISTRO"])));
   fillSelect("f_SALA", uniq(src.map(r=>r["SALA DE CONTROL"])));
   fillSelect("f_LABOR", uniq(src.map(r=>r["LABOR_POSTURA"])));
-
   fillSelect("f_CNC2", uniq(src.map(r=>r["CNC _NIVEL 2"])));
   fillSelect("f_CNC1", uniq(src.map(r=>r["CNC _NIVEL 1"])));
   fillSelect("f_RESP", uniq(src.map(r=>r["RESPONSABLE_CNC"])));
@@ -445,30 +361,24 @@ function buildFiltersFromCatalog(){
   fillSelect("f_PEND", uniq(allRows.map(r=>r["PENDIENTE"])));
   fillSelect("f_RECH", uniq(allRows.map(r=>r["RECHAZADO"])));
 
-  // Modal: mismos catálogos
-  const selPairs = [
+  const pairs = [
     ["n_MES","MES"],["n_SEMANA","SEMANA"],["n_TURNO","TURNO"],["n_GRUPO","GRUPO"],["n_MINA","MINA"],
     ["n_LABOR","LABOR_POSTURA"],["n_GRADO","GRADO"],["n_SUMINISTRO","SUMINISTRO"],
     ["n_CNC2","CNC _NIVEL 2"],["n_CNC1","CNC _NIVEL 1"],["n_RESP","RESPONSABLE_CNC"],["n_SALA","SALA DE CONTROL"],
   ];
-  for (const [id,key] of selPairs){
-    fillSelect(id, uniq(src.map(r=>r[key])), "Seleccione...");
-  }
+  for(const [id,key] of pairs) fillSelect(id, uniq(src.map(r=>r[key])), "Seleccione...");
 }
 
-/** =======================
- *  FILTER & RENDER
- *  ======================= */
 function applyFilters(){
   const q = $("q").value.trim().toLowerCase();
   filtered = allRows.filter(r=>{
-    if (q){
+    if(q){
       const blob = Object.values(r).join(" ").toLowerCase();
-      if (!blob.includes(q)) return false;
+      if(!blob.includes(q)) return false;
     }
-    for (const [selId, col] of filterMap){
-      const v = $(selId).value;
-      if (v && String((r[col]??"")).trim() !== v) return false;
+    for(const [selId,col] of filterMap){
+      const v=$(selId).value;
+      if(v && String((r[col]??"")).trim()!==v) return false;
     }
     return true;
   });
@@ -476,119 +386,63 @@ function applyFilters(){
 }
 
 function renderAll(){
-  // métricas
   $("m_count").textContent = filtered.length;
-  $("m_plan").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["PLANIFICADO"]),0)).toLocaleString("es-CL");
-  $("m_sumi").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["SUMINISTRADO"]),0)).toLocaleString("es-CL");
-  $("m_pend").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["PENDIENTE"]),0)).toLocaleString("es-CL");
-  $("m_rech").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["RECHAZADO"]),0)).toLocaleString("es-CL");
-
-  // TOP CNC1
-  const top = topCount(filtered, "CNC _NIVEL 1", 1);
-  $("m_top").textContent = top.length ? top[0][0] : "-";
+  $("m_plan").textContent  = Math.round(filtered.reduce((a,r)=>a+num(r["PLANIFICADO"]),0)).toLocaleString("es-CL");
+  $("m_sumi").textContent  = Math.round(filtered.reduce((a,r)=>a+num(r["SUMINISTRADO"]),0)).toLocaleString("es-CL");
+  $("m_pend").textContent  = Math.round(filtered.reduce((a,r)=>a+num(r["PENDIENTE"]),0)).toLocaleString("es-CL");
+  $("m_rech").textContent  = Math.round(filtered.reduce((a,r)=>a+num(r["RECHAZADO"]),0)).toLocaleString("es-CL");
+  const top = topCount(filtered,"CNC _NIVEL 1",1);
+  $("m_top").textContent = top.length?top[0][0]:"-";
 
   renderCharts();
   renderTable();
-
-  $("noteTbl").textContent = allRows.length
-    ? ""
-    : "CSV sin filas (solo encabezados). Igual puedes ingresar registros con 'Nuevo registro'.";
+  $("noteTbl").textContent = allRows.length ? "" : "CSV sin filas (solo encabezados). Igual puedes ingresar registros con “Nuevo registro”.";
 }
 
 function renderCharts(){
-  // Top CNC1
-  const top10 = topCount(filtered, "CNC _NIVEL 1", 10);
-  const labels = top10.map(x=>x[0]);
-  const vals = top10.map(x=>x[1]);
+  const top10 = topCount(filtered,"CNC _NIVEL 1",10);
+  if(charts.top) charts.top.destroy();
+  charts.top = new Chart($("chTop"), {type:"bar", data:{labels:top10.map(x=>x[0]), datasets:[{label:"Cantidad", data:top10.map(x=>x[1])}]}, options:{plugins:{legend:{display:false}}}});
+  $("noteTop").textContent = top10.length?`Mostrando TOP ${top10.length}`:"Sin datos con los filtros actuales.";
 
-  if (charts.top) charts.top.destroy();
-  charts.top = new Chart($("chTop"), {
-    type:"bar",
-    data:{ labels, datasets:[{ label:"Cantidad", data:vals }] },
-    options:{ responsive:true, plugins:{ legend:{ display:false } } }
-  });
-  $("noteTop").textContent = top10.length ? `Mostrando TOP ${top10.length}` : "Sin datos con los filtros actuales.";
+  const resp = topCount(filtered,"RESPONSABLE_CNC",20);
+  if(charts.resp) charts.resp.destroy();
+  charts.resp = new Chart($("chResp"), {type:"doughnut", data:{labels:resp.map(x=>x[0]), datasets:[{data:resp.map(x=>x[1])}]}});
+  $("noteResp").textContent = resp.length?`Responsables: ${resp.length}`:"Sin datos.";
 
-  // Responsable
-  const resp = topCount(filtered, "RESPONSABLE_CNC", 20);
-  if (charts.resp) charts.resp.destroy();
-  charts.resp = new Chart($("chResp"), {
-    type:"doughnut",
-    data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
-    options:{ responsive:true }
-  });
-  $("noteResp").textContent = resp.length ? `Responsables: ${resp.length}` : "Sin datos.";
-
-  // Por mina (plan vs sumi)
   const m = by(filtered,"MINA");
-  const minas = Array.from(m.keys()).filter(k=>k).sort((a,b)=>a.localeCompare(b));
+  const minas = Array.from(m.keys()).filter(Boolean).sort((a,b)=>a.localeCompare(b));
   const plan = minas.map(k=>m.get(k).reduce((a,r)=>a+num(r["PLANIFICADO"]),0));
   const sumi = minas.map(k=>m.get(k).reduce((a,r)=>a+num(r["SUMINISTRADO"]),0));
-  if (charts.mina) charts.mina.destroy();
-  charts.mina = new Chart($("chMina"), {
-    type:"bar",
-    data:{ labels:minas, datasets:[{label:"Planificado", data:plan},{label:"Suministrado", data:sumi}] },
-    options:{ responsive:true }
-  });
+  if(charts.mina) charts.mina.destroy();
+  charts.mina = new Chart($("chMina"), {type:"bar", data:{labels:minas, datasets:[{label:"Planificado", data:plan},{label:"Suministrado", data:sumi}]}});
 
-  // Por fecha (plan vs sumi)
   const f = by(filtered,"FECHA");
-  const fechas = Array.from(f.keys()).filter(k=>k).sort((a,b)=>a.localeCompare(b));
+  const fechas = Array.from(f.keys()).filter(Boolean).sort((a,b)=>a.localeCompare(b));
   const planF = fechas.map(k=>f.get(k).reduce((a,r)=>a+num(r["PLANIFICADO"]),0));
   const sumiF = fechas.map(k=>f.get(k).reduce((a,r)=>a+num(r["SUMINISTRADO"]),0));
-  if (charts.fecha) charts.fecha.destroy();
-  charts.fecha = new Chart($("chFecha"), {
-    type:"line",
-    data:{ labels:fechas, datasets:[{label:"Planificado", data:planF},{label:"Suministrado", data:sumiF}] },
-    options:{ responsive:true }
-  });
+  if(charts.fecha) charts.fecha.destroy();
+  charts.fecha = new Chart($("chFecha"), {type:"line", data:{labels:fechas, datasets:[{label:"Planificado", data:planF},{label:"Suministrado", data:sumiF}]}});  
 }
 
 function renderTable(){
-  const tbl = $("tbl");
-  tbl.innerHTML = "";
-
-  // Head
-  const thead = document.createElement("thead");
-  const trh = document.createElement("tr");
-  for (const h of HEADERS){
-    const th = document.createElement("th");
-    th.textContent = h;
-    trh.appendChild(th);
-  }
-  thead.appendChild(trh);
-  tbl.appendChild(thead);
-
-  // Body
-  const tbody = document.createElement("tbody");
-  const rows = filtered.slice(0,500); // límite para rendimiento
-  for (const r of rows){
-    const tr = document.createElement("tr");
-    for (const h of HEADERS){
-      const td = document.createElement("td");
-      td.textContent = r[h] ?? "";
-      tr.appendChild(td);
-    }
+  const tbl=$("tbl"); tbl.innerHTML="";
+  const thead=document.createElement("thead");
+  const trh=document.createElement("tr");
+  for(const h of HEADERS){ const th=document.createElement("th"); th.textContent=h; trh.appendChild(th); }
+  thead.appendChild(trh); tbl.appendChild(thead);
+  const tbody=document.createElement("tbody");
+  for(const r of filtered.slice(0,500)){
+    const tr=document.createElement("tr");
+    for(const h of HEADERS){ const td=document.createElement("td"); td.textContent=r[h]??""; tr.appendChild(td); }
     tbody.appendChild(tr);
   }
   tbl.appendChild(tbody);
 }
 
-/** =======================
- *  MODAL + SAVE
- *  ======================= */
-function openModal(){
-  $("modalBg").style.display="flex";
-  $("saveErr").style.display="none";
-  $("saveOk").style.display="none";
-}
-function closeModal(){
-  $("modalBg").style.display="none";
-}
-
 function ymdToDMY(ymd){
-  if (!ymd) return "";
-  const [y,m,d] = ymd.split("-");
+  if(!ymd) return "";
+  const [y,m,d]=ymd.split("-");
   return `${d}-${m}-${y}`;
 }
 
@@ -623,56 +477,44 @@ async function saveRecord(){
     "SALA DE CONTROL": $("n_SALA").value
   };
 
-  // POST con text/plain => evita preflight (y por eso evita el “Error CORS”)
   try{
+    // text/plain + no-cors => evita preflight CORS
     await fetch(WEBAPP_URL, {
       method:"POST",
       mode:"no-cors",
-      headers: { "Content-Type":"text/plain;charset=utf-8" },
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
 
     $("saveOk").style.display="block";
 
-    // Recargar CSV luego de 2s
     setTimeout(async ()=>{
       try{
         const reg = await loadCSV(CSV_URL);
         allRows = reg.data;
-        buildFiltersFromCatalog();
+        buildDropdowns();
         applyFilters();
       }catch(e){
         console.error(e);
+        $("netErr").style.display="block";
       }
-    }, 2000);
+    }, 1500);
 
-  }catch(err){
-    console.error(err);
+  }catch(e){
+    console.error(e);
     $("saveErr").style.display="block";
+    $("saveErr").textContent = "❌ No se pudo conectar al WebApp. Revisa despliegue y permisos.";
   }
 }
 
-/** =======================
- *  EVENTS
- *  ======================= */
-$("btnNew").onclick = openModal;
-$("btnClose").onclick = closeModal;
-$("modalBg").addEventListener("click",(e)=>{ if(e.target.id==="modalBg") closeModal(); });
-
+$("btnNew").onclick = ()=>{ $("modalBg").style.display="flex"; };
+$("btnClose").onclick = ()=>{ $("modalBg").style.display="none"; };
+$("modalBg").addEventListener("click",(e)=>{ if(e.target.id==="modalBg") $("modalBg").style.display="none"; });
 $("btnSave").onclick = saveRecord;
-
-$("btnClear").onclick = ()=>{
-  $("q").value="";
-  for (const [id] of filterMap) $(id).value="";
-  applyFilters();
-};
-
+$("btnClear").onclick = ()=>{ $("q").value=""; for(const [id] of filterMap) $(id).value=""; applyFilters(); };
 $("btnPdf").onclick = ()=>window.print();
-
-$("q").addEventListener("input", ()=>applyFilters());
-for (const [id] of filterMap){
-  $(id).addEventListener("change", ()=>applyFilters());
-}
+$("q").addEventListener("input", applyFilters);
+for(const [id] of filterMap) $(id).addEventListener("change", applyFilters);
 
 boot();
 </script>
