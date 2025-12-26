@@ -1,690 +1,680 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard Xtreme – Hormigón / CNC</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard Seguimiento – Hormigón / CNC</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root{
-      --bg:#f4f6f8; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
-      --dark:#0b1020; --dark2:#111827; --accent:#ef4444; --accent2:#334155;
-      --shadow:0 10px 25px rgba(0,0,0,.06); --radius:14px;
+      --bg:#0b1220;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --ink:#0f172a;
+      --line:#e5e7eb;
+      --accent:#ef4444;
+      --accent2:#111827;
+      --shadow: 0 10px 30px rgba(0,0,0,.18);
+      --radius:18px;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
-    .topbar{background:linear-gradient(90deg,var(--dark),var(--dark2));color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,.12)}
-    .brand{display:flex;align-items:center;gap:12px;min-width:320px}
-    .logoWrap{width:190px;height:46px;display:flex;align-items:center;justify-content:flex-start;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:6px 10px}
-    .logoWrap img{max-height:34px;max-width:170px;display:block}
-    .titles .h1{font-weight:900;font-size:14px;line-height:1.15;letter-spacing:.2px}
-    .titles .h2{font-size:11px;color:rgba(255,255,255,.75);margin-top:2px;line-height:1.1}
-    .container{max-width:1400px;margin:14px auto 40px;padding:0 14px}
-
-    .filters,.filters2,.filters3{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:grid;gap:10px;align-items:end}
-    .filters{grid-template-columns:1.4fr repeat(5,1fr)}
-    .filters2{margin-top:10px;grid-template-columns:repeat(6,1fr)}
-    .filters3{margin-top:10px;grid-template-columns:repeat(6,1fr)}
-    .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:800;letter-spacing:.2px}
-    input[type="text"], select{width:100%;height:36px;border-radius:10px;border:1px solid var(--line);padding:0 10px;outline:none;background:#fff;font-size:13px}
-    input[type="text"]:focus,select:focus{border-color:#c7cdd6;box-shadow:0 0 0 3px rgba(148,163,184,.25)}
-
-    .btn{height:36px;padding:0 12px;border-radius:10px;border:1px solid transparent;cursor:pointer;font-weight:900;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
-    .btn.secondary{background:var(--accent2);color:#fff}
-    .btn.danger{background:var(--accent);color:#fff}
-    .btn:active{transform:translateY(1px)}
-
-    .grid-kpis{margin-top:12px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-    .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;position:relative;overflow:hidden;min-height:78px}
-    .kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.2px}
-    .kpi .value{font-size:22px;font-weight:900;margin-top:6px;line-height:1.05}
-    .kpi .sub{font-size:10px;color:var(--muted);margin-top:2px}
-    .kpi::after{content:"";position:absolute;right:-40px;top:-40px;width:110px;height:110px;border-radius:50%;background:rgba(239,68,68,.08)}
-
-    .grid-charts{margin-top:12px;display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
-    .grid-charts-2{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
-    .card h3{margin:0 0 8px;font-size:12px;letter-spacing:.2px;color:#0f172a;font-weight:900}
-    .chartbox{height:280px}
-
-    .table-wrap{margin-top:10px;overflow:auto;border-radius:var(--radius);border:1px solid var(--line)}
-    table{width:100%;border-collapse:collapse;min-width:1500px;background:#fff}
-    thead th{position:sticky;top:0;background:#0f172a;color:#fff;font-size:11px;text-align:left;padding:10px;z-index:1;white-space:nowrap}
-    tbody td{font-size:12px;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-    tbody tr:nth-child(even){background:#fafafa}
-    .footer-note{margin-top:10px;color:var(--muted);font-size:11px}
-
-    /* Modal */
-    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;padding:20px}
-    .modalCard{max-width:1100px;margin:40px auto;background:#fff;border-radius:14px;padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.22)}
-    .modalGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
-    .modalActions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
-    .msg{margin-top:10px;font-size:12px;color:#374151}
-
-    @media (max-width:1250px){
-      .filters{grid-template-columns:1fr 1fr}
-      .filters2,.filters3{grid-template-columns:1fr 1fr}
-      .grid-kpis{grid-template-columns:repeat(3,1fr)}
-      .grid-charts,.grid-charts-2{grid-template-columns:1fr}
-      .modalGrid{grid-template-columns:1fr}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#0f172a;color:#111}
+    .topbar{
+      background: linear-gradient(90deg,#0b1220,#111827);
+      color:#fff; padding:14px 18px; position:sticky; top:0; z-index:10;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
     }
-    @media print{
-      .btn,.modal{display:none!important}
-      body{background:#fff}
-      .card,.kpi{box-shadow:none}
+    .topwrap{display:flex;align-items:center;gap:14px;justify-content:space-between;max-width:1250px;margin:0 auto}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:170px;height:46px;border-radius:12px;background:#fff1;
+      display:flex;align-items:center;justify-content:center;border:1px solid #ffffff22;
+      overflow:hidden;
+    }
+    .logo img{width:100%;height:100%;object-fit:contain;background:#f8fafc}
+    .titleblock{line-height:1.15}
+    .titleblock h1{margin:0;font-size:16px;font-weight:800}
+    .titleblock p{margin:4px 0 0;font-size:12px;color:#cbd5e1}
+    .actions{display:flex;gap:10px;align-items:center}
+    .btn{
+      border:0; padding:10px 12px;border-radius:12px;font-weight:700;cursor:pointer;
+      background:#1f2937;color:#fff; display:flex; gap:8px; align-items:center;
+    }
+    .btn.red{background:var(--accent)}
+    .btn.outline{background:transparent;border:1px solid #ffffff33}
+    .wrap{max-width:1250px;margin:18px auto;padding:0 14px}
+    .panel{background:#ffffff10;border:1px solid #ffffff18;border-radius:var(--radius);padding:14px; color:#fff}
+    .filters{display:grid;grid-template-columns: 1.2fr repeat(5,1fr);gap:10px}
+    .filters2{margin-top:10px;display:grid;grid-template-columns: repeat(6,1fr);gap:10px}
+    .filters3{margin-top:10px;display:grid;grid-template-columns: repeat(6,1fr);gap:10px}
+
+    .fbox label{display:block;font-size:11px;color:#cbd5e1;font-weight:800;margin:0 0 6px}
+    input, select{
+      width:100%; padding:10px 10px;border-radius:12px;border:1px solid #ffffff22;
+      background:#0b1220;color:#fff;outline:none;
+    }
+    input::placeholder{color:#94a3b8}
+    .grid{
+      margin-top:14px;
+      display:grid;gap:12px;
+      grid-template-columns: repeat(12,1fr);
+    }
+    .card{
+      background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:14px;border:1px solid var(--line);
+    }
+    .metric{grid-column: span 2}
+    .metric h3{margin:0;font-size:11px;color:#6b7280;font-weight:900}
+    .metric .v{margin-top:8px;font-size:26px;font-weight:900;color:#0f172a}
+    .metric .s{margin-top:3px;font-size:11px;color:#6b7280}
+    .big{grid-column: span 7; min-height:340px}
+    .big2{grid-column: span 5; min-height:340px}
+    .row2{grid-column: span 6; min-height:320px}
+    .table{grid-column: span 12}
+    .card h2{margin:0 0 10px;font-size:13px;font-weight:900;color:#0f172a}
+    canvas{width:100% !important;height:260px !important}
+    .subnote{margin-top:8px;color:#6b7280;font-size:12px}
+    .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+    table{border-collapse:collapse;width:100%;min-width:1100px;background:#fff}
+    th,td{padding:10px;border-bottom:1px solid var(--line);font-size:12px;text-align:left}
+    th{background:#0f172a;color:#fff;position:sticky;top:0}
+    .muted{color:#6b7280}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#f1f5f9;font-weight:800;font-size:11px}
+    .warn{color:#ef4444;font-weight:800;margin-top:8px}
+    /* Modal */
+    .modalBackdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;
+      z-index:50;
+    }
+    .modal{
+      width:min(980px,92vw);background:#fff;border-radius:22px;box-shadow:var(--shadow);
+      border:1px solid var(--line);overflow:hidden;
+    }
+    .modalHead{
+      padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
+    }
+    .modalHead h3{margin:0;font-size:18px;font-weight:900;color:#0f172a}
+    .modalBody{padding:14px 16px}
+    .formGrid{display:grid;grid-template-columns: repeat(4,1fr);gap:10px}
+    .formGrid .full{grid-column: span 2}
+    .modalFoot{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+    .btn2{border:0;padding:10px 14px;border-radius:12px;font-weight:900;cursor:pointer}
+    .btn2.red{background:#ef4444;color:#fff}
+    .btn2.dark{background:#0f172a;color:#fff}
+    @media(max-width:1000px){
+      .filters{grid-template-columns: 1fr 1fr}
+      .filters2,.filters3{grid-template-columns: 1fr 1fr}
+      .metric{grid-column: span 6}
+      .big,.big2,.row2{grid-column: span 12}
+      .formGrid{grid-template-columns: 1fr 1fr}
+      .formGrid .full{grid-column: span 2}
     }
   </style>
 </head>
+
 <body>
   <div class="topbar">
-    <div class="brand">
-      <div class="logoWrap">
-        <img src="logo_Xtreme.png" alt="Xtreme Mining" />
+    <div class="topwrap">
+      <div class="brand">
+        <div class="logo">
+          <!-- Si quieres tu logo local, reemplaza src por "logo.png" -->
+          <img src="https://i.imgur.com/5bRjQz2.png" alt="Xtreme Logo"/>
+        </div>
+        <div class="titleblock">
+          <h1>Dashboard Seguimiento – Hormigón / CNC</h1>
+          <p>Xtreme Mining · Datos desde Google Sheets (CSV)</p>
+        </div>
       </div>
-      <div class="titles">
-        <div class="h1">Dashboard Seguimiento – Hormigón / CNC</div>
-        <div class="h2">Xtreme Mining • Datos desde Google Sheets (CSV)</div>
+      <div class="actions">
+        <button class="btn outline" id="btnNew">➕ Nuevo registro</button>
+        <button class="btn" id="btnClear">🧹 Limpiar filtros</button>
+        <button class="btn red" id="btnPdf">⬇ Exportar PDF</button>
       </div>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <button class="btn secondary" id="btnNew">➕ Nuevo registro</button>
-      <button class="btn secondary" id="btnReset">🧹 Limpiar filtros</button>
-      <button class="btn danger" id="btnPdf">⬇ Exportar PDF</button>
     </div>
   </div>
 
-  <div class="container">
-    <div class="filters">
-      <div class="field">
-        <label>Buscar (texto libre)</label>
-        <input id="q" type="text" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." />
+  <div class="wrap">
+    <div class="panel">
+      <div class="filters">
+        <div class="fbox">
+          <label>Buscar (texto libre)</label>
+          <input id="q" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'...">
+        </div>
+        <div class="fbox"><label>MES</label><select id="f_MES"></select></div>
+        <div class="fbox"><label>SEMANA</label><select id="f_SEMANA"></select></div>
+        <div class="fbox"><label>TURNO</label><select id="f_TURNO"></select></div>
+        <div class="fbox"><label>GRUPO</label><select id="f_GRUPO"></select></div>
+        <div class="fbox"><label>MINA</label><select id="f_MINA"></select></div>
       </div>
-      <div class="field"><label>MES</label><select id="f_mes"><option value="">Todos</option></select></div>
-      <div class="field"><label>SEMANA</label><select id="f_semana"><option value="">Todos</option></select></div>
-      <div class="field"><label>TURNO</label><select id="f_turno"><option value="">Todos</option></select></div>
-      <div class="field"><label>GRUPO</label><select id="f_grupo"><option value="">Todos</option></select></div>
-      <div class="field"><label>MINA</label><select id="f_mina"><option value="">Todos</option></select></div>
-    </div>
 
-    <div class="filters2">
-      <div class="field"><label>GRADO</label><select id="f_grado"><option value="">Todos</option></select></div>
-      <div class="field"><label>SUMINISTRO</label><select id="f_suministro"><option value="">Todos</option></select></div>
-      <div class="field"><label>SALA DE CONTROL</label><select id="f_sala"><option value="">Todos</option></select></div>
-      <div class="field"><label>LABOR_POSTURA</label><select id="f_labor"><option value="">Todos</option></select></div>
-      <div class="field"><label>CNC _NIVEL 2</label><select id="f_cnc2"><option value="">Todos</option></select></div>
-      <div class="field"><label>CNC _NIVEL 1</label><select id="f_cnc1"><option value="">Todos</option></select></div>
-    </div>
-
-    <div class="filters3">
-      <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"><option value="">Todos</option></select></div>
-      <div class="field"><label>FECHA</label><select id="f_fecha"><option value="">Todas</option></select></div>
-      <div class="field"><label>PLANIFICADO</label><select id="f_plan"><option value="">Todos</option></select></div>
-      <div class="field"><label>SUMINISTRADO</label><select id="f_sum"><option value="">Todos</option></select></div>
-      <div class="field"><label>PENDIENTE</label><select id="f_pend"><option value="">Todos</option></select></div>
-      <div class="field"><label>RECHAZADO</label><select id="f_rech"><option value="">Todos</option></select></div>
-    </div>
-
-    <div class="grid-kpis">
-      <div class="kpi"><div class="label">REGISTROS FILTRADOS</div><div class="value" id="k_total">0</div><div class="sub">Total visible según filtros</div></div>
-      <div class="kpi"><div class="label">m³ PLANIFICADO (suma)</div><div class="value" id="k_plan">0</div><div class="sub">Suma columna PLANIFICADO</div></div>
-      <div class="kpi"><div class="label">m³ SUMINISTRADO (suma)</div><div class="value" id="k_sumin">0</div><div class="sub">Suma columna SUMINISTRADO</div></div>
-      <div class="kpi"><div class="label">PENDIENTE (suma)</div><div class="value" id="k_pend">0</div><div class="sub">Suma columna PENDIENTE</div></div>
-      <div class="kpi"><div class="label">RECHAZADO (suma)</div><div class="value" id="k_rech">0</div><div class="sub">Suma columna RECHAZADO</div></div>
-      <div class="kpi"><div class="label">CNC _NIVEL 1 (TOP)</div><div class="value" id="k_top_cnc1">-</div><div class="sub">Causa principal</div></div>
-    </div>
-
-    <div class="grid-charts">
-      <div class="card"><h3>Incidentes por CNC _NIVEL 1 (TOP 10)</h3><div class="chartbox"><canvas id="chCnc1"></canvas></div></div>
-      <div class="card"><h3>Distribución por RESPONSABLE_CNC</h3><div class="chartbox"><canvas id="chResp"></canvas></div></div>
-    </div>
-
-    <div class="grid-charts-2">
-      <div class="card"><h3>m³ por MINA (Planificado vs Suministrado)</h3><div class="chartbox"><canvas id="chMina"></canvas></div></div>
-      <div class="card"><h3>m³ por FECHA (Planificado vs Suministrado)</h3><div class="chartbox"><canvas id="chFecha"></canvas></div></div>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <h3>Detalle (todas las columnas)</h3>
-      <div class="table-wrap">
-        <table id="tbl">
-          <thead><tr id="tblHead"></tr></thead>
-          <tbody id="tblBody"></tbody>
-        </table>
+      <div class="filters2">
+        <div class="fbox"><label>GRADO</label><select id="f_GRADO"></select></div>
+        <div class="fbox"><label>SUMINISTRO</label><select id="f_SUMINISTRO"></select></div>
+        <div class="fbox"><label>SALA DE CONTROL</label><select id="f_SALA"></select></div>
+        <div class="fbox"><label>LABOR_POSTURA</label><select id="f_LABOR"></select></div>
+        <div class="fbox"><label>CNC _NIVEL 2</label><select id="f_CNC2"></select></div>
+        <div class="fbox"><label>CNC _NIVEL 1</label><select id="f_CNC1"></select></div>
       </div>
-      <div class="footer-note" id="note">Cargando datos…</div>
+
+      <div class="filters3">
+        <div class="fbox"><label>RESPONSABLE_CNC</label><select id="f_RESP"></select></div>
+        <div class="fbox"><label>FECHA</label><select id="f_FECHA"></select></div>
+        <div class="fbox"><label>PLANIFICADO</label><select id="f_PLAN"></select></div>
+        <div class="fbox"><label>SUMINISTRADO</label><select id="f_SUMI"></select></div>
+        <div class="fbox"><label>PENDIENTE</label><select id="f_PEND"></select></div>
+        <div class="fbox"><label>RECHAZADO</label><select id="f_RECH"></select></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card metric"><h3>REGISTROS FILTRADOS</h3><div class="v" id="m_count">0</div><div class="s">Total visible según filtros</div></div>
+      <div class="card metric"><h3>m³ PLANIFICADO (suma)</h3><div class="v" id="m_plan">0</div><div class="s">Suma columna PLANIFICADO</div></div>
+      <div class="card metric"><h3>m³ SUMINISTRADO (suma)</h3><div class="v" id="m_sumi">0</div><div class="s">Suma columna SUMINISTRADO</div></div>
+      <div class="card metric"><h3>PENDIENTE (suma)</h3><div class="v" id="m_pend">0</div><div class="s">Suma columna PENDIENTE</div></div>
+      <div class="card metric"><h3>RECHAZADO (suma)</h3><div class="v" id="m_rech">0</div><div class="s">Suma columna RECHAZADO</div></div>
+      <div class="card metric"><h3>CNC NIVEL 1 (TOP)</h3><div class="v" id="m_top">-</div><div class="s">Causa principal</div></div>
+
+      <div class="card big">
+        <h2>Incidentes por CNC _NIVEL 1 (TOP 10)</h2>
+        <canvas id="chTop"></canvas>
+        <div class="subnote muted" id="noteTop"></div>
+      </div>
+
+      <div class="card big2">
+        <h2>Distribución por RESPONSABLE_CNC</h2>
+        <canvas id="chResp"></canvas>
+        <div class="subnote muted" id="noteResp"></div>
+      </div>
+
+      <div class="card row2">
+        <h2>m³ por MINA (Planificado vs Suministrado)</h2>
+        <canvas id="chMina"></canvas>
+      </div>
+
+      <div class="card row2">
+        <h2>m³ por FECHA (Planificado vs Suministrado)</h2>
+        <canvas id="chFecha"></canvas>
+      </div>
+
+      <div class="card table">
+        <h2>Detalle (todas las columnas)</h2>
+        <div class="tblwrap">
+          <table id="tbl"></table>
+        </div>
+        <div class="subnote muted" id="noteTbl"></div>
+        <div class="warn" id="netErr" style="display:none">❌ Error de red. Revisa tus links CSV y permisos.</div>
+      </div>
     </div>
   </div>
 
-  <div class="modal" id="modal">
-    <div class="modalCard">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-        <h3 style="margin:0;">➕ Nuevo Registro</h3>
-        <button class="btn danger" id="btnClose">Cerrar</button>
+  <!-- MODAL NUEVO REGISTRO -->
+  <div class="modalBackdrop" id="modalBg">
+    <div class="modal">
+      <div class="modalHead">
+        <h3>➕ Nuevo Registro</h3>
+        <button class="btn2 red" id="btnClose">Cerrar</button>
       </div>
-      <div class="modalGrid" id="modalGrid"></div>
-      <div class="modalActions">
-        <button class="btn secondary" id="btnSave">💾 Guardar</button>
+      <div class="modalBody">
+        <div class="formGrid">
+          <div class="fbox"><label>FECHA</label><input id="n_FECHA" type="date"></div>
+
+          <div class="fbox"><label>MES</label><select id="n_MES"></select></div>
+          <div class="fbox"><label>SEMANA</label><select id="n_SEMANA"></select></div>
+          <div class="fbox"><label>TURNO</label><select id="n_TURNO"></select></div>
+
+          <div class="fbox"><label>GRUPO</label><select id="n_GRUPO"></select></div>
+          <div class="fbox"><label>MINA</label><select id="n_MINA"></select></div>
+          <div class="fbox"><label>LABOR_POSTURA</label><select id="n_LABOR"></select></div>
+          <div class="fbox"><label>GRADO</label><select id="n_GRADO"></select></div>
+
+          <div class="fbox"><label>SUMINISTRO</label><select id="n_SUMINISTRO"></select></div>
+          <div class="fbox"><label>PLANIFICADO</label><input id="n_PLANIFICADO" placeholder="0"></div>
+          <div class="fbox"><label>SUMINISTRADO</label><input id="n_SUMINISTRADO" placeholder="0"></div>
+          <div class="fbox"><label>PENDIENTE</label><input id="n_PENDIENTE" placeholder="0"></div>
+
+          <div class="fbox"><label>RECHAZADO</label><input id="n_RECHAZADO" placeholder="0"></div>
+          <div class="fbox"><label>REAGENDADO</label><input id="n_REAGENDADO" placeholder="0"></div>
+          <div class="fbox"><label>ELIMINADO</label><input id="n_ELIMINADO" placeholder="0"></div>
+          <div class="fbox"><label>NÚMERO GUÍA</label><input id="n_GUIA" placeholder=""></div>
+
+          <div class="fbox"><label>HORA SALIDA PLANTA</label><input id="n_HSAL" placeholder="HH:MM"></div>
+          <div class="fbox"><label>HORA LLEGADA OBRA</label><input id="n_HLLE" placeholder="HH:MM"></div>
+          <div class="fbox"><label>HORA INICIO DESCARGA</label><input id="n_HINI" placeholder="HH:MM"></div>
+          <div class="fbox"><label>HORA TERMINO DESCARGA</label><input id="n_HTER" placeholder="HH:MM"></div>
+
+          <div class="fbox"><label>CNC _NIVEL 2</label><select id="n_CNC2"></select></div>
+          <div class="fbox"><label>CNC _NIVEL 1</label><select id="n_CNC1"></select></div>
+          <div class="fbox"><label>RESPONSABLE_CNC</label><select id="n_RESP"></select></div>
+          <div class="fbox"><label>SALA DE CONTROL</label><select id="n_SALA"></select></div>
+        </div>
+        <div class="warn" id="saveErr" style="display:none">❌ Error de red o CORS.</div>
+        <div class="subnote" id="saveOk" style="display:none;color:#16a34a;font-weight:900">✅ Enviado. Actualizando…</div>
       </div>
-      <div class="msg" id="saveMsg"></div>
+      <div class="modalFoot">
+        <button class="btn2 dark" id="btnSave">💾 Guardar</button>
+      </div>
     </div>
   </div>
 
 <script>
-  // ====== CONFIG ======
-  const CSV_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
-  const POST_URL = "https://script.google.com/macros/s/AKfycbwUcRcUiuiTa1J9V9irJdsjaQAcmU84GyADIRVDxEHrBf44psNU02TdTj22S1VFAhC5/exec"; // URL /exec de Apps Script
+/** =======================
+ *  CONFIG (TU CASO REAL)
+ *  ======================= */
+const SHEET_ID = "1nzr-ErhyIda2Di1zYQEQmGveyhBzg6xJkQTcLoDHOi4";
+const DATA_GID = 1538363274;      // HORMIGONES (tu gid confirmado)
+const CATALOG_GID = 1538363274;   // si tienes hoja "DATOS" con otro gid, cámbialo aquí
 
-  // Encabezados EXACTOS del CSV (como en tu sheet)
-  const RAW_COLS = [
-    "FECHA","MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
-    "PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO",
-    "NÚMERO GUÍA","HORA SALIDA PLANTA","HORA LLEGADA OBRA","HORA INICIO DESCARGA","HORA TERMINO DESCARGA",
-    "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${DATA_GID}`;
+const CATALOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${CATALOG_GID}`;
+
+// TU WEBAPP /exec
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxME6F9APLeHBS4HHtA7Kmhx4MmBmcd3M4vqR9O4aAKW1CLe-yIoz7XwCR9EnEUbV2A/exec";
+
+/** Encabezados del registro (deben coincidir con Apps Script) */
+const HEADERS = [
+  "FECHA", "MES", "SEMANA", "TURNO", "GRUPO", "MINA", "LABOR_POSTURA", "GRADO", "SUMINISTRO",
+  "PLANIFICADO", "SUMINISTRADO", "PENDIENTE", "RECHAZADO", "REAGENDADO", "ELIMINADO",
+  "NÚMERO GUÍA", "HORA SALIDA PLANTA", "HORA LLEGADA OBRA", "HORA INICIO DESCARGA", "HORA TERMINO DESCARGA",
+  "CNC _NIVEL 2", "CNC _NIVEL 1", "RESPONSABLE_CNC", "SALA DE CONTROL"
+];
+
+/** =======================
+ *  UTIL
+ *  ======================= */
+function parseCSV(text){
+  const rows = [];
+  let cur = "", inQ = false;
+  const out = [];
+  for (let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if (c === '"' && n === '"'){ cur+='"'; i++; continue; }
+    if (c === '"'){ inQ = !inQ; continue; }
+    if (c === '\n' && !inQ){ out.push(cur); cur=""; continue; }
+    cur += c;
+  }
+  out.push(cur);
+  for (const line of out){
+    if (!line.trim()) continue;
+    const cols = [];
+    let s="", q=false;
+    for (let i=0;i<line.length;i++){
+      const ch=line[i], nx=line[i+1];
+      if (ch === '"' && nx === '"'){ s+='"'; i++; continue; }
+      if (ch === '"'){ q=!q; continue; }
+      if (ch === ',' && !q){ cols.push(s); s=""; continue; }
+      s+=ch;
+    }
+    cols.push(s);
+    rows.push(cols);
+  }
+  return rows;
+}
+const uniq = arr => Array.from(new Set(arr.filter(v=>v!=="" && v!=null))).sort((a,b)=>String(a).localeCompare(String(b)));
+const num = v => {
+  if (v===null||v===undefined) return 0;
+  const s = String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"");
+  const n = parseFloat(s);
+  return isNaN(n)?0:n;
+};
+const by = (arr, key) => {
+  const m = new Map();
+  for (const r of arr){
+    const k = (r[key] ?? "").trim();
+    if (!m.has(k)) m.set(k, []);
+    m.get(k).push(r);
+  }
+  return m;
+};
+function topCount(arr, key, topN=10){
+  const m = new Map();
+  for (const r of arr){
+    const k = (r[key]??"").trim();
+    if (!k) continue;
+    m.set(k, (m.get(k)||0)+1);
+  }
+  return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]).slice(0,topN);
+}
+
+/** =======================
+ *  STATE
+ *  ======================= */
+let allRows = [];
+let filtered = [];
+let catalog = []; // para desplegables
+
+let charts = {};
+
+/** =======================
+ *  DOM
+ *  ======================= */
+const $ = (id)=>document.getElementById(id);
+const netErr = $("netErr");
+
+const filterMap = [
+  ["f_MES","MES"],["f_SEMANA","SEMANA"],["f_TURNO","TURNO"],["f_GRUPO","GRUPO"],["f_MINA","MINA"],
+  ["f_GRADO","GRADO"],["f_SUMINISTRO","SUMINISTRO"],["f_SALA","SALA DE CONTROL"],["f_LABOR","LABOR_POSTURA"],
+  ["f_CNC2","CNC _NIVEL 2"],["f_CNC1","CNC _NIVEL 1"],["f_RESP","RESPONSABLE_CNC"],
+  ["f_FECHA","FECHA"],["f_PLAN","PLANIFICADO"],["f_SUMI","SUMINISTRADO"],["f_PEND","PENDIENTE"],["f_RECH","RECHAZADO"],
+];
+
+function fillSelect(selId, values, allLabel="Todos"){
+  const sel = $(selId);
+  sel.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value=""; opt0.textContent=allLabel;
+  sel.appendChild(opt0);
+  for (const v of values){
+    const opt = document.createElement("option");
+    opt.value=v; opt.textContent=v;
+    sel.appendChild(opt);
+  }
+}
+
+/** =======================
+ *  LOAD DATA
+ *  ======================= */
+async function loadCSV(url){
+  const res = await fetch(url, { cache:"no-store" });
+  if (!res.ok) throw new Error("CSV fetch failed: " + res.status);
+  const text = await res.text();
+  const rows = parseCSV(text);
+  const headers = rows[0].map(h=>h.trim());
+  const data = rows.slice(1).map(cols=>{
+    const obj = {};
+    headers.forEach((h,i)=>obj[h]= (cols[i]??"").trim());
+    return obj;
+  });
+  return { headers, data };
+}
+
+async function boot(){
+  try{
+    netErr.style.display="none";
+
+    // 1) Catálogo (para desplegables)
+    const cat = await loadCSV(CATALOG_CSV_URL);
+    catalog = cat.data;
+
+    // 2) Registros
+    const reg = await loadCSV(CSV_URL);
+    allRows = reg.data;
+
+    // Si la hoja tiene solo encabezados (sin filas), igual tendremos catálogo para desplegables:
+    buildFiltersFromCatalog();
+    applyFilters();
+  }catch(err){
+    console.error(err);
+    netErr.style.display="block";
+    // Aun así intenta catálogo para que se vean desplegables
+    try{
+      const cat = await loadCSV(CATALOG_CSV_URL);
+      catalog = cat.data;
+      buildFiltersFromCatalog();
+      allRows = []; filtered = [];
+      renderAll();
+    }catch(e2){
+      console.error(e2);
+    }
+  }
+}
+
+/** Desplegables desde CATÁLOGO (aunque HORMIGONES esté vacío) */
+function buildFiltersFromCatalog(){
+  const src = (catalog && catalog.length) ? catalog : allRows;
+
+  fillSelect("f_MES", uniq(src.map(r=>r["MES"])));
+  fillSelect("f_SEMANA", uniq(src.map(r=>r["SEMANA"])));
+  fillSelect("f_TURNO", uniq(src.map(r=>r["TURNO"])));
+  fillSelect("f_GRUPO", uniq(src.map(r=>r["GRUPO"])));
+  fillSelect("f_MINA", uniq(src.map(r=>r["MINA"])));
+
+  fillSelect("f_GRADO", uniq(src.map(r=>r["GRADO"])));
+  fillSelect("f_SUMINISTRO", uniq(src.map(r=>r["SUMINISTRO"])));
+  fillSelect("f_SALA", uniq(src.map(r=>r["SALA DE CONTROL"])));
+  fillSelect("f_LABOR", uniq(src.map(r=>r["LABOR_POSTURA"])));
+
+  fillSelect("f_CNC2", uniq(src.map(r=>r["CNC _NIVEL 2"])));
+  fillSelect("f_CNC1", uniq(src.map(r=>r["CNC _NIVEL 1"])));
+  fillSelect("f_RESP", uniq(src.map(r=>r["RESPONSABLE_CNC"])));
+
+  fillSelect("f_FECHA", uniq(allRows.map(r=>r["FECHA"])), "Todas");
+  fillSelect("f_PLAN", uniq(allRows.map(r=>r["PLANIFICADO"])));
+  fillSelect("f_SUMI", uniq(allRows.map(r=>r["SUMINISTRADO"])));
+  fillSelect("f_PEND", uniq(allRows.map(r=>r["PENDIENTE"])));
+  fillSelect("f_RECH", uniq(allRows.map(r=>r["RECHAZADO"])));
+
+  // Modal: mismos catálogos
+  const selPairs = [
+    ["n_MES","MES"],["n_SEMANA","SEMANA"],["n_TURNO","TURNO"],["n_GRUPO","GRUPO"],["n_MINA","MINA"],
+    ["n_LABOR","LABOR_POSTURA"],["n_GRADO","GRADO"],["n_SUMINISTRO","SUMINISTRO"],
+    ["n_CNC2","CNC _NIVEL 2"],["n_CNC1","CNC _NIVEL 1"],["n_RESP","RESPONSABLE_CNC"],["n_SALA","SALA DE CONTROL"],
   ];
+  for (const [id,key] of selPairs){
+    fillSelect(id, uniq(src.map(r=>r[key])), "Seleccione...");
+  }
+}
 
-  // Mapeo interno para evitar problemas con espacios/tildes
-  const MAP = {
-    FECHA:"FECHA", MES:"MES", SEMANA:"SEMANA", TURNO:"TURNO", GRUPO:"GRUPO", MINA:"MINA",
-    LABOR_POSTURA:"LABOR_POSTURA", GRADO:"GRADO", SUMINISTRO:"SUMINISTRO",
-    PLANIFICADO:"PLANIFICADO", SUMINISTRADO:"SUMINISTRADO", PENDIENTE:"PENDIENTE", RECHAZADO:"RECHAZADO",
-    REAGENDADO:"REAGENDADO", ELIMINADO:"ELIMINADO",
-    "NÚMERO GUÍA":"NUMERO_GUIA",
-    "HORA SALIDA PLANTA":"HORA_SALIDA_PLANTA",
-    "HORA LLEGADA OBRA":"HORA_LLEGADA_OBRA",
-    "HORA INICIO DESCARGA":"HORA_INICIO_DESCARGA",
-    "HORA TERMINO DESCARGA":"HORA_TERMINO_DESCARGA",
-    "CNC _NIVEL 2":"CNC_NIVEL_2",
-    "CNC _NIVEL 1":"CNC_NIVEL_1",
-    RESPONSABLE_CNC:"RESPONSABLE_CNC",
-    "SALA DE CONTROL":"SALA_DE_CONTROL"
+/** =======================
+ *  FILTER & RENDER
+ *  ======================= */
+function applyFilters(){
+  const q = $("q").value.trim().toLowerCase();
+  filtered = allRows.filter(r=>{
+    if (q){
+      const blob = Object.values(r).join(" ").toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    for (const [selId, col] of filterMap){
+      const v = $(selId).value;
+      if (v && String((r[col]??"")).trim() !== v) return false;
+    }
+    return true;
+  });
+  renderAll();
+}
+
+function renderAll(){
+  // métricas
+  $("m_count").textContent = filtered.length;
+  $("m_plan").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["PLANIFICADO"]),0)).toLocaleString("es-CL");
+  $("m_sumi").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["SUMINISTRADO"]),0)).toLocaleString("es-CL");
+  $("m_pend").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["PENDIENTE"]),0)).toLocaleString("es-CL");
+  $("m_rech").textContent = Math.round(filtered.reduce((a,r)=>a+num(r["RECHAZADO"]),0)).toLocaleString("es-CL");
+
+  // TOP CNC1
+  const top = topCount(filtered, "CNC _NIVEL 1", 1);
+  $("m_top").textContent = top.length ? top[0][0] : "-";
+
+  renderCharts();
+  renderTable();
+
+  $("noteTbl").textContent = allRows.length
+    ? ""
+    : "CSV sin filas (solo encabezados). Igual puedes ingresar registros con 'Nuevo registro'.";
+}
+
+function renderCharts(){
+  // Top CNC1
+  const top10 = topCount(filtered, "CNC _NIVEL 1", 10);
+  const labels = top10.map(x=>x[0]);
+  const vals = top10.map(x=>x[1]);
+
+  if (charts.top) charts.top.destroy();
+  charts.top = new Chart($("chTop"), {
+    type:"bar",
+    data:{ labels, datasets:[{ label:"Cantidad", data:vals }] },
+    options:{ responsive:true, plugins:{ legend:{ display:false } } }
+  });
+  $("noteTop").textContent = top10.length ? `Mostrando TOP ${top10.length}` : "Sin datos con los filtros actuales.";
+
+  // Responsable
+  const resp = topCount(filtered, "RESPONSABLE_CNC", 20);
+  if (charts.resp) charts.resp.destroy();
+  charts.resp = new Chart($("chResp"), {
+    type:"doughnut",
+    data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
+    options:{ responsive:true }
+  });
+  $("noteResp").textContent = resp.length ? `Responsables: ${resp.length}` : "Sin datos.";
+
+  // Por mina (plan vs sumi)
+  const m = by(filtered,"MINA");
+  const minas = Array.from(m.keys()).filter(k=>k).sort((a,b)=>a.localeCompare(b));
+  const plan = minas.map(k=>m.get(k).reduce((a,r)=>a+num(r["PLANIFICADO"]),0));
+  const sumi = minas.map(k=>m.get(k).reduce((a,r)=>a+num(r["SUMINISTRADO"]),0));
+  if (charts.mina) charts.mina.destroy();
+  charts.mina = new Chart($("chMina"), {
+    type:"bar",
+    data:{ labels:minas, datasets:[{label:"Planificado", data:plan},{label:"Suministrado", data:sumi}] },
+    options:{ responsive:true }
+  });
+
+  // Por fecha (plan vs sumi)
+  const f = by(filtered,"FECHA");
+  const fechas = Array.from(f.keys()).filter(k=>k).sort((a,b)=>a.localeCompare(b));
+  const planF = fechas.map(k=>f.get(k).reduce((a,r)=>a+num(r["PLANIFICADO"]),0));
+  const sumiF = fechas.map(k=>f.get(k).reduce((a,r)=>a+num(r["SUMINISTRADO"]),0));
+  if (charts.fecha) charts.fecha.destroy();
+  charts.fecha = new Chart($("chFecha"), {
+    type:"line",
+    data:{ labels:fechas, datasets:[{label:"Planificado", data:planF},{label:"Suministrado", data:sumiF}] },
+    options:{ responsive:true }
+  });
+}
+
+function renderTable(){
+  const tbl = $("tbl");
+  tbl.innerHTML = "";
+
+  // Head
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+  for (const h of HEADERS){
+    const th = document.createElement("th");
+    th.textContent = h;
+    trh.appendChild(th);
+  }
+  thead.appendChild(trh);
+  tbl.appendChild(thead);
+
+  // Body
+  const tbody = document.createElement("tbody");
+  const rows = filtered.slice(0,500); // límite para rendimiento
+  for (const r of rows){
+    const tr = document.createElement("tr");
+    for (const h of HEADERS){
+      const td = document.createElement("td");
+      td.textContent = r[h] ?? "";
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  tbl.appendChild(tbody);
+}
+
+/** =======================
+ *  MODAL + SAVE
+ *  ======================= */
+function openModal(){
+  $("modalBg").style.display="flex";
+  $("saveErr").style.display="none";
+  $("saveOk").style.display="none";
+}
+function closeModal(){
+  $("modalBg").style.display="none";
+}
+
+function ymdToDMY(ymd){
+  if (!ymd) return "";
+  const [y,m,d] = ymd.split("-");
+  return `${d}-${m}-${y}`;
+}
+
+async function saveRecord(){
+  $("saveErr").style.display="none";
+  $("saveOk").style.display="none";
+
+  const payload = {
+    "FECHA": ymdToDMY($("n_FECHA").value),
+    "MES": $("n_MES").value,
+    "SEMANA": $("n_SEMANA").value,
+    "TURNO": $("n_TURNO").value,
+    "GRUPO": $("n_GRUPO").value,
+    "MINA": $("n_MINA").value,
+    "LABOR_POSTURA": $("n_LABOR").value,
+    "GRADO": $("n_GRADO").value,
+    "SUMINISTRO": $("n_SUMINISTRO").value,
+    "PLANIFICADO": $("n_PLANIFICADO").value,
+    "SUMINISTRADO": $("n_SUMINISTRADO").value,
+    "PENDIENTE": $("n_PENDIENTE").value,
+    "RECHAZADO": $("n_RECHAZADO").value,
+    "REAGENDADO": $("n_REAGENDADO").value,
+    "ELIMINADO": $("n_ELIMINADO").value,
+    "NÚMERO GUÍA": $("n_GUIA").value,
+    "HORA SALIDA PLANTA": $("n_HSAL").value,
+    "HORA LLEGADA OBRA": $("n_HLLE").value,
+    "HORA INICIO DESCARGA": $("n_HINI").value,
+    "HORA TERMINO DESCARGA": $("n_HTER").value,
+    "CNC _NIVEL 2": $("n_CNC2").value,
+    "CNC _NIVEL 1": $("n_CNC1").value,
+    "RESPONSABLE_CNC": $("n_RESP").value,
+    "SALA DE CONTROL": $("n_SALA").value
   };
 
-  // ====== Estado ======
-  let rawRows = [];
-  let viewRows = [];
-  let charts = {};
+  // POST con text/plain => evita preflight (y por eso evita el “Error CORS”)
+  try{
+    await fetch(WEBAPP_URL, {
+      method:"POST",
+      mode:"no-cors",
+      headers: { "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
 
-  // ====== Desplegables del Modal (Nuevo Registro) ======
-  const MODAL_DROPDOWNS = new Set([
-    "MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
-    "CNC_NIVEL_2","CNC_NIVEL_1","RESPONSABLE_CNC","SALA_DE_CONTROL"
-  ]);
+    $("saveOk").style.display="block";
 
-  let modalOptions = {};
-// ====== CATALOGO FIJO (para llenar desplegables aunque no haya registros) ======
-const CATALOG = {
-  GRADO: [
-    "SH-22,5 NORMAL","SH-22,5 FIBRA","SH-300","HN-70","HN-30","HN-40","HN-50","HB-30","HB-40","HB-50","GN-25","HB-70","GN-65"
-  ],
-  SUMINISTRO: ["En Planta","En Obra",""],
-  TURNO: ["1","2","A","B","C",""],
-  GRUPO: ["Grupo_1","Grupo_2","Grupo_3","Grupo_4",""],
-  SALA_DE_CONTROL: [
-    "Carlos Salazar Rodriguez","Martin Arriaza Vidal","Alvaro Coloma Toledo","Marcelo Henriquez Ortiz",""
-  ],
-  MINA: [
-    "ESMERALDA","ESMERALDA_ACARREO","ESMERALDA_PANEL_1","ESMERALDA_PANEL_2",
-    "DIABLO_REGIMIENTO","PACIFICO_SUPERIOR","PILAR_NORTE","PANEL_RENO","RENO",
-    "RRNN","DACITA","PANEL_INVARIANTE","TENIENTE_6","TENIENTE_7","TENIENTE_8",
-    "ANDESITA","COLÓN","ADIT_71"
-  ],
-  LABOR_POSTURA: [
-    "C-49 IZ","C-55 IZ","C-25 Z-44 HW","C-25 Z-45 HW","C-49 OP-48","C-23 Z-0",
-    "C-23 Z-42 FW","C-23 Z-42 HW","C-2 Z-10/9","C-2 Z-5/6","C-0 SOC. SUR A Z-10",
-    "OP-27 UH","OP-26 Pto 22-A","OP-26 Pto 22-B","OP-26 Pto 24","OP-26 Pto 23",
-    "OP-27 Pto 20-A","OP-27 Pto 20-B","OP-27 Pto 21-A","OP-27 Pto 21-B","OP-27 Pto 22-A",
-    "Pilar Bz 24-1S (Pto 1)","Soc. Hw 1 (Pto 2)","Soc. Hw 1 / Acceso Sur Loop (Pto 3)",
-    "Acceso Sur Loop (Pto 4)","Soc. Hw 1 / Loop Norte (Pto 5)","Loop Fw A (Pto 6)","Loop Fw B (Pto 7)",
-    "CX 1S/2S con Loop 1S (Pto 8)","Loop Hw / CX Loop 1S/2S (Pto 9)","Loop Hw / Adit 65 (Pto 10)",
-    "Loop Hw entre P4 y P5 (Pto 11)","Fr Inv descarga Dacita (Pto 12)","CAV acceso descarga CH DT (Pto 13)",
-    "Galería curva CH DT (Pto 14)","OP 24","EDIFICIO 132"
-  ],
-  CNC_NIVEL_2: [
-    "Interferencia por derrumbe","Comunicación","Trabajos en ruta","Traslado personal DET",
-    "ruta no apta para el ingreso de mixer","Simulacros","Ventana horaria","Restricción por evento climatico",
-    "Movilizaciones","Visita Gerencia GSYS","Cambio de prioridad","Sin Autorizacion DET","APP no disponible",
-    "Planta sin comunicación","Sismología","Ruta marina","Cenefa","Trabajo otras empresas","Equipos en área",
-    "Marina en postura","Liberación de gases","Energía","Agua","Cancha no lista","Trabajos otras disciplinas",
-    "Cancelacion Suministro","Pedido Fuera de Programa","Confirmacion fuera de horario",
-    "Indisponibilidad de mixer propio","Falta operador","Falta personal OOCC","Equipo shortcrete F/S","Bomba F/S",
-    "Problemas con escolta","Lento retorno de equipos","Mixer Retrasado","Sin retorno de mixer a planta",
-    "Capacidad maxima equipo","Mezcladores","Postura rematada con menos m3","Cambio de Postura",
-    "Suspension Administrativa","Planificación errónea","Problemas en la calidad","Falta suministros","Falla planta",
-    "Incumplimiento horario APP","Equipo F/S Xtreme","Tarjeta Verde","Somnolencia",
-    "Proceso de carguío tarda mas de lo programado","Espera equipo en planta"
-  ],
-  CNC_NIVEL_1: [
-    "Ruta Codelco","Clima","Personal","Prioridades","APP no disponible","Comunicación","Sismología","Ruta",
-    "Interferencia empresas","Liberación de gases","Servicios","Frente no preparada","Pedido",
-    "Indisponibilidad de mixer propio","Dotación no disponible","Equipos","Postura","Suministro",
-    "Planificación errónea","Calidad","Indisponibilidad de planta","Incumplimiento horario APP","Equipo F/S",
-    "Planta","Falla operacional","Espera equipo en planta"
-  ],
-  RESPONSABLE_CNC: ["CODELCO","INTERNA","SUMINISTRO"]
+    // Recargar CSV luego de 2s
+    setTimeout(async ()=>{
+      try{
+        const reg = await loadCSV(CSV_URL);
+        allRows = reg.data;
+        buildFiltersFromCatalog();
+        applyFilters();
+      }catch(e){
+        console.error(e);
+      }
+    }, 2000);
+
+  }catch(err){
+    console.error(err);
+    $("saveErr").style.display="block";
+  }
+}
+
+/** =======================
+ *  EVENTS
+ *  ======================= */
+$("btnNew").onclick = openModal;
+$("btnClose").onclick = closeModal;
+$("modalBg").addEventListener("click",(e)=>{ if(e.target.id==="modalBg") closeModal(); });
+
+$("btnSave").onclick = saveRecord;
+
+$("btnClear").onclick = ()=>{
+  $("q").value="";
+  for (const [id] of filterMap) $(id).value="";
+  applyFilters();
 };
 
-function autoFillDateFields(dateStr){
-  if (!dateStr) return;
+$("btnPdf").onclick = ()=>window.print();
 
-  const d = new Date(dateStr + "T00:00:00");
-
-  // MES (nombre)
-  const meses = [
-    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
-  ];
-  const mes = meses[d.getMonth()];
-
-  // SEMANA ISO
-  const week = getISOWeek(d);
-
-  // Setear valores si existen
-  const mesInput = document.getElementById("i_MES");
-  const semanaInput = document.getElementById("i_SEMANA");
-
-  if (mesInput) mesInput.value = mes;
-  if (semanaInput) semanaInput.value = week;
+$("q").addEventListener("input", ()=>applyFilters());
+for (const [id] of filterMap){
+  $(id).addEventListener("change", ()=>applyFilters());
 }
 
-// Semana ISO (estándar)
-function getISOWeek(date) {
-  const tmp = new Date(date.valueOf());
-  const dayNr = (date.getDay() + 6) % 7;
-  tmp.setDate(tmp.getDate() - dayNr + 3);
-  const firstThursday = tmp.valueOf();
-  tmp.setMonth(0, 1);
-  if (tmp.getDay() !== 4) {
-    tmp.setMonth(0, 1 + ((4 - tmp.getDay()) + 7) % 7);
-  }
-  return 1 + Math.ceil((firstThursday - tmp) / 604800000);
-}
-
-  // ====== Helpers ======
-  function csvParse(text){
-    let cur="", inQ=false;
-    const out=[[]];
-    for(let i=0;i<text.length;i++){
-      const ch=text[i], nxt=text[i+1];
-      if(ch === '"' && nxt === '"'){cur+='"'; i++; continue;}
-      if(ch === '"'){inQ=!inQ; continue;}
-      if(!inQ && ch===','){out[out.length-1].push(cur); cur=""; continue;}
-      if(!inQ && (ch==='\n' || ch==='\r')){
-        if(ch==='\r' && nxt==='\n') i++;
-        out[out.length-1].push(cur); cur="";
-        out.push([]); continue;
-      }
-      cur+=ch;
-    }
-    out[out.length-1].push(cur);
-    return out.filter(r => r.length>1 || (r[0] && r[0].trim()!==""));
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
-
-  function uniq(arr){
-    return [...new Set(arr.filter(v => v!==null && v!==undefined && String(v).trim()!==""))]
-      .map(v => String(v).trim())
-      .sort((a,b)=>a.localeCompare(b,"es"));
-  }
-
-  function normalizeNumber(x){
-    if (x === null || x === undefined) return 0;
-    let s = String(x).trim();
-    if (!s) return 0;
-    s = s.replace(/\s+/g,"");
-    if (s.includes(",")) s = s.replace(/\./g,"").replace(",",".");
-    const n = Number(s);
-    return Number.isFinite(n) ? n : 0;
-  }
-
-  function sumCol(rows, key){ return rows.reduce((a,r)=>a + normalizeNumber(r[key]), 0); }
-
-  function countBy(rows, key){
-    const m=new Map();
-    rows.forEach(r=>{
-      const v=(r[key] ?? "").toString().trim() || "(vacío)";
-      m.set(v, (m.get(v)||0)+1);
-    });
-    return [...m.entries()].sort((a,b)=>b[1]-a[1]);
-  }
-
-  function topLabel(pairs){ return pairs.length ? pairs[0][0] : "-"; }
-
-  function setOptions(selectEl, values){
-    const current = selectEl.value;
-    selectEl.innerHTML = `<option value="">Todos</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
-    if (values.includes(current)) selectEl.value = current;
-  }
-
-  function normalizeRow(objOriginal){
-    const out = {};
-    for (const rawKey of Object.keys(objOriginal)){
-      const internal = MAP[rawKey] || rawKey;
-      out[internal] = (objOriginal[rawKey] ?? "").toString().trim();
-    }
-    return out;
-  }
-
-  // ====== Filtros ======
-  function fillDropdowns(){
-    setOptions(document.getElementById("f_fecha"), uniq(rawRows.map(r=>r.FECHA)));
-    setOptions(document.getElementById("f_mes"), uniq(rawRows.map(r=>r.MES)));
-    setOptions(document.getElementById("f_semana"), uniq(rawRows.map(r=>r.SEMANA)));
-    setOptions(document.getElementById("f_turno"), uniq(rawRows.map(r=>r.TURNO)));
-    setOptions(document.getElementById("f_grupo"), uniq(rawRows.map(r=>r.GRUPO)));
-    setOptions(document.getElementById("f_mina"), uniq(rawRows.map(r=>r.MINA)));
-    setOptions(document.getElementById("f_grado"), uniq(rawRows.map(r=>r.GRADO)));
-    setOptions(document.getElementById("f_suministro"), uniq(rawRows.map(r=>r.SUMINISTRO)));
-    setOptions(document.getElementById("f_sala"), uniq(rawRows.map(r=>r.SALA_DE_CONTROL)));
-    setOptions(document.getElementById("f_labor"), uniq(rawRows.map(r=>r.LABOR_POSTURA)));
-    setOptions(document.getElementById("f_cnc2"), uniq(rawRows.map(r=>r.CNC_NIVEL_2)));
-    setOptions(document.getElementById("f_cnc1"), uniq(rawRows.map(r=>r.CNC_NIVEL_1)));
-    setOptions(document.getElementById("f_resp"), uniq(rawRows.map(r=>r.RESPONSABLE_CNC)));
-
-    setOptions(document.getElementById("f_plan"), uniq(rawRows.map(r=>r.PLANIFICADO)));
-    setOptions(document.getElementById("f_sum"), uniq(rawRows.map(r=>r.SUMINISTRADO)));
-    setOptions(document.getElementById("f_pend"), uniq(rawRows.map(r=>r.PENDIENTE)));
-    setOptions(document.getElementById("f_rech"), uniq(rawRows.map(r=>r.RECHAZADO)));
-  }
-
-  function getFilters(){
-    return {
-      q: document.getElementById("q").value.trim().toLowerCase(),
-      FECHA: document.getElementById("f_fecha").value,
-      MES: document.getElementById("f_mes").value,
-      SEMANA: document.getElementById("f_semana").value,
-      TURNO: document.getElementById("f_turno").value,
-      GRUPO: document.getElementById("f_grupo").value,
-      MINA: document.getElementById("f_mina").value,
-      GRADO: document.getElementById("f_grado").value,
-      SUMINISTRO: document.getElementById("f_suministro").value,
-      SALA_DE_CONTROL: document.getElementById("f_sala").value,
-      LABOR_POSTURA: document.getElementById("f_labor").value,
-      CNC_NIVEL_2: document.getElementById("f_cnc2").value,
-      CNC_NIVEL_1: document.getElementById("f_cnc1").value,
-      RESPONSABLE_CNC: document.getElementById("f_resp").value,
-      PLANIFICADO: document.getElementById("f_plan").value,
-      SUMINISTRADO: document.getElementById("f_sum").value,
-      PENDIENTE: document.getElementById("f_pend").value,
-      RECHAZADO: document.getElementById("f_rech").value,
-    };
-  }
-
-  function applyFilters(){
-    const f = getFilters();
-    viewRows = rawRows.filter(r=>{
-      for (const k of Object.keys(f)){
-        if (k==="q") continue;
-        if (f[k] && String(r[k] ?? "").trim() !== f[k]) return false;
-      }
-      if (f.q){
-        const blob = RAW_COLS.map(rc => (r[MAP[rc] || rc] ?? "")).join(" ").toLowerCase();
-        if (!blob.includes(f.q)) return false;
-      }
-      return true;
-    });
-    renderKPIs(); renderCharts(); renderTable();
-    document.getElementById("note").textContent =
-      `Registros: ${viewRows.length.toLocaleString("es-CL")} (filtrados) • Fuente: Google Sheets (CSV)`;
-  }
-
-  // ====== KPIs ======
-  function renderKPIs(){
-    document.getElementById("k_total").textContent = viewRows.length.toLocaleString("es-CL");
-    document.getElementById("k_plan").textContent = sumCol(viewRows, "PLANIFICADO").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_sumin").textContent = sumCol(viewRows, "SUMINISTRADO").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_pend").textContent = sumCol(viewRows, "PENDIENTE").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_rech").textContent = sumCol(viewRows, "RECHAZADO").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_top_cnc1").textContent = topLabel(countBy(viewRows,"CNC_NIVEL_1"));
-  }
-
-  // ====== Charts ======
-  function makeOrUpdateChart(canvasId, chartInstance, config){
-    const ctx = document.getElementById(canvasId);
-    if (chartInstance){
-      chartInstance.config.type = config.type;
-      chartInstance.data = config.data;
-      chartInstance.options = config.options;
-      chartInstance.update();
-      return chartInstance;
-    }
-    return new Chart(ctx, config);
-  }
-
-  function groupSum(rows, groupKey, sumKeys){
-    const m = new Map();
-    rows.forEach(r=>{
-      const g = (r[groupKey] ?? "").toString().trim() || "(vacío)";
-      if (!m.has(g)) m.set(g, {g, sums: sumKeys.map(()=>0)});
-      const obj = m.get(g);
-      sumKeys.forEach((sk, idx)=> obj.sums[idx] += normalizeNumber(r[sk]));
-    });
-    return [...m.values()].sort((a,b)=> (b.sums[0]+b.sums[1]) - (a.sums[0]+a.sums[1]));
-  }
-
-  function renderCharts(){
-    const cnc1 = countBy(viewRows, "CNC_NIVEL_1").slice(0, 10);
-    charts.cnc1 = makeOrUpdateChart("chCnc1", charts.cnc1, {
-      type:"bar",
-      data:{ labels: cnc1.map(x=>x[0]), datasets:[{ label:"Cantidad", data: cnc1.map(x=>x[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
-    });
-
-    const resp = countBy(viewRows, "RESPONSABLE_CNC");
-    charts.resp = makeOrUpdateChart("chResp", charts.resp, {
-      type:"doughnut",
-      data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
-    });
-
-    const minaAgg = groupSum(viewRows, "MINA", ["PLANIFICADO","SUMINISTRADO"]).slice(0, 12);
-    charts.mina = makeOrUpdateChart("chMina", charts.mina, {
-      type:"bar",
-      data:{ labels: minaAgg.map(x=>x.g), datasets:[{ label:"Planificado", data: minaAgg.map(x=>x.sums[0]) }, { label:"Suministrado", data: minaAgg.map(x=>x.sums[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
-    });
-
-    const fechaAgg = groupSum(viewRows, "FECHA", ["PLANIFICADO","SUMINISTRADO"]).slice(0, 14);
-    charts.fecha = makeOrUpdateChart("chFecha", charts.fecha, {
-      type:"line",
-      data:{ labels: fechaAgg.map(x=>x.g), datasets:[{ label:"Planificado", data: fechaAgg.map(x=>x.sums[0]), tension:.25 }, { label:"Suministrado", data: fechaAgg.map(x=>x.sums[1]), tension:.25 }] },
-      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
-    });
-  }
-
-  // ====== Tabla ======
-  function renderTable(){
-    document.getElementById("tblHead").innerHTML = RAW_COLS.map(c=>`<th>${escapeHtml(c)}</th>`).join("");
-    const maxRows = 700;
-    const rows = viewRows.slice(0, maxRows);
-    document.getElementById("tblBody").innerHTML = rows.map(r=>{
-      return "<tr>" + RAW_COLS.map(rawC=>{
-        const internal = MAP[rawC] || rawC;
-        const val = (r[internal] ?? "").toString().trim();
-        return `<td title="${escapeHtml(val)}">${escapeHtml(val)}</td>`;
-      }).join("") + "</tr>";
-    }).join("");
-  }
-
-  // ====== Modal (Nuevo Registro) con DESPLEGABLES ======
-  function buildModalOptions(){
-  const pick = (k) => uniq(rawRows.map(r => (r[k] ?? "").toString().trim()));
-
-  // Si hay datos reales en el CSV, usa esos. Si no, usa el CATALOG fijo.
-  const fromDataOrCatalog = (k) => {
-    const fromData = pick(k);
-    if (fromData.length) return fromData;
-    return (CATALOG[k] || []).filter(v => String(v).trim() !== "");
-  };
-
-  modalOptions = {
-    MES: fromDataOrCatalog("MES"),
-    SEMANA: fromDataOrCatalog("SEMANA"),
-    TURNO: fromDataOrCatalog("TURNO"),
-    GRUPO: fromDataOrCatalog("GRUPO"),
-    MINA: fromDataOrCatalog("MINA"),
-    LABOR_POSTURA: fromDataOrCatalog("LABOR_POSTURA"),
-    GRADO: fromDataOrCatalog("GRADO"),
-    SUMINISTRO: fromDataOrCatalog("SUMINISTRO"),
-    CNC_NIVEL_2: fromDataOrCatalog("CNC_NIVEL_2"),
-    CNC_NIVEL_1: fromDataOrCatalog("CNC_NIVEL_1"),
-    RESPONSABLE_CNC: fromDataOrCatalog("RESPONSABLE_CNC"),
-    SALA_DE_CONTROL: fromDataOrCatalog("SALA_DE_CONTROL"),
-  };
-}
-
-  function buildModalForm(){
-    const grid = document.getElementById("modalGrid");
-    grid.innerHTML = RAW_COLS.map(c=>{
-      const internal = MAP[c] || c;
-      const id = "i_" + internal.replace(/[^A-Z0-9_]/gi,"_");
-
-// FECHA como selector calendario
-if (internal === "FECHA") {
-  return `
-    <div class="field">
-      <label>FECHA</label>
-      <input id="${id}" type="date" onchange="autoFillDateFields(this.value)" />
-    </div>
-  `;
-}
-
-      if (MODAL_DROPDOWNS.has(internal)){
-        const opts = (modalOptions[internal] || []);
-        const optionsHtml = `<option value="">Seleccione…</option>` +
-          opts.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
-        return `<div class="field"><label>${escapeHtml(c)}</label><select id="${id}">${optionsHtml}</select></div>`;
-      }
-
-      return `<div class="field"><label>${escapeHtml(c)}</label><input id="${id}" type="text" placeholder="${escapeHtml(c)}" /></div>`;
-    }).join("");
-  }
-
-function openModal(){
-  const grid = document.getElementById("modalGrid");
-
-  // Si por cualquier motivo el CSV no cargó, igual arma el formulario
-  if (!grid.innerHTML || grid.innerHTML.trim() === "") {
-    try { buildModalOptions(); } catch(e) {}
-    buildModalForm();
-  }
-
-  document.getElementById("saveMsg").textContent = "";
-  document.getElementById("modal").style.display = "block";
-}
-
-  function closeModal(){ document.getElementById("modal").style.display="none"; }
-
-  function getFormPayload(){
-    const payload = {};
-    RAW_COLS.forEach(c=>{
-      const internal = MAP[c] || c;
-      const id = "i_" + internal.replace(/[^A-Z0-9_]/gi,"_");
-      payload[c] = (document.getElementById(id)?.value ?? "").toString().trim();
-    });
-    return payload;
-  }
-
-  async function saveRecord(){
-    const msgEl = document.getElementById("saveMsg");
-    if (!POST_URL || POST_URL.includes("PEGA_AQUI")){
-      msgEl.textContent = "⚠️ Falta configurar POST_URL (Apps Script Web App).";
-      return;
-    }
-    msgEl.textContent = "Guardando…";
-    const payload = getFormPayload();
-
-    try{
-      const res = await fetch(POST_URL, {
-  method: "POST",
-  mode: "cors",
-  headers: { "Content-Type": "text/plain;charset=utf-8" }, // <- clave
-  body: JSON.stringify(payload)
-})
-.then(r => r.json())
-.then(res => {
-  if (!res.ok) throw new Error(res.error || "Error al guardar");
-  // éxito:
-  showSaveOk("Guardado OK ✅");
-  closeModal();
-  loadData(); // recarga
-})
-.catch(err => {
-  console.error(err);
-  showSaveError("Error de red o CORS (bloqueo del navegador / permisos).");
-});
-
-  // ====== Carga ======
-  async function loadData(){
-    document.getElementById("note").textContent = "Cargando CSV…";
-    const res = await fetch(CSV_URL, { cache:"no-store" });
-    if (!res.ok) throw new Error("No se pudo cargar el CSV.");
-    const text = await res.text();
-    const grid = csvParse(text);
-    if (grid.length < 2) {
-  rawRows = [];
-  fillDropdowns();
-  buildModalOptions();
-  buildModalForm();
-  applyFilters();
-  document.getElementById("note").textContent = "CSV sin filas (solo encabezados). Igual puedes ingresar registros con 'Nuevo registro'.";
-  return;
-}
-
-    const header = grid[0].map(h => h.trim());
-    const missing = RAW_COLS.filter(c => !header.includes(c));
-    if (missing.length){
-      document.getElementById("note").textContent = `Faltan columnas en CSV: ${missing.join(", ")}`;
-      console.warn("Encabezados detectados:", header);
-      return;
-    }
-
-    const rowsOriginal = grid.slice(1)
-      .filter(r => r.some(x => String(x ?? "").trim() !== ""))
-      .map(r=>{
-        const obj = {};
-        header.forEach((h,i)=> obj[h] = (r[i] ?? "").toString().trim());
-        return obj;
-      });
-
-    rawRows = rowsOriginal.map(normalizeRow);
-
-    fillDropdowns();
-    buildModalOptions();
-    buildModalForm();
-    applyFilters();
-  }
-
-  function resetFilters(){
-    document.getElementById("q").value="";
-    ["f_fecha","f_mes","f_semana","f_turno","f_grupo","f_mina","f_grado","f_suministro","f_sala","f_labor","f_cnc2","f_cnc1","f_resp","f_plan","f_sum","f_pend","f_rech"]
-      .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
-    applyFilters();
-  }
-
-  function wireEvents(){
-    const ids = ["q","f_fecha","f_mes","f_semana","f_turno","f_grupo","f_mina","f_grado","f_suministro","f_sala","f_labor","f_cnc2","f_cnc1","f_resp","f_plan","f_sum","f_pend","f_rech"];
-    ids.forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
-
-    document.getElementById("btnReset").addEventListener("click", resetFilters);
-    document.getElementById("btnPdf").addEventListener("click", () => window.print());
-
-    document.getElementById("btnNew").addEventListener("click", openModal);
-    document.getElementById("btnClose").addEventListener("click", closeModal);
-    document.getElementById("btnSave").addEventListener("click", saveRecord);
-
-    document.getElementById("modal").addEventListener("click", (e)=>{ if (e.target && e.target.id==="modal") closeModal(); });
-  }
-
-  (function init(){
-    wireEvents();
-    loadData().catch(err=>{
-      document.getElementById("note").textContent = "Error: " + err.message;
-      console.error(err);
-    });
-  })();
+boot();
 </script>
 </body>
 </html>
