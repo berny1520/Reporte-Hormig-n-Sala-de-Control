@@ -598,24 +598,23 @@ function openModal(){
 
     try{
       const res = await fetch(POST_URL, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(payload)
-      });
-      const t = await res.text();
-      if (!res.ok){
-        msgEl.textContent = "❌ Error al guardar. Revisa permisos Web App.";
-        console.error("POST error:", res.status, t);
-        return;
-      }
-      msgEl.textContent = "✅ Guardado. Actualizando…";
-      closeModal();
-      await loadData();
-    }catch(err){
-      msgEl.textContent = "❌ Error de red o CORS.";
-      console.error(err);
-    }
-  }
+  method: "POST",
+  mode: "cors",
+  headers: { "Content-Type": "text/plain;charset=utf-8" }, // <- clave
+  body: JSON.stringify(payload)
+})
+.then(r => r.json())
+.then(res => {
+  if (!res.ok) throw new Error(res.error || "Error al guardar");
+  // éxito:
+  showSaveOk("Guardado OK ✅");
+  closeModal();
+  loadData(); // recarga
+})
+.catch(err => {
+  console.error(err);
+  showSaveError("Error de red o CORS (bloqueo del navegador / permisos).");
+});
 
   // ====== Carga ======
   async function loadData(){
