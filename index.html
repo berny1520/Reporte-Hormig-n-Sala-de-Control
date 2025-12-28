@@ -8,7 +8,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <style>
+  <script>if(window.Chart){Chart.defaults.maintainAspectRatio=false;Chart.defaults.responsive=true;}</script>
+<style>
     :root{
       --bg:#0b1220;
       --card:#ffffff;
@@ -141,7 +142,11 @@
     .formgrid{display:grid;gap:10px;grid-template-columns: repeat(4, 1fr)}
     @media (max-width: 1050px){.formgrid{grid-template-columns:1fr 1fr}}
     .footer-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
-  </style>
+  
+    .panel canvas{width:100% !important; height:240px !important; max-height:240px !important;}
+    .panels .panel{min-height:310px;}
+    .panels2 .panel{min-height:310px;}
+</style>
 </head>
 
 <body>
@@ -266,7 +271,7 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
 
 // 2) ESTE ES TU WEBAPP /exec (GUARDA DATOS).
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw7XR2HiuFvzEht3CtUZ6W8UtALpUhyFU5qCdyyMrpi24t8M61wLTLPmjmRI4VMiVD-/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzmRXto1NpdgZtAWp745a65o1t78-NQeBC8L_62jgjRwwRe7a19FfLhnRw-0Ce60yoQ/exec";
 
 /** Encabezados exactos de la hoja de registros (HORMIGONES) **/
 const HEADERS = [
