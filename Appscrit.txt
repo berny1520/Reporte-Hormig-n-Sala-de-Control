@@ -1,0 +1,55 @@
+/** Code.gs — Xtreme Mining (Hormigón / CNC)
+ *  Recibe JSON por POST (Content-Type: text/plain) desde tu HTML y hace append a la hoja.
+ *
+ *  DESPLIEGUE (Web App):
+ *  - Ejecutar como: Tú
+ *  - Quién tiene acceso: Cualquiera
+ */
+const SHEET_NAME = "HORMIGONES";
+
+const HEADERS = [
+  "FECHA","MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
+  "PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO",
+  "NÚMERO GUÍA","HORA SALIDA PLANTA","HORA LLEGADA OBRA","HORA INICIO DESCARGA","HORA TERMINO DESCARGA",
+  "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
+];
+
+function doGet(e){
+  return ContentService
+    .createTextOutput(JSON.stringify({ok:true, msg:"Xtreme WebApp OK", ts:new Date().toISOString()}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e){
+  try{
+    if (!e || !e.postData || !e.postData.contents){
+      return json_({ok:false, error:"No body"});
+    }
+    const payload = JSON.parse(e.postData.contents);
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sh = ss.getSheetByName(SHEET_NAME);
+    if (!sh) return json_({ok:false, error:"No existe hoja: " + SHEET_NAME});
+
+    const headerRow = sh.getRange(1,1,1,HEADERS.length).getValues()[0];
+    const hasHeaders = headerRow.some(v => String(v||"").trim() !== "");
+    if (!hasHeaders){
+      sh.getRange(1,1,1,HEADERS.length).setValues([HEADERS]);
+    }
+
+    const row = HEADERS.map(h => {
+      const v = payload[h];
+      return (v === undefined || v === null) ? "" : String(v);
+    });
+
+    sh.appendRow(row);
+    return json_({ok:true});
+  }catch(err){
+    return json_({ok:false, error:String(err && err.message ? err.message : err)});
+  }
+}
+
+function json_(obj){
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}

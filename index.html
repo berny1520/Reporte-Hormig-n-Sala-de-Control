@@ -26,52 +26,55 @@
     .filters2{margin-top:10px;grid-template-columns:repeat(6,1fr)}
     .filters3{margin-top:10px;grid-template-columns:repeat(6,1fr)}
     .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:800;letter-spacing:.2px}
-    input[type="text"], select{width:100%;height:36px;border-radius:10px;border:1px solid var(--line);padding:0 10px;outline:none;background:#fff;font-size:13px}
-    input[type="text"]:focus,select:focus{border-color:#c7cdd6;box-shadow:0 0 0 3px rgba(148,163,184,.25)}
+    input[type="text"], input[type="date"], input[type="time"], input[type="number"], select{
+      width:100%;height:36px;border-radius:10px;border:1px solid var(--line);padding:0 10px;outline:none;background:#fff;font-size:13px
+    }
+    input:focus,select:focus{border-color:#c7cdd6;box-shadow:0 0 0 3px rgba(148,163,184,.25)}
+    .btn{height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.14);padding:0 14px;background:rgba(255,255,255,.08);color:#fff;font-weight:800;cursor:pointer}
+    .btn.secondary{background:rgba(255,255,255,.08)}
+    .btn.danger{background:rgba(239,68,68,.85);border-color:rgba(239,68,68,.5)}
+    .btn2{height:38px;border-radius:12px;border:1px solid var(--line);padding:0 14px;background:#fff;color:var(--text);font-weight:800;cursor:pointer}
+    .btn2.dark{background:var(--dark2);color:#fff;border-color:rgba(255,255,255,.12)}
+    .btn2:active,.btn:active{transform:translateY(1px)}
 
-    .btn{height:36px;padding:0 12px;border-radius:10px;border:1px solid transparent;cursor:pointer;font-weight:900;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
-    .btn.secondary{background:var(--accent2);color:#fff}
-    .btn.danger{background:var(--accent);color:#fff}
-    .btn:active{transform:translateY(1px)}
+    .grid-kpis{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
+    .kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.25px}
+    .kpi .value{font-size:22px;font-weight:950;margin-top:6px}
+    .kpi .sub{font-size:11px;color:var(--muted);margin-top:4px}
 
-    .grid-kpis{margin-top:12px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-    .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;position:relative;overflow:hidden;min-height:78px}
-    .kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.2px}
-    .kpi .value{font-size:22px;font-weight:900;margin-top:6px;line-height:1.05}
-    .kpi .sub{font-size:10px;color:var(--muted);margin-top:2px}
-    .kpi::after{content:"";position:absolute;right:-40px;top:-40px;width:110px;height:110px;border-radius:50%;background:rgba(239,68,68,.08)}
-
-    .grid-charts{margin-top:12px;display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+    .grid-charts{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .grid-charts-2{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
-    .card h3{margin:0 0 8px;font-size:12px;letter-spacing:.2px;color:#0f172a;font-weight:900}
+    .card h3{margin:0 0 10px 0;font-size:13px;font-weight:950}
     .chartbox{height:280px}
 
-    .table-wrap{margin-top:10px;overflow:auto;border-radius:var(--radius);border:1px solid var(--line)}
-    table{width:100%;border-collapse:collapse;min-width:1500px;background:#fff}
-    thead th{position:sticky;top:0;background:#0f172a;color:#fff;font-size:11px;text-align:left;padding:10px;z-index:1;white-space:nowrap}
-    tbody td{font-size:12px;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-    tbody tr:nth-child(even){background:#fafafa}
-    .footer-note{margin-top:10px;color:var(--muted);font-size:11px}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+    table{width:100%;border-collapse:collapse;min-width:980px}
+    th,td{padding:8px 10px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}
+    thead th{position:sticky;top:0;background:var(--dark2);color:#fff;font-size:11px;letter-spacing:.2px;text-align:left}
+    tbody tr:hover{background:#f9fafb}
+    .footer-note{margin-top:8px;font-size:12px;color:var(--muted);font-weight:700}
+    .footer-note.err{color:#ef4444}
 
-    /* Modal */
-    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;padding:20px}
-    .modalCard{max-width:1100px;margin:40px auto;background:#fff;border-radius:14px;padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.22)}
+    .modalBg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;align-items:center;justify-content:center;padding:18px}
+    .modalCard{width:min(1100px,95vw);background:#fff;border-radius:16px;box-shadow:0 25px 70px rgba(0,0,0,.35);padding:14px}
     .modalGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
-    .modalActions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
-    .msg{margin-top:10px;font-size:12px;color:#374151}
+    .modalFoot{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+    .warn{margin-top:10px;font-size:12px;color:#ef4444;font-weight:900}
+    .subnote{margin-top:10px;font-size:12px;color:#16a34a;font-weight:900}
 
-    @media (max-width:1250px){
+    @media (max-width:1100px){
       .filters{grid-template-columns:1fr 1fr}
       .filters2,.filters3{grid-template-columns:1fr 1fr}
-      .grid-kpis{grid-template-columns:repeat(3,1fr)}
+      .grid-kpis{grid-template-columns:1fr 1fr}
       .grid-charts,.grid-charts-2{grid-template-columns:1fr}
-      .modalGrid{grid-template-columns:1fr}
+      .modalGrid{grid-template-columns:1fr 1fr}
     }
     @media print{
-      .btn,.modal{display:none!important}
+      .topbar, .filters, .filters2, .filters3, .modalBg { display:none !important; }
       body{background:#fff}
-      .card,.kpi{box-shadow:none}
+      .card, .kpi{box-shadow:none}
     }
   </style>
 </head>
@@ -79,16 +82,17 @@
   <div class="topbar">
     <div class="brand">
       <div class="logoWrap">
-        <img src="logo_Xtreme.png" alt="Xtreme Mining" />
+        <img src="https://i.imgur.com/2QfKc7o.png" alt="Xtreme Mining" />
       </div>
       <div class="titles">
         <div class="h1">Dashboard Seguimiento – Hormigón / CNC</div>
         <div class="h2">Xtreme Mining • Datos desde Google Sheets (CSV)</div>
       </div>
     </div>
+
     <div style="display:flex;gap:10px;align-items:center;">
       <button class="btn secondary" id="btnNew">➕ Nuevo registro</button>
-      <button class="btn secondary" id="btnReset">🧹 Limpiar filtros</button>
+      <button class="btn secondary" id="btnClear">🧹 Limpiar filtros</button>
       <button class="btn danger" id="btnPdf">⬇ Exportar PDF</button>
     </div>
   </div>
@@ -97,7 +101,7 @@
     <div class="filters">
       <div class="field">
         <label>Buscar (texto libre)</label>
-        <input id="q" type="text" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." />
+        <input id="q" type="text" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'." />
       </div>
       <div class="field"><label>MES</label><select id="f_mes"><option value="">Todos</option></select></div>
       <div class="field"><label>SEMANA</label><select id="f_semana"><option value="">Todos</option></select></div>
@@ -127,10 +131,9 @@
     <div class="grid-kpis">
       <div class="kpi"><div class="label">REGISTROS FILTRADOS</div><div class="value" id="k_total">0</div><div class="sub">Total visible según filtros</div></div>
       <div class="kpi"><div class="label">m³ PLANIFICADO (suma)</div><div class="value" id="k_plan">0</div><div class="sub">Suma columna PLANIFICADO</div></div>
-      <div class="kpi"><div class="label">m³ SUMINISTRADO (suma)</div><div class="value" id="k_sumin">0</div><div class="sub">Suma columna SUMINISTRADO</div></div>
+      <div class="kpi"><div class="label">m³ SUMINISTRADO (suma)</div><div class="value" id="k_sumi">0</div><div class="sub">Suma columna SUMINISTRADO</div></div>
       <div class="kpi"><div class="label">PENDIENTE (suma)</div><div class="value" id="k_pend">0</div><div class="sub">Suma columna PENDIENTE</div></div>
-      <div class="kpi"><div class="label">RECHAZADO (suma)</div><div class="value" id="k_rech">0</div><div class="sub">Suma columna RECHAZADO</div></div>
-      <div class="kpi"><div class="label">CNC _NIVEL 1 (TOP)</div><div class="value" id="k_top_cnc1">-</div><div class="sub">Causa principal</div></div>
+      <div class="kpi"><div class="label">RECHAZADO (suma)</div><div class="value" id="k_rech_sum">0</div><div class="sub">Suma columna RECHAZADO</div></div>
     </div>
 
     <div class="grid-charts">
@@ -155,501 +158,437 @@
     </div>
   </div>
 
-  <div class="modal" id="modal">
+  <div class="modalBg" id="modalBg">
     <div class="modalCard">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
         <h3 style="margin:0;">➕ Nuevo Registro</h3>
         <button class="btn danger" id="btnClose">Cerrar</button>
       </div>
-      <div class="modalGrid" id="modalGrid"></div>
-      <div class="modalActions">
-        <button class="btn secondary" id="btnSave">💾 Guardar</button>
+
+      <div class="modalGrid">
+        <div class="field"><label>FECHA</label><input id="n_FECHA" type="date"></div>
+        <div class="field"><label>MES</label><select id="n_MES"></select></div>
+        <div class="field"><label>SEMANA</label><select id="n_SEMANA"></select></div>
+        <div class="field"><label>TURNO</label><select id="n_TURNO"></select></div>
+
+        <div class="field"><label>GRUPO</label><select id="n_GRUPO"></select></div>
+        <div class="field"><label>MINA</label><select id="n_MINA"></select></div>
+        <div class="field"><label>LABOR_POSTURA</label><select id="n_LABOR"></select></div>
+        <div class="field"><label>GRADO</label><select id="n_GRADO"></select></div>
+
+        <div class="field"><label>SUMINISTRO</label><select id="n_SUMINISTRO"></select></div>
+        <div class="field"><label>PLANIFICADO</label><input id="n_PLANIFICADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>SUMINISTRADO</label><input id="n_SUMINISTRADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>PENDIENTE</label><input id="n_PENDIENTE" type="number" step="0.01" placeholder="0"></div>
+
+        <div class="field"><label>RECHAZADO</label><input id="n_RECHAZADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>REAGENDADO</label><input id="n_REAGENDADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>ELIMINADO</label><input id="n_ELIMINADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>NÚMERO GUÍA</label><input id="n_GUIA" type="text" placeholder=""></div>
+
+        <div class="field"><label>HORA SALIDA PLANTA</label><input id="n_HSAL" type="time"></div>
+        <div class="field"><label>HORA LLEGADA OBRA</label><input id="n_HLLE" type="time"></div>
+        <div class="field"><label>HORA INICIO DESCARGA</label><input id="n_HINI" type="time"></div>
+        <div class="field"><label>HORA TERMINO DESCARGA</label><input id="n_HTER" type="time"></div>
+
+        <div class="field"><label>CNC _NIVEL 2</label><select id="n_CNC2"></select></div>
+        <div class="field"><label>CNC _NIVEL 1</label><select id="n_CNC1"></select></div>
+        <div class="field"><label>RESPONSABLE_CNC</label><select id="n_RESP"></select></div>
+        <div class="field"><label>SALA DE CONTROL</label><select id="n_SALA"></select></div>
       </div>
-      <div class="msg" id="saveMsg"></div>
+
+      <div class="warn" id="saveErr" style="display:none">❌ Error de red (no se pudo enviar). Revisa que el WebApp esté “Cualquiera” y el link sea /exec.</div>
+      <div class="subnote" id="saveOk" style="display:none">✅ Enviado. Actualizando…</div>
+
+      <div class="modalFoot">
+        <button class="btn2 dark" id="btnSave">💾 Guardar</button>
+      </div>
     </div>
   </div>
 
 <script>
-  // ====== CONFIG ======
-  const CSV_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
-  const POST_URL = "https://script.google.com/macros/s/AKfycbzdvlAA2h5RkQ9HAfC_L9gKqza89PqJhfWNuZjxdHshA6NBMXL9DHNI-ZtI7pMnqQlB/exec"; // URL /exec de Apps Script
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzplOQNxGYEjR81RMK1bMLOr_8yom0XVTqo2UZ9GbNMyCglfzq74ipRsaSgQukqxES7/exec";
 
-  // Encabezados EXACTOS del CSV (como en tu sheet)
-  const RAW_COLS = [
-    "FECHA","MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
-    "PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO",
-    "NÚMERO GUÍA","HORA SALIDA PLANTA","HORA LLEGADA OBRA","HORA INICIO DESCARGA","HORA TERMINO DESCARGA",
-    "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
-  ];
+const HEADERS = [
+  "FECHA","MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
+  "PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO",
+  "NÚMERO GUÍA","HORA SALIDA PLANTA","HORA LLEGADA OBRA","HORA INICIO DESCARGA","HORA TERMINO DESCARGA",
+  "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
+];
 
-  // Mapeo interno para evitar problemas con espacios/tildes
-  const MAP = {
-    FECHA:"FECHA", MES:"MES", SEMANA:"SEMANA", TURNO:"TURNO", GRUPO:"GRUPO", MINA:"MINA",
-    LABOR_POSTURA:"LABOR_POSTURA", GRADO:"GRADO", SUMINISTRO:"SUMINISTRO",
-    PLANIFICADO:"PLANIFICADO", SUMINISTRADO:"SUMINISTRADO", PENDIENTE:"PENDIENTE", RECHAZADO:"RECHAZADO",
-    REAGENDADO:"REAGENDADO", ELIMINADO:"ELIMINADO",
-    "NÚMERO GUÍA":"NUMERO_GUIA",
-    "HORA SALIDA PLANTA":"HORA_SALIDA_PLANTA",
-    "HORA LLEGADA OBRA":"HORA_LLEGADA_OBRA",
-    "HORA INICIO DESCARGA":"HORA_INICIO_DESCARGA",
-    "HORA TERMINO DESCARGA":"HORA_TERMINO_DESCARGA",
-    "CNC _NIVEL 2":"CNC_NIVEL_2",
-    "CNC _NIVEL 1":"CNC_NIVEL_1",
-    RESPONSABLE_CNC:"RESPONSABLE_CNC",
-    "SALA DE CONTROL":"SALA_DE_CONTROL"
-  };
-
-  // ====== Estado ======
-  let rawRows = [];
-  let viewRows = [];
-  let charts = {};
-
-  // ====== Desplegables del Modal (Nuevo Registro) ======
-  const MODAL_DROPDOWNS = new Set([
-    "MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
-    "CNC_NIVEL_2","CNC_NIVEL_1","RESPONSABLE_CNC","SALA_DE_CONTROL"
-  ]);
-
-  let modalOptions = {};
-// ====== CATALOGO FIJO (para llenar desplegables aunque no haya registros) ======
-const CATALOG = {
-  GRADO: [
-    "SH-22,5 NORMAL","SH-22,5 FIBRA","SH-300","HN-70","HN-30","HN-40","HN-50","HB-30","HB-40","HB-50","GN-25","HB-70","GN-65"
-  ],
-  SUMINISTRO: ["En Planta","En Obra",""],
-  TURNO: ["1","2","A","B","C",""],
-  GRUPO: ["Grupo_1","Grupo_2","Grupo_3","Grupo_4",""],
-  SALA_DE_CONTROL: [
-    "Carlos Salazar Rodriguez","Martin Arriaza Vidal","Alvaro Coloma Toledo","Marcelo Henriquez Ortiz",""
-  ],
-  MINA: [
-    "ESMERALDA","ESMERALDA_ACARREO","ESMERALDA_PANEL_1","ESMERALDA_PANEL_2",
-    "DIABLO_REGIMIENTO","PACIFICO_SUPERIOR","PILAR_NORTE","PANEL_RENO","RENO",
-    "RRNN","DACITA","PANEL_INVARIANTE","TENIENTE_6","TENIENTE_7","TENIENTE_8",
-    "ANDESITA","COLÓN","ADIT_71"
-  ],
-  LABOR_POSTURA: [
-    "C-49 IZ","C-55 IZ","C-25 Z-44 HW","C-25 Z-45 HW","C-49 OP-48","C-23 Z-0",
-    "C-23 Z-42 FW","C-23 Z-42 HW","C-2 Z-10/9","C-2 Z-5/6","C-0 SOC. SUR A Z-10",
-    "OP-27 UH","OP-26 Pto 22-A","OP-26 Pto 22-B","OP-26 Pto 24","OP-26 Pto 23",
-    "OP-27 Pto 20-A","OP-27 Pto 20-B","OP-27 Pto 21-A","OP-27 Pto 21-B","OP-27 Pto 22-A",
-    "Pilar Bz 24-1S (Pto 1)","Soc. Hw 1 (Pto 2)","Soc. Hw 1 / Acceso Sur Loop (Pto 3)",
-    "Acceso Sur Loop (Pto 4)","Soc. Hw 1 / Loop Norte (Pto 5)","Loop Fw A (Pto 6)","Loop Fw B (Pto 7)",
-    "CX 1S/2S con Loop 1S (Pto 8)","Loop Hw / CX Loop 1S/2S (Pto 9)","Loop Hw / Adit 65 (Pto 10)",
-    "Loop Hw entre P4 y P5 (Pto 11)","Fr Inv descarga Dacita (Pto 12)","CAV acceso descarga CH DT (Pto 13)",
-    "Galería curva CH DT (Pto 14)","OP 24","EDIFICIO 132"
-  ],
-  CNC_NIVEL_2: [
-    "Interferencia por derrumbe","Comunicación","Trabajos en ruta","Traslado personal DET",
-    "ruta no apta para el ingreso de mixer","Simulacros","Ventana horaria","Restricción por evento climatico",
-    "Movilizaciones","Visita Gerencia GSYS","Cambio de prioridad","Sin Autorizacion DET","APP no disponible",
-    "Planta sin comunicación","Sismología","Ruta marina","Cenefa","Trabajo otras empresas","Equipos en área",
-    "Marina en postura","Liberación de gases","Energía","Agua","Cancha no lista","Trabajos otras disciplinas",
-    "Cancelacion Suministro","Pedido Fuera de Programa","Confirmacion fuera de horario",
-    "Indisponibilidad de mixer propio","Falta operador","Falta personal OOCC","Equipo shortcrete F/S","Bomba F/S",
-    "Problemas con escolta","Lento retorno de equipos","Mixer Retrasado","Sin retorno de mixer a planta",
-    "Capacidad maxima equipo","Mezcladores","Postura rematada con menos m3","Cambio de Postura",
-    "Suspension Administrativa","Planificación errónea","Problemas en la calidad","Falta suministros","Falla planta",
-    "Incumplimiento horario APP","Equipo F/S Xtreme","Tarjeta Verde","Somnolencia",
-    "Proceso de carguío tarda mas de lo programado","Espera equipo en planta"
-  ],
-  CNC_NIVEL_1: [
-    "Ruta Codelco","Clima","Personal","Prioridades","APP no disponible","Comunicación","Sismología","Ruta",
-    "Interferencia empresas","Liberación de gases","Servicios","Frente no preparada","Pedido",
-    "Indisponibilidad de mixer propio","Dotación no disponible","Equipos","Postura","Suministro",
-    "Planificación errónea","Calidad","Indisponibilidad de planta","Incumplimiento horario APP","Equipo F/S",
-    "Planta","Falla operacional","Espera equipo en planta"
-  ],
-  RESPONSABLE_CNC: ["CODELCO","INTERNA","SUMINISTRO"]
+const $ = (id)=>document.getElementById(id);
+const uniq = (arr)=>Array.from(new Set(arr.filter(v=>v!=="" && v!=null))).sort((a,b)=>String(a).localeCompare(String(b)));
+const num = (v)=>{
+  if (v===null||v===undefined) return 0;
+  const s = String(v).trim().replace(/\./g,"").replace(",",".");
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
 };
-
-  // ====== Helpers ======
-  function csvParse(text){
-    let cur="", inQ=false;
-    const out=[[]];
-    for(let i=0;i<text.length;i++){
-      const ch=text[i], nxt=text[i+1];
-      if(ch === '"' && nxt === '"'){cur+='"'; i++; continue;}
-      if(ch === '"'){inQ=!inQ; continue;}
-      if(!inQ && ch===','){out[out.length-1].push(cur); cur=""; continue;}
-      if(!inQ && (ch==='\n' || ch==='\r')){
-        if(ch==='\r' && nxt==='\n') i++;
-        out[out.length-1].push(cur); cur="";
-        out.push([]); continue;
-      }
-      cur+=ch;
+function parseCSV(text){
+  const rows=[];
+  let row=[], cur="", inQ=false;
+  for (let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if (c === '"' && n === '"'){ cur+='"'; i++; continue; }
+    if (c === '"'){ inQ = !inQ; continue; }
+    if (c === ',' && !inQ){ row.push(cur); cur=""; continue; }
+    if ((c === '\n' || c === '\r') && !inQ){
+      if (cur!=="" || row.length){ row.push(cur); rows.push(row); }
+      row=[]; cur="";
+      continue;
     }
-    out[out.length-1].push(cur);
-    return out.filter(r => r.length>1 || (r[0] && r[0].trim()!==""));
+    cur += c;
   }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
-
-  function uniq(arr){
-    return [...new Set(arr.filter(v => v!==null && v!==undefined && String(v).trim()!==""))]
-      .map(v => String(v).trim())
-      .sort((a,b)=>a.localeCompare(b,"es"));
-  }
-
-  function normalizeNumber(x){
-    if (x === null || x === undefined) return 0;
-    let s = String(x).trim();
-    if (!s) return 0;
-    s = s.replace(/\s+/g,"");
-    if (s.includes(",")) s = s.replace(/\./g,"").replace(",",".");
-    const n = Number(s);
-    return Number.isFinite(n) ? n : 0;
-  }
-
-  function sumCol(rows, key){ return rows.reduce((a,r)=>a + normalizeNumber(r[key]), 0); }
-
-  function countBy(rows, key){
-    const m=new Map();
-    rows.forEach(r=>{
-      const v=(r[key] ?? "").toString().trim() || "(vacío)";
-      m.set(v, (m.get(v)||0)+1);
-    });
-    return [...m.entries()].sort((a,b)=>b[1]-a[1]);
-  }
-
-  function topLabel(pairs){ return pairs.length ? pairs[0][0] : "-"; }
-
-  function setOptions(selectEl, values){
-    const current = selectEl.value;
-    selectEl.innerHTML = `<option value="">Todos</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
-    if (values.includes(current)) selectEl.value = current;
-  }
-
-  function normalizeRow(objOriginal){
-    const out = {};
-    for (const rawKey of Object.keys(objOriginal)){
-      const internal = MAP[rawKey] || rawKey;
-      out[internal] = (objOriginal[rawKey] ?? "").toString().trim();
-    }
-    return out;
-  }
-
-  // ====== Filtros ======
-  function fillDropdowns(){
-    setOptions(document.getElementById("f_fecha"), uniq(rawRows.map(r=>r.FECHA)));
-    setOptions(document.getElementById("f_mes"), uniq(rawRows.map(r=>r.MES)));
-    setOptions(document.getElementById("f_semana"), uniq(rawRows.map(r=>r.SEMANA)));
-    setOptions(document.getElementById("f_turno"), uniq(rawRows.map(r=>r.TURNO)));
-    setOptions(document.getElementById("f_grupo"), uniq(rawRows.map(r=>r.GRUPO)));
-    setOptions(document.getElementById("f_mina"), uniq(rawRows.map(r=>r.MINA)));
-    setOptions(document.getElementById("f_grado"), uniq(rawRows.map(r=>r.GRADO)));
-    setOptions(document.getElementById("f_suministro"), uniq(rawRows.map(r=>r.SUMINISTRO)));
-    setOptions(document.getElementById("f_sala"), uniq(rawRows.map(r=>r.SALA_DE_CONTROL)));
-    setOptions(document.getElementById("f_labor"), uniq(rawRows.map(r=>r.LABOR_POSTURA)));
-    setOptions(document.getElementById("f_cnc2"), uniq(rawRows.map(r=>r.CNC_NIVEL_2)));
-    setOptions(document.getElementById("f_cnc1"), uniq(rawRows.map(r=>r.CNC_NIVEL_1)));
-    setOptions(document.getElementById("f_resp"), uniq(rawRows.map(r=>r.RESPONSABLE_CNC)));
-
-    setOptions(document.getElementById("f_plan"), uniq(rawRows.map(r=>r.PLANIFICADO)));
-    setOptions(document.getElementById("f_sum"), uniq(rawRows.map(r=>r.SUMINISTRADO)));
-    setOptions(document.getElementById("f_pend"), uniq(rawRows.map(r=>r.PENDIENTE)));
-    setOptions(document.getElementById("f_rech"), uniq(rawRows.map(r=>r.RECHAZADO)));
-  }
-
-  function getFilters(){
-    return {
-      q: document.getElementById("q").value.trim().toLowerCase(),
-      FECHA: document.getElementById("f_fecha").value,
-      MES: document.getElementById("f_mes").value,
-      SEMANA: document.getElementById("f_semana").value,
-      TURNO: document.getElementById("f_turno").value,
-      GRUPO: document.getElementById("f_grupo").value,
-      MINA: document.getElementById("f_mina").value,
-      GRADO: document.getElementById("f_grado").value,
-      SUMINISTRO: document.getElementById("f_suministro").value,
-      SALA_DE_CONTROL: document.getElementById("f_sala").value,
-      LABOR_POSTURA: document.getElementById("f_labor").value,
-      CNC_NIVEL_2: document.getElementById("f_cnc2").value,
-      CNC_NIVEL_1: document.getElementById("f_cnc1").value,
-      RESPONSABLE_CNC: document.getElementById("f_resp").value,
-      PLANIFICADO: document.getElementById("f_plan").value,
-      SUMINISTRADO: document.getElementById("f_sum").value,
-      PENDIENTE: document.getElementById("f_pend").value,
-      RECHAZADO: document.getElementById("f_rech").value,
-    };
-  }
-
-  function applyFilters(){
-    const f = getFilters();
-    viewRows = rawRows.filter(r=>{
-      for (const k of Object.keys(f)){
-        if (k==="q") continue;
-        if (f[k] && String(r[k] ?? "").trim() !== f[k]) return false;
-      }
-      if (f.q){
-        const blob = RAW_COLS.map(rc => (r[MAP[rc] || rc] ?? "")).join(" ").toLowerCase();
-        if (!blob.includes(f.q)) return false;
-      }
-      return true;
-    });
-    renderKPIs(); renderCharts(); renderTable();
-    document.getElementById("note").textContent =
-      `Registros: ${viewRows.length.toLocaleString("es-CL")} (filtrados) • Fuente: Google Sheets (CSV)`;
-  }
-
-  // ====== KPIs ======
-  function renderKPIs(){
-    document.getElementById("k_total").textContent = viewRows.length.toLocaleString("es-CL");
-    document.getElementById("k_plan").textContent = sumCol(viewRows, "PLANIFICADO").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_sumin").textContent = sumCol(viewRows, "SUMINISTRADO").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_pend").textContent = sumCol(viewRows, "PENDIENTE").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_rech").textContent = sumCol(viewRows, "RECHAZADO").toLocaleString("es-CL",{maximumFractionDigits:2});
-    document.getElementById("k_top_cnc1").textContent = topLabel(countBy(viewRows,"CNC_NIVEL_1"));
-  }
-
-  // ====== Charts ======
-  function makeOrUpdateChart(canvasId, chartInstance, config){
-    const ctx = document.getElementById(canvasId);
-    if (chartInstance){
-      chartInstance.config.type = config.type;
-      chartInstance.data = config.data;
-      chartInstance.options = config.options;
-      chartInstance.update();
-      return chartInstance;
-    }
-    return new Chart(ctx, config);
-  }
-
-  function groupSum(rows, groupKey, sumKeys){
-    const m = new Map();
-    rows.forEach(r=>{
-      const g = (r[groupKey] ?? "").toString().trim() || "(vacío)";
-      if (!m.has(g)) m.set(g, {g, sums: sumKeys.map(()=>0)});
-      const obj = m.get(g);
-      sumKeys.forEach((sk, idx)=> obj.sums[idx] += normalizeNumber(r[sk]));
-    });
-    return [...m.values()].sort((a,b)=> (b.sums[0]+b.sums[1]) - (a.sums[0]+a.sums[1]));
-  }
-
-  function renderCharts(){
-    const cnc1 = countBy(viewRows, "CNC_NIVEL_1").slice(0, 10);
-    charts.cnc1 = makeOrUpdateChart("chCnc1", charts.cnc1, {
-      type:"bar",
-      data:{ labels: cnc1.map(x=>x[0]), datasets:[{ label:"Cantidad", data: cnc1.map(x=>x[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
-    });
-
-    const resp = countBy(viewRows, "RESPONSABLE_CNC");
-    charts.resp = makeOrUpdateChart("chResp", charts.resp, {
-      type:"doughnut",
-      data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
-    });
-
-    const minaAgg = groupSum(viewRows, "MINA", ["PLANIFICADO","SUMINISTRADO"]).slice(0, 12);
-    charts.mina = makeOrUpdateChart("chMina", charts.mina, {
-      type:"bar",
-      data:{ labels: minaAgg.map(x=>x.g), datasets:[{ label:"Planificado", data: minaAgg.map(x=>x.sums[0]) }, { label:"Suministrado", data: minaAgg.map(x=>x.sums[1]) }] },
-      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
-    });
-
-    const fechaAgg = groupSum(viewRows, "FECHA", ["PLANIFICADO","SUMINISTRADO"]).slice(0, 14);
-    charts.fecha = makeOrUpdateChart("chFecha", charts.fecha, {
-      type:"line",
-      data:{ labels: fechaAgg.map(x=>x.g), datasets:[{ label:"Planificado", data: fechaAgg.map(x=>x.sums[0]), tension:.25 }, { label:"Suministrado", data: fechaAgg.map(x=>x.sums[1]), tension:.25 }] },
-      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }
-    });
-  }
-
-  // ====== Tabla ======
-  function renderTable(){
-    document.getElementById("tblHead").innerHTML = RAW_COLS.map(c=>`<th>${escapeHtml(c)}</th>`).join("");
-    const maxRows = 700;
-    const rows = viewRows.slice(0, maxRows);
-    document.getElementById("tblBody").innerHTML = rows.map(r=>{
-      return "<tr>" + RAW_COLS.map(rawC=>{
-        const internal = MAP[rawC] || rawC;
-        const val = (r[internal] ?? "").toString().trim();
-        return `<td title="${escapeHtml(val)}">${escapeHtml(val)}</td>`;
-      }).join("") + "</tr>";
-    }).join("");
-  }
-
-  // ====== Modal (Nuevo Registro) con DESPLEGABLES ======
-  function buildModalOptions(){
-  const pick = (k) => uniq(rawRows.map(r => (r[k] ?? "").toString().trim()));
-
-  // Si hay datos reales en el CSV, usa esos. Si no, usa el CATALOG fijo.
-  const fromDataOrCatalog = (k) => {
-    const fromData = pick(k);
-    if (fromData.length) return fromData;
-    return (CATALOG[k] || []).filter(v => String(v).trim() !== "");
-  };
-
-  modalOptions = {
-    MES: fromDataOrCatalog("MES"),
-    SEMANA: fromDataOrCatalog("SEMANA"),
-    TURNO: fromDataOrCatalog("TURNO"),
-    GRUPO: fromDataOrCatalog("GRUPO"),
-    MINA: fromDataOrCatalog("MINA"),
-    LABOR_POSTURA: fromDataOrCatalog("LABOR_POSTURA"),
-    GRADO: fromDataOrCatalog("GRADO"),
-    SUMINISTRO: fromDataOrCatalog("SUMINISTRO"),
-    CNC_NIVEL_2: fromDataOrCatalog("CNC_NIVEL_2"),
-    CNC_NIVEL_1: fromDataOrCatalog("CNC_NIVEL_1"),
-    RESPONSABLE_CNC: fromDataOrCatalog("RESPONSABLE_CNC"),
-    SALA_DE_CONTROL: fromDataOrCatalog("SALA_DE_CONTROL"),
-  };
+  if (cur!=="" || row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+function fmt2(n){ return (Math.round(n*100)/100).toLocaleString("es-CL"); }
+function ymdToDMY(ymd){
+  if (!ymd) return "";
+  const [y,m,d]=ymd.split("-");
+  return `${d}-${m}-${y}`;
+}
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
-  function buildModalForm(){
-    const grid = document.getElementById("modalGrid");
-    grid.innerHTML = RAW_COLS.map(c=>{
-      const internal = MAP[c] || c;
-      const id = "i_" + internal.replace(/[^A-Z0-9_]/gi,"_");
+let allRows = [];
+let filtered = [];
+let charts = { cnc1:null, resp:null, mina:null, fecha:null };
 
-// FECHA como selector calendario
-if (internal === "FECHA") {
-  return `
-    <div class="field">
-      <label>FECHA</label>
-      <input id="${id}" type="date" onchange="autoFillDateFields(this.value)" />
-    </div>
-  `;
+const filterMap = new Map([
+  ["f_fecha","FECHA"], ["f_mes","MES"], ["f_semana","SEMANA"], ["f_turno","TURNO"], ["f_grupo","GRUPO"], ["f_mina","MINA"],
+  ["f_grado","GRADO"], ["f_suministro","SUMINISTRO"], ["f_sala","SALA DE CONTROL"], ["f_labor","LABOR_POSTURA"],
+  ["f_cnc2","CNC _NIVEL 2"], ["f_cnc1","CNC _NIVEL 1"], ["f_resp","RESPONSABLE_CNC"],
+  ["f_plan","PLANIFICADO"], ["f_sum","SUMINISTRADO"], ["f_pend","PENDIENTE"], ["f_rech","RECHAZADO"]
+]);
+
+async function fetchTextWithRetry(url, tries=3){
+  let lastErr=null;
+  for (let i=0;i<tries;i++){
+    try{
+      const bust = (url.includes("?") ? "&" : "?") + "cb=" + Date.now() + "_" + Math.random().toString(16).slice(2);
+      const res = await fetch(url + bust, { cache:"no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return await res.text();
+    }catch(e){
+      lastErr=e;
+      await new Promise(r=>setTimeout(r, 400*(i+1)));
+    }
+  }
+  throw lastErr || new Error("No se pudo cargar");
 }
 
-      if (MODAL_DROPDOWNS.has(internal)){
-        const opts = (modalOptions[internal] || []);
-        const optionsHtml = `<option value="">Seleccione…</option>` +
-          opts.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
-        return `<div class="field"><label>${escapeHtml(c)}</label><select id="${id}">${optionsHtml}</select></div>`;
-      }
+async function loadCSV(){
+  const note = $("note");
+  note.classList.remove("err");
+  note.textContent = "Cargando datos…";
 
-      return `<div class="field"><label>${escapeHtml(c)}</label><input id="${id}" type="text" placeholder="${escapeHtml(c)}" /></div>`;
-    }).join("");
+  const text = await fetchTextWithRetry(CSV_URL, 3);
+  const grid = parseCSV(text);
+
+  if (!grid.length){
+    allRows=[];
+    note.classList.add("err");
+    note.textContent = "Error de red: CSV vacío (no llegó contenido).";
+    return;
   }
+
+  const header = grid[0].map(h=>String(h||"").trim());
+  const missing = HEADERS.filter(h=>!header.includes(h));
+  if (missing.length){
+    allRows=[];
+    note.classList.add("err");
+    note.textContent = "Faltan columnas en CSV: " + missing.join(", ");
+    return;
+  }
+
+  const idx = Object.fromEntries(header.map((h,i)=>[h,i]));
+  const rows = grid.slice(1)
+    .filter(r=>r.some(x=>String(x??"").trim()!==""))
+    .map(r=>{
+      const obj={};
+      for (const h of HEADERS){
+        obj[h] = (r[idx[h]] ?? "").toString().trim();
+      }
+      return obj;
+    });
+
+  allRows = rows;
+  if (!allRows.length){
+    note.textContent = "CSV sin filas (solo encabezados). Igual puedes ingresar registros con 'Nuevo registro'.";
+  }else{
+    note.textContent = `Datos cargados: ${allRows.length} registros.`;
+  }
+}
+
+function fillDropdown(selectId, values, withAllLabel){
+  const el = $(selectId);
+  if (!el) return;
+  const cur = el.value;
+  el.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = withAllLabel || "Todos";
+  el.appendChild(opt0);
+
+  for (const v of values){
+    const o=document.createElement("option");
+    o.value=v;
+    o.textContent=v;
+    el.appendChild(o);
+  }
+  el.value = values.includes(cur) ? cur : "";
+}
+
+function buildFiltersFromData(){
+  const u = (col)=>uniq(allRows.map(r=>(r[col]??"").trim()));
+  fillDropdown("f_mes", u("MES"), "Todos");
+  fillDropdown("f_semana", u("SEMANA"), "Todos");
+  fillDropdown("f_turno", u("TURNO"), "Todos");
+  fillDropdown("f_grupo", u("GRUPO"), "Todos");
+  fillDropdown("f_mina", u("MINA"), "Todos");
+
+  fillDropdown("f_grado", u("GRADO"), "Todos");
+  fillDropdown("f_suministro", u("SUMINISTRO"), "Todos");
+  fillDropdown("f_sala", u("SALA DE CONTROL"), "Todos");
+  fillDropdown("f_labor", u("LABOR_POSTURA"), "Todos");
+  fillDropdown("f_cnc2", u("CNC _NIVEL 2"), "Todos");
+  fillDropdown("f_cnc1", u("CNC _NIVEL 1"), "Todos");
+
+  fillDropdown("f_resp", u("RESPONSABLE_CNC"), "Todos");
+  fillDropdown("f_fecha", u("FECHA"), "Todas");
+  fillDropdown("f_plan", u("PLANIFICADO"), "Todos");
+  fillDropdown("f_sum", u("SUMINISTRADO"), "Todos");
+  fillDropdown("f_pend", u("PENDIENTE"), "Todos");
+  fillDropdown("f_rech", u("RECHAZADO"), "Todos");
+}
+
+function buildModalDropdownsFromData(){
+  const u = (col)=>uniq(allRows.map(r=>(r[col]??"").trim()));
+  const fillModal = (id, col)=>{
+    const el = $(id);
+    if (!el) return;
+    el.innerHTML = `<option value="">Seleccione…</option>` + u(col).map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+  };
+  fillModal("n_MES","MES");
+  fillModal("n_SEMANA","SEMANA");
+  fillModal("n_TURNO","TURNO");
+  fillModal("n_GRUPO","GRUPO");
+  fillModal("n_MINA","MINA");
+  fillModal("n_LABOR","LABOR_POSTURA");
+  fillModal("n_GRADO","GRADO");
+  fillModal("n_SUMINISTRO","SUMINISTRO");
+  fillModal("n_CNC2","CNC _NIVEL 2");
+  fillModal("n_CNC1","CNC _NIVEL 1");
+  fillModal("n_RESP","RESPONSABLE_CNC");
+  fillModal("n_SALA","SALA DE CONTROL");
+}
+
+function applyFilters(){
+  const q = $("q").value.trim().toLowerCase();
+  let rows = allRows.slice();
+
+  for (const [id, col] of filterMap){
+    const v = ($(id)?.value ?? "").trim();
+    if (v) rows = rows.filter(r => (r[col] ?? "").trim() === v);
+  }
+
+  if (q){
+    rows = rows.filter(r => HEADERS.some(h => String(r[h] ?? "").toLowerCase().includes(q)));
+  }
+
+  filtered = rows;
+  renderKPIs();
+  renderCharts();
+  renderTable();
+}
+
+function renderKPIs(){
+  $("k_total").textContent = String(filtered.length);
+  $("k_plan").textContent = fmt2(filtered.reduce((a,r)=>a+num(r["PLANIFICADO"]),0));
+  $("k_sumi").textContent = fmt2(filtered.reduce((a,r)=>a+num(r["SUMINISTRADO"]),0));
+  $("k_pend").textContent = fmt2(filtered.reduce((a,r)=>a+num(r["PENDIENTE"]),0));
+  $("k_rech_sum").textContent = fmt2(filtered.reduce((a,r)=>a+num(r["RECHAZADO"]),0));
+}
+
+function groupCount(col){
+  const m=new Map();
+  for (const r of filtered){
+    const k=(r[col]??"").trim() || "(vacío)";
+    m.set(k, (m.get(k)||0)+1);
+  }
+  return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]);
+}
+function groupSum(colGroup, colValue){
+  const m=new Map();
+  for (const r of filtered){
+    const k=(r[colGroup]??"").trim() || "(vacío)";
+    m.set(k, (m.get(k)||0)+num(r[colValue]));
+  }
+  return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]);
+}
+
+function renderCharts(){
+  const cnc = groupCount("CNC _NIVEL 1").slice(0,10);
+  if (charts.cnc1) charts.cnc1.destroy();
+  charts.cnc1 = new Chart($("chCnc1"), {
+    type:"bar",
+    data:{ labels: cnc.map(x=>x[0]), datasets:[{ label:"Registros", data: cnc.map(x=>x[1]) }]},
+    options:{ responsive:true, maintainAspectRatio:false }
+  });
+
+  const resp = groupCount("RESPONSABLE_CNC").slice(0,12);
+  if (charts.resp) charts.resp.destroy();
+  charts.resp = new Chart($("chResp"), {
+    type:"doughnut",
+    data:{ labels: resp.map(x=>x[0]), datasets:[{ label:"Registros", data: resp.map(x=>x[1]) }]},
+    options:{ responsive:true, maintainAspectRatio:false }
+  });
+
+  const planByM = groupSum("MINA","PLANIFICADO").slice(0,12);
+  const minas = planByM.map(x=>x[0]);
+  const plan = minas.map(m=> filtered.filter(r=>(r["MINA"]??"").trim()===m).reduce((a,r)=>a+num(r["PLANIFICADO"]),0));
+  const sumi = minas.map(m=> filtered.filter(r=>(r["MINA"]??"").trim()===m).reduce((a,r)=>a+num(r["SUMINISTRADO"]),0));
+  if (charts.mina) charts.mina.destroy();
+  charts.mina = new Chart($("chMina"), {
+    type:"bar",
+    data:{ labels:minas, datasets:[{label:"Planificado", data:plan},{label:"Suministrado", data:sumi}] },
+    options:{ responsive:true, maintainAspectRatio:false }
+  });
+
+  const byF = new Map();
+  for (const r of filtered){
+    const f=(r["FECHA"]??"").trim() || "(vacío)";
+    if (!byF.has(f)) byF.set(f, {p:0,s:0});
+    const o=byF.get(f);
+    o.p += num(r["PLANIFICADO"]);
+    o.s += num(r["SUMINISTRADO"]);
+  }
+  const fechas = Array.from(byF.keys()).sort((a,b)=>String(a).localeCompare(String(b)));
+  if (charts.fecha) charts.fecha.destroy();
+  charts.fecha = new Chart($("chFecha"), {
+    type:"line",
+    data:{ labels: fechas, datasets:[{label:"Planificado", data:fechas.map(f=>byF.get(f).p), tension:.25},{label:"Suministrado", data:fechas.map(f=>byF.get(f).s), tension:.25}] },
+    options:{ responsive:true, maintainAspectRatio:false }
+  });
+}
+
+function renderTable(){
+  const head = $("tblHead");
+  const body = $("tblBody");
+  head.innerHTML = HEADERS.map(h=>`<th>${escapeHtml(h)}</th>`).join("");
+
+  const maxRows = 600;
+  const rows = filtered.slice(0,maxRows);
+  body.innerHTML = rows.map(r=>{
+    return "<tr>" + HEADERS.map(h=>`<td title="${escapeHtml(r[h]??"")}">${escapeHtml(r[h]??"")}</td>`).join("") + "</tr>";
+  }).join("");
+
+  const note = $("note");
+  if (!allRows.length) return;
+  note.classList.remove("err");
+  note.textContent = `Mostrando ${filtered.length} registro(s)` + (filtered.length>maxRows ? ` • Mostrando ${maxRows} de ${filtered.length}` : "");
+}
 
 function openModal(){
-  const grid = document.getElementById("modalGrid");
-
-  // Si por cualquier motivo el CSV no cargó, igual arma el formulario
-  if (!grid.innerHTML || grid.innerHTML.trim() === "") {
-    try { buildModalOptions(); } catch(e) {}
-    buildModalForm();
+  $("modalBg").style.display="flex";
+  $("saveErr").style.display="none";
+  $("saveOk").style.display="none";
+  if (!$("n_FECHA").value){
+    const d=new Date();
+    const y=d.getFullYear();
+    const m=String(d.getMonth()+1).padStart(2,"0");
+    const dd=String(d.getDate()).padStart(2,"0");
+    $("n_FECHA").value = `${y}-${m}-${dd}`;
   }
+}
+function closeModal(){ $("modalBg").style.display="none"; }
 
-  document.getElementById("saveMsg").textContent = "";
-  document.getElementById("modal").style.display = "block";
+async function saveRecord(){
+  $("saveErr").style.display="none";
+  $("saveOk").style.display="none";
+
+  const payload = {
+    "FECHA": ymdToDMY($("n_FECHA").value),
+    "MES": $("n_MES").value,
+    "SEMANA": $("n_SEMANA").value,
+    "TURNO": $("n_TURNO").value,
+    "GRUPO": $("n_GRUPO").value,
+    "MINA": $("n_MINA").value,
+    "LABOR_POSTURA": $("n_LABOR").value,
+    "GRADO": $("n_GRADO").value,
+    "SUMINISTRO": $("n_SUMINISTRO").value,
+    "PLANIFICADO": $("n_PLANIFICADO").value,
+    "SUMINISTRADO": $("n_SUMINISTRADO").value,
+    "PENDIENTE": $("n_PENDIENTE").value,
+    "RECHAZADO": $("n_RECHAZADO").value,
+    "REAGENDADO": $("n_REAGENDADO").value,
+    "ELIMINADO": $("n_ELIMINADO").value,
+    "NÚMERO GUÍA": $("n_GUIA").value,
+    "HORA SALIDA PLANTA": $("n_HSAL").value,
+    "HORA LLEGADA OBRA": $("n_HLLE").value,
+    "HORA INICIO DESCARGA": $("n_HINI").value,
+    "HORA TERMINO DESCARGA": $("n_HTER").value,
+    "CNC _NIVEL 2": $("n_CNC2").value,
+    "CNC _NIVEL 1": $("n_CNC1").value,
+    "RESPONSABLE_CNC": $("n_RESP").value,
+    "SALA DE CONTROL": $("n_SALA").value
+  };
+
+  try{
+    await fetch(WEBAPP_URL, {
+      method:"POST",
+      mode:"no-cors",
+      headers: { "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    $("saveOk").style.display="block";
+    setTimeout(async ()=>{
+      try{ await boot(); closeModal(); }catch(e){ console.error(e); }
+    }, 2500);
+
+  }catch(err){
+    console.error(err);
+    $("saveErr").style.display="block";
+  }
 }
 
-  function closeModal(){ document.getElementById("modal").style.display="none"; }
-
-  function getFormPayload(){
-    const payload = {};
-    RAW_COLS.forEach(c=>{
-      const internal = MAP[c] || c;
-      const id = "i_" + internal.replace(/[^A-Z0-9_]/gi,"_");
-      payload[c] = (document.getElementById(id)?.value ?? "").toString().trim();
-    });
-    return payload;
-  }
-
-  async function saveRecord(){
-    const msgEl = document.getElementById("saveMsg");
-    if (!POST_URL || POST_URL.includes("PEGA_AQUI")){
-      msgEl.textContent = "⚠️ Falta configurar POST_URL (Apps Script Web App).";
-      return;
-    }
-    msgEl.textContent = "Guardando…";
-    const payload = getFormPayload();
-
-    try{
-      const res = await fetch(POST_URL, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(payload)
-      });
-      const t = await res.text();
-      if (!res.ok){
-        msgEl.textContent = "❌ Error al guardar. Revisa permisos Web App.";
-        console.error("POST error:", res.status, t);
-        return;
-      }
-      msgEl.textContent = "✅ Guardado. Actualizando…";
-      closeModal();
-      await loadData();
-    }catch(err){
-      msgEl.textContent = "❌ Error de red o CORS.";
-      console.error(err);
-    }
-  }
-
-  // ====== Carga ======
-  async function loadData(){
-    document.getElementById("note").textContent = "Cargando CSV…";
-    const res = await fetch(CSV_URL, { cache:"no-store" });
-    if (!res.ok) throw new Error("No se pudo cargar el CSV.");
-    const text = await res.text();
-    const grid = csvParse(text);
-    if (grid.length < 2) {
-  rawRows = [];
-  fillDropdowns();
-  buildModalOptions();
-  buildModalForm();
+async function boot(){
+  await loadCSV();
+  buildFiltersFromData();
+  buildModalDropdownsFromData();
   applyFilters();
-  document.getElementById("note").textContent = "CSV sin filas (solo encabezados). Igual puedes ingresar registros con 'Nuevo registro'.";
-  return;
 }
 
-    const header = grid[0].map(h => h.trim());
-    const missing = RAW_COLS.filter(c => !header.includes(c));
-    if (missing.length){
-      document.getElementById("note").textContent = `Faltan columnas en CSV: ${missing.join(", ")}`;
-      console.warn("Encabezados detectados:", header);
-      return;
-    }
+$("btnNew").onclick = openModal;
+$("btnClose").onclick = closeModal;
+$("modalBg").addEventListener("click",(e)=>{ if(e.target.id==="modalBg") closeModal(); });
+$("btnSave").onclick = saveRecord;
 
-    const rowsOriginal = grid.slice(1)
-      .filter(r => r.some(x => String(x ?? "").trim() !== ""))
-      .map(r=>{
-        const obj = {};
-        header.forEach((h,i)=> obj[h] = (r[i] ?? "").toString().trim());
-        return obj;
-      });
+$("btnClear").onclick = ()=>{
+  $("q").value="";
+  for (const [id] of filterMap) $(id).value="";
+  applyFilters();
+};
 
-    rawRows = rowsOriginal.map(normalizeRow);
+$("btnPdf").onclick = ()=>window.print();
 
-    fillDropdowns();
-    buildModalOptions();
-    buildModalForm();
-    applyFilters();
-  }
+$("q").addEventListener("input", ()=>applyFilters());
+for (const [id] of filterMap){
+  $(id).addEventListener("change", ()=>applyFilters());
+}
 
-  function resetFilters(){
-    document.getElementById("q").value="";
-    ["f_fecha","f_mes","f_semana","f_turno","f_grupo","f_mina","f_grado","f_suministro","f_sala","f_labor","f_cnc2","f_cnc1","f_resp","f_plan","f_sum","f_pend","f_rech"]
-      .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
-    applyFilters();
-  }
-
-  function wireEvents(){
-    const ids = ["q","f_fecha","f_mes","f_semana","f_turno","f_grupo","f_mina","f_grado","f_suministro","f_sala","f_labor","f_cnc2","f_cnc1","f_resp","f_plan","f_sum","f_pend","f_rech"];
-    ids.forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
-
-    document.getElementById("btnReset").addEventListener("click", resetFilters);
-    document.getElementById("btnPdf").addEventListener("click", () => window.print());
-
-    document.getElementById("btnNew").addEventListener("click", openModal);
-    document.getElementById("btnClose").addEventListener("click", closeModal);
-    document.getElementById("btnSave").addEventListener("click", saveRecord);
-
-    document.getElementById("modal").addEventListener("click", (e)=>{ if (e.target && e.target.id==="modal") closeModal(); });
-  }
-
-  (function init(){
-    wireEvents();
-    loadData().catch(err=>{
-      document.getElementById("note").textContent = "Error: " + err.message;
-      console.error(err);
-    });
-  })();
+boot().catch(err=>{
+  console.error(err);
+  const note = $("note");
+  note.classList.add("err");
+  note.textContent = "Error de red: no se pudo leer el CSV. Revisa publicación del Sheet y el link CSV.";
+});
 </script>
 </body>
 </html>
