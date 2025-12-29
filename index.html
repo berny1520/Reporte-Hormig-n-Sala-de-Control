@@ -8,6 +8,35 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
+/* === FIX GRAFICOS: TAMAÑO CONTROLADO === */
+.chart-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  height: 320px;
+  max-height: 320px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: 240px !important;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .charts-grid { grid-template-columns: 1fr; }
+  .chart-card { height: 280px; }
+  .chart-card canvas { height: 200px !important; }
+}
+
   <style>
     :root{
       --bg:#0b1220;
