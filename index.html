@@ -3,796 +3,902 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard Seguimiento – Hormigón / CNC</title>
+  <title>Dashboard Seguimiento – Hormigón / CNC (Xtreme)</title>
 
-  <!-- Chart.js -->
+  <!-- Libs (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
-  <script>if(window.Chart){Chart.defaults.maintainAspectRatio=false;Chart.defaults.responsive=true;}</script>
-<style>
+  <style>
     :root{
       --bg:#0b1220;
       --card:#ffffff;
-      --muted:#667085;
-      --ink:#101828;
-      --brand:#ef4444;
-      --brand2:#111827;
-      --shadow:0 10px 35px rgba(0,0,0,.18);
-      --radius:18px;
-      --stroke:#e5e7eb;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --dark:#0f172a;
+      --accent:#ef4444;
+      --accent2:#7c3aed;
+      --shadow: 0 10px 28px rgba(0,0,0,.18);
+      --radius:16px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(255,255,255,.10), transparent 60%),
-                  radial-gradient(1200px 600px at 90% 0%, rgba(239,68,68,.16), transparent 55%),
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:#111827;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(124,58,237,.24), transparent 55%),
+                  radial-gradient(1200px 600px at 70% 0%, rgba(239,68,68,.22), transparent 55%),
                   var(--bg);
-      color:var(--ink);
     }
-    .wrap{max-width:1220px;margin:22px auto 60px;padding:0 14px}
+    .wrap{max-width:1280px;margin:0 auto;padding:18px 14px 26px}
     header{
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:22px;
-      padding:14px 14px;
       display:flex;align-items:center;gap:14px;
+      padding:14px 14px;border-radius:18px;
+      background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(15,23,42,.72));
       color:#fff;
       box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.08);
     }
-    .logo{
-      width:160px; height:54px;
-      border-radius:14px;
-      background: rgba(255,255,255,.06);
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      flex:0 0 auto;
+    .brand{
+      display:flex;align-items:center;gap:12px;min-width:260px;
+      padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
     }
-    .logo img{max-width:100%; max-height:100%; object-fit:contain}
-    .title{flex:1 1 auto}
-    .title h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.2px}
-    .title p{margin:2px 0 0;font-size:12px;opacity:.85}
-    .actions{display:flex;gap:10px;align-items:center}
+    .brand img{height:44px;width:auto;border-radius:10px;background:#fff;padding:6px}
+    .brand .t1{font-weight:800;letter-spacing:.2px}
+    .brand .t2{font-size:12px;color:rgba(255,255,255,.75);margin-top:2px}
+    .spacer{flex:1}
     .btn{
-      border:0; cursor:pointer;
-      padding:10px 12px;border-radius:12px;
-      font-weight:700; font-size:13px;
-      display:inline-flex;align-items:center;gap:8px;
-      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
       color:#fff;
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .btn.primary{background: var(--brand); border-color: rgba(255,255,255,.0)}
-    .btn:active{transform: translateY(1px)}
-    .grid{display:grid; gap:14px; margin-top:14px}
-    .filters{
-      background: var(--card); border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:14px;
-    }
-    .filters h3{margin:0 0 10px;font-size:13px;color:#1f2937}
-    .fgrid{display:grid;gap:10px;grid-template-columns: 1.4fr repeat(5,1fr)}
-    .fgrid2{display:grid;gap:10px;grid-template-columns: repeat(5,1fr);margin-top:10px}
-    .fgrid3{display:grid;gap:10px;grid-template-columns: repeat(6,1fr);margin-top:10px}
-    @media (max-width: 1050px){
-      .fgrid{grid-template-columns: 1fr 1fr}
-      .fgrid2{grid-template-columns: 1fr 1fr}
-      .fgrid3{grid-template-columns: 1fr 1fr}
-    }
-    .field label{display:block;font-size:11px;font-weight:800;color:#344054;margin:0 0 6px}
-    .field input,.field select{
-      width:100%; padding:10px 10px;
       border-radius:12px;
-      border:1px solid var(--stroke);
+      padding:10px 12px;
+      font-weight:700;
+      display:inline-flex;align-items:center;gap:8px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.1)}
+    .btn.red{background:linear-gradient(135deg, #ef4444, #b91c1c);border:0}
+    .btn.red:hover{filter:brightness(1.05)}
+    .btn.purple{background:linear-gradient(135deg,#7c3aed,#4c1d95);border:0}
+    .btn.purple:hover{filter:brightness(1.05)}
+    .grid{display:grid;gap:12px;margin-top:14px}
+    .filters{
+      background:var(--card);border-radius:var(--radius);
+      padding:14px;box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .filters .row{display:grid;gap:10px}
+    .row.r1{grid-template-columns: 1.2fr repeat(4, 1fr)}
+    .row.r2{grid-template-columns: repeat(5, 1fr)}
+    .row.r3{grid-template-columns: repeat(4, 1fr)}
+    .field label{display:block;font-size:12px;font-weight:800;color:#111827;margin:0 0 6px}
+    .field input,.field select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
       outline:none;
+      font-size:14px;
       background:#fff;
-      font-size:13px;
     }
-    .cards{display:grid;gap:14px;grid-template-columns: repeat(6,1fr)}
-    @media (max-width: 1050px){.cards{grid-template-columns: repeat(2,1fr)}}
-    .card{
-      background: var(--card); border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:14px; min-height:96px;
-      position:relative; overflow:hidden;
+    .hint{margin-top:10px;font-size:12px;color:var(--muted)}
+    .ok{color:#16a34a;font-weight:700}
+    .bad{color:#dc2626;font-weight:700}
+
+    .kpis{display:grid;gap:12px;grid-template-columns: repeat(5, 1fr)}
+    .kpi{
+      background:var(--card);border-radius:var(--radius);
+      padding:12px 12px 10px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      min-height:72px;
     }
-    .card .k{font-size:11px;font-weight:800;color:#344054}
-    .card .v{font-size:26px;font-weight:900;margin-top:6px}
-    .card .s{font-size:11px;color:var(--muted);margin-top:2px}
-    .card:before{
-      content:""; position:absolute; right:-22px; top:-22px;
-      width:120px; height:120px; border-radius:999px;
-      background: rgba(239,68,68,.10);
+    .kpi .n{font-size:26px;font-weight:900}
+    .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+    .kpi::after{
+      content:"";
+      position:absolute;right:-25px;top:-25px;
+      width:90px;height:90px;border-radius:50%;
+      background: rgba(239,68,68,.12);
     }
-    .panels{display:grid;gap:14px;grid-template-columns: 1.5fr 1fr}
-    .panels2{display:grid;gap:14px;grid-template-columns: 1fr 1fr}
-    @media (max-width: 1050px){
-      .panels{grid-template-columns:1fr}
-      .panels2{grid-template-columns:1fr}
+
+    .charts{display:grid;gap:12px;grid-template-columns: 2fr 1fr}
+    .chartCard{
+      background:var(--card);border-radius:var(--radius);
+      padding:12px;box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.08);
+      min-height: 170px;
     }
-    .panel{
-      background: var(--card); border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:14px;
-      min-height:340px;
+    .chartTitle{font-weight:900;margin:0 0 8px}
+    .chartWrap{height:210px;}
+    canvas{width:100% !important;height:100% !important;}
+
+    .charts2{display:grid;gap:12px;grid-template-columns: 2fr 1fr}
+    .tableCard{
+      background:var(--card);border-radius:var(--radius);
+      padding:12px;box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.08);
+      overflow:hidden;
     }
-    .panel h3{margin:0 0 10px;font-size:13px;color:#111827}
-    canvas{max-width:100%}
-    .table{
-      background: var(--card); border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:14px;
+    .tableTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .tableTop h3{margin:0;font-weight:900}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th,td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+    th{position:sticky;top:0;background:#0f172a;color:#fff;z-index:1}
+    tbody tr:hover{background:#f8fafc}
+    .pill{
+      display:inline-block;padding:2px 8px;border-radius:999px;
+      font-weight:800;font-size:11px;border:1px solid var(--line);background:#fff;
     }
-    .table h3{margin:0 0 10px;font-size:13px;color:#111827}
-    .scroll{overflow:auto;border-radius:14px;border:1px solid #0b1220}
-    table{border-collapse:collapse; width:100%; min-width:980px; background:#0b1220; color:#fff}
-    th,td{padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.08); font-size:12px; white-space:nowrap}
-    th{position:sticky; top:0; background:#0a1020; z-index:2; text-align:left}
-    .hint{margin-top:10px;color:#fff;opacity:.75;font-size:12px}
-    .status{margin-top:10px;font-size:12px;font-weight:800}
-    .ok{color:#16a34a}
-    .bad{color:#ef4444}
-    /* modal */
-    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
-    .modal{width:min(980px, 100%); background:#fff; border-radius:22px; box-shadow: var(--shadow); padding:16px}
-    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .modal-head h2{margin:0;font-size:18px}
-    .close{background:var(--brand);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer}
-    .formgrid{display:grid;gap:10px;grid-template-columns: repeat(4, 1fr)}
-    @media (max-width: 1050px){.formgrid{grid-template-columns:1fr 1fr}}
-    .footer-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
-  
-    .panel canvas{width:100% !important; height:240px !important; max-height:240px !important;}
-    .panels .panel{min-height:310px;}
-    .panels2 .panel{min-height:310px;}
-</style>
+    .actions{display:flex;gap:6px;flex-wrap:wrap}
+    .mini{
+      font-size:12px;font-weight:900;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer
+    }
+    .mini:hover{background:#f1f5f9}
+    .mini.danger{border-color:#fecaca;background:#fff1f2}
+    .mini.danger:hover{background:#ffe4e6}
+
+    /* Modal */
+    .backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.55);
+      display:none;align-items:center;justify-content:center;padding:14px;z-index:50;
+    }
+    .modal{
+      width:min(1020px, 100%);
+      background:#fff;border-radius:18px;box-shadow: var(--shadow);
+      overflow:hidden;border:1px solid rgba(255,255,255,.08);
+    }
+    .modalHead{
+      padding:14px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+      background: linear-gradient(180deg,#ffffff, #f8fafc);
+      border-bottom:1px solid var(--line);
+    }
+    .modalHead h2{margin:0;font-weight:950}
+    .modalBody{padding:14px}
+    .formGrid{display:grid;gap:10px;grid-template-columns: repeat(4, 1fr)}
+    .formGrid .span2{grid-column: span 2}
+    .formGrid .span4{grid-column: span 4}
+    .modalFoot{
+      padding:12px 14px;display:flex;gap:10px;justify-content:flex-end;align-items:center;
+      border-top:1px solid var(--line);background:#fff;
+    }
+    .msg{font-weight:800;font-size:13px}
+    .msg.ok{color:#16a34a}
+    .msg.bad{color:#dc2626}
+
+    @media (max-width: 980px){
+      .row.r1{grid-template-columns: 1fr 1fr}
+      .row.r2{grid-template-columns: 1fr 1fr}
+      .row.r3{grid-template-columns: 1fr 1fr}
+      .kpis{grid-template-columns: 1fr 1fr}
+      .charts{grid-template-columns: 1fr}
+      .charts2{grid-template-columns: 1fr}
+      .formGrid{grid-template-columns: 1fr 1fr}
+    }
+  </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">
-        <!-- PON TU LOGO EN LA MISMA CARPETA: logo_Xtreme.png -->
-        <img src="logo_Xtreme.png" alt="Xtreme" onerror="this.style.display='none'">
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <!-- Sube tu logo como: /assets/logo_Xtreme.png (o edita el src) -->
+      <img id="logoImg" src="assets/logo_Xtreme.png" alt="Xtreme logo" onerror="this.style.display='none'">
+      <div>
+        <div class="t1">Dashboard Seguimiento – Hormigón / CNC</div>
+        <div class="t2">Xtreme Mining · Google Sheets (CSV) + Apps Script (ingreso/edición)</div>
       </div>
-      <div class="title">
-        <h1>Dashboard Seguimiento – Hormigón / CNC</h1>
-        <p>Xtreme Mining • Datos desde Google Sheets (CSV) + Ingreso vía Apps Script</p>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button class="btn purple" id="btnNew">➕ Nuevo registro</button>
+    <button class="btn" id="btnClear">🧹 Limpiar filtros</button>
+    <button class="btn" id="btnRefresh">🔄 Actualizar</button>
+    <button class="btn red" id="btnPdf">⬇ Exportar PDF</button>
+  </header>
+
+  <section class="filters" id="reportArea">
+    <div class="row r1">
+      <div class="field">
+        <label>Buscar (texto libre)</label>
+        <input id="q" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." />
       </div>
-      <div class="actions">
-        <button class="btn" id="btnNew">➕ Nuevo registro</button>
-        <button class="btn" id="btnClear">🧹 Limpiar filtros</button>
-        <button class="btn primary" id="btnRefresh">🔄 Actualizar</button>
+      <div class="field">
+        <label>MES</label>
+        <select id="fMES"></select>
       </div>
-    </header>
-
-    <section class="filters grid">
-      <div class="filters">
-        <div class="fgrid">
-          <div class="field">
-            <label>Buscar (texto libre)</label>
-            <input id="q" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." />
-          </div>
-          <div class="field"><label>MES</label><select id="fMES"></select></div>
-          <div class="field"><label>SEMANA</label><select id="fSEMANA"></select></div>
-          <div class="field"><label>TURNO</label><select id="fTURNO"></select></div>
-          <div class="field"><label>GRUPO</label><select id="fGRUPO"></select></div>
-          <div class="field"><label>MINA</label><select id="fMINA"></select></div>
-        </div>
-
-        <div class="fgrid2">
-          <div class="field"><label>GRADO</label><select id="fGRADO"></select></div>
-          <div class="field"><label>SUMINISTRO</label><select id="fSUMINISTRO"></select></div>
-          <div class="field"><label>SALA DE CONTROL</label><select id="fSALA"></select></div>
-          <div class="field"><label>LABOR_POSTURA</label><select id="fLABOR"></select></div>
-          <div class="field"><label>CNC_NIVEL 2</label><select id="fCNC2"></select></div>
-        </div>
-
-        <div class="fgrid3">
-          <div class="field"><label>CNC_NIVEL 1</label><select id="fCNC1"></select></div>
-          <div class="field"><label>RESPONSABLE_CNC</label><select id="fRESP"></select></div>
-          <div class="field"><label>FECHA</label><select id="fFECHA"></select></div>
-          <div class="field"><label>PLANIFICADO</label><select id="fPLAN"></select></div>
-          <div class="field"><label>SUMINISTRADO</label><select id="fSUMI"></select></div>
-          <div class="field"><label>PENDIENTE</label><select id="fPEND"></select></div>
-        </div>
-
-        <div class="status" id="status"></div>
+      <div class="field">
+        <label>SEMANA</label>
+        <select id="fSEMANA"></select>
       </div>
-
-      <div class="cards">
-        <div class="card"><div class="k">REGISTROS FILTRADOS</div><div class="v" id="kRows">0</div><div class="s">Total visible según filtros</div></div>
-        <div class="card"><div class="k">m³ PLANIFICADO (suma)</div><div class="v" id="kPlan">0</div><div class="s">Suma columna PLANIFICADO</div></div>
-        <div class="card"><div class="k">m³ SUMINISTRADO (suma)</div><div class="v" id="kSumi">0</div><div class="s">Suma columna SUMINISTRADO</div></div>
-        <div class="card"><div class="k">PENDIENTE (suma)</div><div class="v" id="kPend">0</div><div class="s">Suma columna PENDIENTE</div></div>
-        <div class="card"><div class="k">RECHAZADO (suma)</div><div class="v" id="kRech">0</div><div class="s">Suma columna RECHAZADO</div></div>
-        <div class="card"><div class="k">CNC NIVEL 1 (TOP)</div><div class="v" id="kTop">-</div><div class="s">Causa principal</div></div>
+      <div class="field">
+        <label>TURNO</label>
+        <select id="fTURNO"></select>
       </div>
-
-      <div class="panels">
-        <div class="panel">
-          <h3>Incidentes por CNC_NIVEL 1 (TOP 10)</h3>
-          <canvas id="chTop"></canvas>
-        </div>
-        <div class="panel">
-          <h3>Distribución por RESPONSABLE_CNC</h3>
-          <canvas id="chResp"></canvas>
-        </div>
+      <div class="field">
+        <label>GRUPO</label>
+        <select id="fGRUPO"></select>
       </div>
+    </div>
 
-      <div class="panels2">
-        <div class="panel">
-          <h3>m³ por MINA (Planificado vs Suministrado)</h3>
-          <canvas id="chMina"></canvas>
-        </div>
-        <div class="panel">
-          <h3>m³ por FECHA (Planificado vs Suministrado)</h3>
-          <canvas id="chFecha"></canvas>
-        </div>
+    <div class="row r2" style="margin-top:10px">
+      <div class="field"><label>MINA</label><select id="fMINA"></select></div>
+      <div class="field"><label>GRADO</label><select id="fGRADO"></select></div>
+      <div class="field"><label>SUMINISTRO</label><select id="fSUMINISTRO"></select></div>
+      <div class="field"><label>SALA DE CONTROL</label><select id="fSALA"></select></div>
+      <div class="field"><label>LABOR_POSTURA</label><select id="fLABOR"></select></div>
+    </div>
+
+    <div class="row r3" style="margin-top:10px">
+      <div class="field"><label>CNC_NIVEL 1</label><select id="fCNC1"></select></div>
+      <div class="field"><label>CNC_NIVEL 2</label><select id="fCNC2"></select></div>
+      <div class="field"><label>RESPONSABLE_CNC</label><select id="fRESP"></select></div>
+      <div class="field"><label>FECHA</label><select id="fFECHA"></select></div>
+    </div>
+
+    <div class="hint" id="status">Cargando…</div>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi"><div class="n" id="kCount">0</div><div class="l">Registros filtrados</div></div>
+    <div class="kpi"><div class="n" id="kPlan">0</div><div class="l">m³ Planificado (suma)</div></div>
+    <div class="kpi"><div class="n" id="kSumi">0</div><div class="l">m³ Suministrado (suma)</div></div>
+    <div class="kpi"><div class="n" id="kPend">0</div><div class="l">Pendiente (suma)</div></div>
+    <div class="kpi"><div class="n" id="kTop">-</div><div class="l">CNC_NIVEL 1 (TOP)</div></div>
+  </section>
+
+  <section class="charts">
+    <div class="chartCard">
+      <div class="chartTitle">Incidentes por CNC_NIVEL 1 (TOP 10)</div>
+      <div class="chartWrap"><canvas id="chCnc1"></canvas></div>
+    </div>
+    <div class="chartCard">
+      <div class="chartTitle">Distribución por RESPONSABLE_CNC</div>
+      <div class="chartWrap"><canvas id="chResp"></canvas></div>
+    </div>
+  </section>
+
+  <section class="charts2">
+    <div class="chartCard">
+      <div class="chartTitle">m³ por MINA (Planificado vs Suministrado)</div>
+      <div class="chartWrap"><canvas id="chMina"></canvas></div>
+    </div>
+    <div class="chartCard">
+      <div class="chartTitle">m³ por FECHA (Planificado vs Suministrado)</div>
+      <div class="chartWrap"><canvas id="chFecha"></canvas></div>
+    </div>
+  </section>
+
+  <section class="tableCard" style="margin-top:12px">
+    <div class="tableTop">
+      <h3>Detalle (todas las columnas)</h3>
+      <div style="font-size:12px;color:var(--muted)">Tip: usa “Editar” para corregir un registro (requiere columna ID).</div>
+    </div>
+    <div style="overflow:auto;max-height:360px;border-radius:14px;border:1px solid var(--line)">
+      <table>
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- MODAL -->
+<div class="backdrop" id="backdrop">
+  <div class="modal">
+    <div class="modalHead">
+      <h2 id="modalTitle">Nuevo Registro</h2>
+      <button class="btn red" id="btnClose">Cerrar</button>
+    </div>
+    <div class="modalBody">
+      <div class="formGrid" id="formGrid">
+        <div class="field"><label>FECHA</label><input id="iFECHA" type="date"></div>
+        <div class="field"><label>MES</label><select id="iMES"></select></div>
+        <div class="field"><label>SEMANA</label><select id="iSEMANA"></select></div>
+        <div class="field"><label>TURNO</label><select id="iTURNO"></select></div>
+
+        <div class="field"><label>GRUPO</label><select id="iGRUPO"></select></div>
+        <div class="field"><label>MINA</label><select id="iMINA"></select></div>
+        <div class="field"><label>LABOR_POSTURA</label><select id="iLABOR_POSTURA"></select></div>
+        <div class="field"><label>GRADO</label><select id="iGRADO"></select></div>
+
+        <div class="field"><label>SUMINISTRO</label><select id="iSUMINISTRO"></select></div>
+        <div class="field"><label>PLANIFICADO</label><input id="iPLANIFICADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>SUMINISTRADO</label><input id="iSUMINISTRADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>PENDIENTE</label><input id="iPENDIENTE" type="number" step="0.01" placeholder="0"></div>
+
+        <div class="field"><label>RECHAZADO</label><input id="iRECHAZADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>REAGENDADO</label><input id="iREAGENDADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>ELIMINADO</label><input id="iELIMINADO" type="number" step="0.01" placeholder="0"></div>
+        <div class="field"><label>NÚMERO GUÍA</label><input id="iNUMERO_GUIA" placeholder="Ej: 55626"></div>
+
+        <div class="field"><label>HORA SALIDA PLANTA</label><input id="iHORA_SALIDA_PLANTA" type="time"></div>
+        <div class="field"><label>HORA LLEGADA OBRA</label><input id="iHORA_LLEGADA_OBRA" type="time"></div>
+        <div class="field"><label>HORA INICIO DESCARGA</label><input id="iHORA_INICIO_DESCARGA" type="time"></div>
+        <div class="field"><label>HORA TERMINO DESCARGA</label><input id="iHORA_TERMINO_DESCARGA" type="time"></div>
+
+        <div class="field span2"><label>CNC_NIVEL 2</label><select id="iCNC_NIVEL_2"></select></div>
+        <div class="field"><label>CNC_NIVEL 1</label><select id="iCNC_NIVEL_1"></select></div>
+        <div class="field"><label>RESPONSABLE_CNC</label><select id="iRESPONSABLE_CNC"></select></div>
+
+        <div class="field span4"><label>SALA DE CONTROL</label><select id="iSALA_DE_CONTROL"></select></div>
+
+        <!-- hidden -->
+        <input id="iID" type="hidden">
       </div>
-
-      <div class="table">
-        <h3>Detalle (todas las columnas)</h3>
-        <div class="scroll">
-          <table id="tbl">
-            <thead><tr id="th"></tr></thead>
-            <tbody id="tb"></tbody>
-          </table>
-        </div>
-        <div class="hint" id="hint"></div>
-      </div>
-    </section>
-  </div>
-
-  <!-- MODAL -->
-  <div class="modal-back" id="modalBack">
-    <div class="modal">
-      <div class="modal-head">
-        <h2>➕ Nuevo Registro</h2>
-        <button class="close" id="btnClose">Cerrar</button>
-      </div>
-
-      <div class="formgrid" id="formGrid"></div>
-
-      <div class="footer-actions">
-        <button class="btn primary" id="btnSave">💾 Guardar</button>
-      </div>
-
-      <div class="status" id="saveStatus"></div>
+    </div>
+    <div class="modalFoot">
+      <div class="msg" id="saveMsg"></div>
+      <button class="btn purple" id="btnSave">💾 Guardar</button>
     </div>
   </div>
+</div>
 
 <script>
-/** ===================== CONFIG ===================== **/
-
-// 1) ESTE CSV ES EL QUE EL DASHBOARD LEE (PUBLICADO).
-//    Debe apuntar al GID correcto (pestaña de datos).
+/** =========================
+ *  CONFIG (EDITA AQUÍ)
+ *  ========================= */
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv";
+const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmRXto1NpdgZtAWp745a65o1t78-NQeBC8L_62jgjRwwRe7a19FfLhnRw-0Ce60yoQ/exec";
 
-// 2) ESTE ES TU WEBAPP /exec (GUARDA DATOS).
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzmRXto1NpdgZtAWp745a65o1t78-NQeBC8L_62jgjRwwRe7a19FfLhnRw-0Ce60yoQ/exec";
-
-/** Encabezados exactos de la hoja de registros (HORMIGONES) **/
-const HEADERS = [
+/** Columnas esperadas (y nombre exacto en tu Sheet/CSV). */
+const COLS = [
+  "ID",
   "FECHA","MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
   "PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO",
   "NÚMERO GUÍA","HORA SALIDA PLANTA","HORA LLEGADA OBRA","HORA INICIO DESCARGA","HORA TERMINO DESCARGA",
   "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
 ];
 
-// Campos que deben ser desplegables en el ingreso
-const FORM_SELECT_FIELDS = new Set([
-  "MES","SEMANA","TURNO","GRUPO","MINA","LABOR_POSTURA","GRADO","SUMINISTRO",
-  "CNC _NIVEL 2","CNC _NIVEL 1","RESPONSABLE_CNC","SALA DE CONTROL"
-]);
-
-// Catálogo “fijo” (tu lista) para que los selects del modal SIEMPRE tengan opciones aunque el CSV esté vacío.
-const CATALOG = {
-  "GRADO": ["SH-22,5 NORMAL","SH-22,5 FIBRA","SH-300","HN-70","HN-30","HN-40","HN-50","HB-30","HB-40","HB-50","GN-25","HB-70","GN-65"],
-  "SUMINISTRO": ["En Planta","En Obra"],
-  "TURNO": ["1","2","A","B","C"],
-  "GRUPO": ["Grupo_1","Grupo_2","Grupo_3","Grupo_4"],
-  "SALA DE CONTROL": ["Carlos Salazar Rodriguez","Martin Arriaza Vidal","Alvaro Coloma Toledo","Marcelo Henriquez Ortiz"],
-  "MINA": [
-    "ESMERALDA","ESMERALDA_ACARREO","ESMERALDA_PANEL_1","ESMERALDA_PANEL_2","DIABLO_REGIMIENTO","PACIFICO_SUPERIOR",
-    "PILAR_NORTE","PANEL_RENO","RENO","RRNN","DACITA","PANEL_INVARIANTE","TENIENTE_6","TENIENTE_7","TENIENTE_8",
-    "ANDESITA","COLÓN","ADIT_71"
-  ],
-  "LABOR_POSTURA": [
-    "C-49 IZ","C-55 IZ","C-25 Z-44 HW","C-25 Z-45 HW","C-49 OP-48","C-23 Z-0","C-23 Z-42 FW","C-23 Z-42 HW",
-    "C-2 Z-10/9","C-2 Z-5/6","C-0 SOC. SUR A Z-10","OP-27 UH","OP-26 Pto 22-A","OP-26 Pto 22-B","OP-26 Pto 24",
-    "OP-26 Pto 23","OP-27 Pto 20-A","OP-27 Pto 20-B","OP-27 Pto 21-A","OP-27 Pto 21-B","OP-27 Pto 22-A",
-    "Pilar Bz 24-1S (Pto 1)","Soc. Hw 1 (Pto 2)","Soc. Hw 1 / Acceso Sur Loop (Pto 3)","Acceso Sur Loop (Pto 4)",
-    "Soc. Hw 1 / Loop Norte (Pto 5)","Loop Fw A (Pto 6)","Loop Fw B (Pto 7)","CX 1S/2S con Loop 1S (Pto 8)",
-    "Loop Hw / CX Loop 1S/2S (Pto 9)","Loop Hw / Adit 65 (Pto 10)","Loop Hw entre P4 y P5 (Pto 11)",
-    "Fr Inv descarga Dacita (Pto 12)","CAV acceso descarga CH DT (Pto 13)","Galería curva CH DT (Pto 14)","OP 24","EDIFICIO 132"
-  ],
-  "CNC _NIVEL 2": [
-    "Interferencia por derrumbe","Comunicación","Trabajos en ruta","Traslado personal DET","ruta no apta para el ingreso de mixer",
-    "Simulacros","Ventana horaria","Restricción por evento climatico","Movilizaciones","Visita Gerencia GSYS","Cambio de prioridad",
-    "Sin Autorizacion DET","APP no disponible","Planta sin comunicación","Sismología","Ruta marina","Cenefa","Trabajo otras empresas",
-    "Equipos en área","Marina en postura","Liberación de gases","Energía","Agua","Cancha no lista","Trabajos otras disciplinas",
-    "Cancelacion Suministro","Pedido Fuera de Programa","Confirmacion fuera de horario","Indisponibilidad de mixer propio","Falta operador",
-    "Falta personal OOCC","Equipo shortcrete F/S","Bomba F/S","Problemas con escolta","Lento retorno de equipos","Mixer Retrasado",
-    "Sin retorno de mixer a planta","Capacidad maxima equipo","Mezcladores","Postura rematada con menos m3","Cambio de Postura",
-    "Suspension Administrativa","Planificación errónea","Problemas en la calidad","Falta suministros","Falla planta","Incumplimiento horario APP",
-    "Equipo F/S Xtreme","Tarjeta Verde","Somnolencia","Proceso de carguío tarda mas de lo programado","Espera equipo en planta"
-  ],
-  "CNC _NIVEL 1": [
-    "Ruta Codelco","Clima","Personal","Prioridades","APP no disponible","Comunicación","Sismología","Ruta","Interferencia empresas",
-    "Liberación de gases","Servicios","Frente no preparada","Pedido","Indisponibilidad de mixer propio","Dotación no disponible","Equipos",
-    "Postura","Suministro","Planificación errónea","Calidad","Indisponibilidad de planta","Incumplimiento horario APP","Equipo F/S","Planta",
-    "Falla operacional","Espera equipo en planta"
-  ],
-  "RESPONSABLE_CNC": ["CODELCO","INTERNA","SUMINISTRO"]
+/** Para dropdowns del ingreso: se construyen desde el CSV (valores únicos). */
+const FORM_SELECTS = {
+  MES:"iMES",
+  SEMANA:"iSEMANA",
+  TURNO:"iTURNO",
+  GRUPO:"iGRUPO",
+  MINA:"iMINA",
+  LABOR_POSTURA:"iLABOR_POSTURA",
+  GRADO:"iGRADO",
+  SUMINISTRO:"iSUMINISTRO",
+  "CNC _NIVEL 2":"iCNC_NIVEL_2",
+  "CNC _NIVEL 1":"iCNC_NIVEL_1",
+  RESPONSABLE_CNC:"iRESPONSABLE_CNC",
+  "SALA DE CONTROL":"iSALA_DE_CONTROL",
 };
 
-/** ===================== STATE ===================== **/
-let rawRows = [];     // objects
-let filtered = [];
+/** =========================
+ *  STATE
+ *  ========================= */
+let raw = [];         // all rows (objects)
+let filtered = [];    // filtered rows
 let charts = {};
-let lastHeadersInCsv = [];
+let lastFetchAt = 0;
 
-/** ===================== HELPERS ===================== **/
+/** =========================
+ *  HELPERS
+ *  ========================= */
 const $ = (id)=>document.getElementById(id);
-const fmt = (n)=> (isNaN(n)?0:n).toLocaleString("es-CL");
-const toNum = (v)=> {
-  if(v===null||v===undefined) return 0;
-  const s=String(v).trim().replaceAll(".","").replace(",",".");
-  const x=parseFloat(s);
-  return isNaN(x)?0:x;
-};
-function uniqueSorted(arr){
-  return [...new Set(arr.filter(v=>String(v).trim()!=="").map(v=>String(v).trim()))].sort((a,b)=>a.localeCompare(b,"es"));
-}
-function setStatus(msg, ok=true){
-  const el=$("status");
-  el.textContent=msg;
-  el.className="status "+(ok?"ok":"bad");
+
+function normHeader(h){
+  return String(h||"").trim();
 }
 
-/** ===================== CSV LOAD ===================== **/
-async function fetchCsvWithRetry(url, tries=3){
-  let lastErr=null;
-  for(let i=0;i<tries;i++){
-    try{
-      const bust = (url.includes("?")?"&":"?")+"ts="+Date.now()+"_"+i;
-      const res = await fetch(url+bust, {cache:"no-store"});
-      if(!res.ok) throw new Error("HTTP "+res.status);
-      const text = await res.text();
-      if(!text || text.trim().length<5) throw new Error("CSV vacío");
-      return text;
-    }catch(e){
-      lastErr=e;
-      await new Promise(r=>setTimeout(r, 400*(i+1)));
-    }
+function toNumber(v){
+  if (v===null || v===undefined) return 0;
+  const s = String(v).replace(",", ".").trim();
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function textMatch(row, q){
+  if(!q) return true;
+  const s = q.toLowerCase();
+  return Object.values(row).some(v => String(v||"").toLowerCase().includes(s));
+}
+
+function uniq(arr){
+  return Array.from(new Set(arr.filter(v => v!==null && v!==undefined && String(v).trim()!=="").map(v => String(v).trim())));
+}
+
+function setOptions(selectEl, values, allLabel="Todos"){
+  selectEl.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = allLabel;
+  selectEl.appendChild(opt0);
+  values.forEach(v=>{
+    const o=document.createElement("option");
+    o.value=v;
+    o.textContent=v;
+    selectEl.appendChild(o);
+  });
+}
+
+function setOptionsForm(selectEl, values){
+  selectEl.innerHTML = "";
+  const o0=document.createElement("option");
+  o0.value="";
+  o0.textContent="Seleccione…";
+  selectEl.appendChild(o0);
+  values.forEach(v=>{
+    const o=document.createElement("option");
+    o.value=v;
+    o.textContent=v;
+    selectEl.appendChild(o);
+  });
+}
+
+function groupCount(rows, key){
+  const m=new Map();
+  rows.forEach(r=>{
+    const k = String(r[key]||"").trim() || "(Vacío)";
+    m.set(k, (m.get(k)||0)+1);
+  });
+  return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]);
+}
+
+function groupSumBy(rows, key, col){
+  const m=new Map();
+  rows.forEach(r=>{
+    const k = String(r[key]||"").trim() || "(Vacío)";
+    const v = toNumber(r[col]);
+    m.set(k, (m.get(k)||0)+v);
+  });
+  return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]);
+}
+
+function safeDateIso(v){
+  // acepta "YYYY-MM-DD" o "DD-MM-YYYY"
+  const s = String(v||"").trim();
+  if(!s) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if (/^\d{2}-\d{2}-\d{4}$/.test(s)){
+    const [dd,mm,yy]=s.split("-");
+    return `${yy}-${mm}-${dd}`;
   }
-  throw lastErr;
+  return s;
+}
+
+/** =========================
+ *  CSV LOAD
+ *  ========================= */
+async function fetchCsv(){
+  if(!CSV_URL || CSV_URL.includes("REEMPLAZA")) throw new Error("Debes pegar tu CSV_URL en el index.html");
+  const url = CSV_URL + (CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
+  const res = await fetch(url, { cache:"no-store", mode:"cors" });
+  if(!res.ok) throw new Error("No se pudo leer CSV (status " + res.status + ")");
+  const txt = await res.text();
+  return parseCsv(txt);
 }
 
 function parseCsv(text){
-  // parser simple CSV (soporta comillas)
+  // parser simple (soporta comillas básicas)
+  const lines = text.replace(/\r/g,"").split("\n").filter(l=>l.trim()!=="");
+  if(lines.length<1) return [];
+  const headers = splitCsvLine(lines[0]).map(normHeader);
   const rows=[];
-  let i=0, field="", row=[], inQ=false;
-  const pushField=()=>{ row.push(field); field=""; };
-  const pushRow=()=>{ rows.push(row); row=[]; };
-  while(i<text.length){
-    const c=text[i];
-    if(inQ){
-      if(c==='"' && text[i+1]==='"'){ field+='"'; i+=2; continue; }
-      if(c==='"'){ inQ=false; i++; continue; }
-      field+=c; i++; continue;
-    }else{
-      if(c==='"'){ inQ=true; i++; continue; }
-      if(c===','){ pushField(); i++; continue; }
-      if(c==='\n'){ pushField(); pushRow(); i++; continue; }
-      if(c==='\r'){ i++; continue; }
-      field+=c; i++; continue;
-    }
+  for(let i=1;i<lines.length;i++){
+    const parts = splitCsvLine(lines[i]);
+    const obj={};
+    headers.forEach((h,idx)=>obj[h]= (parts[idx] ?? "").trim());
+    rows.push(obj);
   }
-  pushField(); pushRow();
   return rows;
 }
 
-async function loadData(){
-  try{
-    setStatus("Cargando CSV…");
-    const csvText = await fetchCsvWithRetry(CSV_URL, 4);
-    const grid = parseCsv(csvText);
-    const headers = grid[0].map(h=>String(h).trim());
-    lastHeadersInCsv = headers;
-
-    const dataRows = grid.slice(1).filter(r=>r.some(x=>String(x||"").trim()!==""));
-    rawRows = dataRows.map(r=>{
-      const obj={};
-      headers.forEach((h,idx)=>obj[h]= (r[idx]??""));
-      // normaliza nombres esperados por dashboard (por si vienen con espacios)
-      // (no tocamos HEADERS, solo para filtro/render)
-      return obj;
-    });
-
-    if(dataRows.length===0){
-      setStatus("CSV cargado (sin filas). Puedes ingresar registros con 'Nuevo registro'.", true);
-      $("hint").textContent="CSV sin filas (solo encabezados). Igual puedes ingresar registros con “Nuevo registro”.";
-    }else{
-      setStatus("CSV cargado: "+dataRows.length+" filas.", true);
-      $("hint").textContent="Mostrando registros desde el CSV publicado.";
+function splitCsvLine(line){
+  const out=[]; let cur=""; let inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch === '"'){
+      if(inQ && line[i+1]==='"'){ cur+='"'; i++; }
+      else inQ=!inQ;
+    } else if(ch === "," && !inQ){
+      out.push(cur); cur="";
+    } else {
+      cur+=ch;
     }
+  }
+  out.push(cur);
+  return out;
+}
 
-    buildFilterOptions();
-    applyFilters();
-  }catch(e){
-    setStatus("Error de red: no se pudo leer el CSV. Revisa permisos y el link publicado (output=csv).", false);
-    $("hint").textContent="Error: "+String(e);
-    rawRows=[];
-    buildFilterOptions(true);
-    applyFilters();
+/** =========================
+ *  FILTERS
+ *  ========================= */
+function buildFilterOptions(){
+  const map = {
+    fMES:"MES",
+    fSEMANA:"SEMANA",
+    fTURNO:"TURNO",
+    fGRUPO:"GRUPO",
+    fMINA:"MINA",
+    fGRADO:"GRADO",
+    fSUMINISTRO:"SUMINISTRO",
+    fSALA:"SALA DE CONTROL",
+    fLABOR:"LABOR_POSTURA",
+    fCNC1:"CNC _NIVEL 1",
+    fCNC2:"CNC _NIVEL 2",
+    fRESP:"RESPONSABLE_CNC",
+    fFECHA:"FECHA",
+  };
+  for(const [selId, col] of Object.entries(map)){
+    const values = uniq(raw.map(r => r[col]));
+    values.sort((a,b)=>a.localeCompare(b,"es"));
+    setOptions($(selId), values, selId==="fFECHA" ? "Todas" : "Todos");
   }
 }
 
-/** ===================== FILTER OPTIONS ===================== **/
-function fillSelect(selId, values, allLabel="Todos"){
-  const sel=$(selId);
-  sel.innerHTML="";
-  const opt0=document.createElement("option");
-  opt0.value="__ALL__"; opt0.textContent=allLabel;
-  sel.appendChild(opt0);
-  values.forEach(v=>{
-    const o=document.createElement("option");
-    o.value=v; o.textContent=v;
-    sel.appendChild(o);
-  });
-}
-
-function buildFilterOptions(fallback=false){
-  const get = (h)=> uniqueSorted(rawRows.map(r=>r[h]));
-  // si no hay datos, igual dejamos selects con "Todos"
-  fillSelect("fMES", get("MES"));
-  fillSelect("fSEMANA", get("SEMANA"));
-  fillSelect("fTURNO", get("TURNO"));
-  fillSelect("fGRUPO", get("GRUPO"));
-  fillSelect("fMINA", get("MINA"));
-  fillSelect("fGRADO", get("GRADO"));
-  fillSelect("fSUMINISTRO", get("SUMINISTRO"));
-  fillSelect("fSALA", get("SALA DE CONTROL") , "Todos");
-  fillSelect("fLABOR", get("LABOR_POSTURA"));
-  fillSelect("fCNC2", get("CNC _NIVEL 2"));
-  fillSelect("fCNC1", get("CNC _NIVEL 1"));
-  fillSelect("fRESP", get("RESPONSABLE_CNC"));
-  fillSelect("fFECHA", get("FECHA"), "Todas");
-  fillSelect("fPLAN", uniqueSorted(rawRows.map(r=>String(r["PLANIFICADO"]??"").trim()).filter(Boolean)), "Todos");
-  fillSelect("fSUMI", uniqueSorted(rawRows.map(r=>String(r["SUMINISTRADO"]??"").trim()).filter(Boolean)), "Todos");
-  fillSelect("fPEND", uniqueSorted(rawRows.map(r=>String(r["PENDIENTE"]??"").trim()).filter(Boolean)), "Todos");
-}
-
-/** ===================== APPLY FILTERS ===================== **/
-function valOrAll(sel){ const v=$(sel).value; return v==="__ALL__" ? "" : v; }
-
 function applyFilters(){
-  const q = $("q").value.trim().toLowerCase();
-
-  const F = {
-    MES: valOrAll("fMES"),
-    SEMANA: valOrAll("fSEMANA"),
-    TURNO: valOrAll("fTURNO"),
-    GRUPO: valOrAll("fGRUPO"),
-    MINA: valOrAll("fMINA"),
-    GRADO: valOrAll("fGRADO"),
-    SUMINISTRO: valOrAll("fSUMINISTRO"),
-    SALA: valOrAll("fSALA"),
-    LABOR: valOrAll("fLABOR"),
-    CNC2: valOrAll("fCNC2"),
-    CNC1: valOrAll("fCNC1"),
-    RESP: valOrAll("fRESP"),
-    FECHA: valOrAll("fFECHA"),
-    PLAN: valOrAll("fPLAN"),
-    SUMI: valOrAll("fSUMI"),
-    PEND: valOrAll("fPEND")
-  };
-
-  filtered = rawRows.filter(r=>{
-    if(F.MES && String(r["MES"]||"").trim()!==F.MES) return false;
-    if(F.SEMANA && String(r["SEMANA"]||"").trim()!==F.SEMANA) return false;
-    if(F.TURNO && String(r["TURNO"]||"").trim()!==F.TURNO) return false;
-    if(F.GRUPO && String(r["GRUPO"]||"").trim()!==F.GRUPO) return false;
-    if(F.MINA && String(r["MINA"]||"").trim()!==F.MINA) return false;
-    if(F.GRADO && String(r["GRADO"]||"").trim()!==F.GRADO) return false;
-    if(F.SUMINISTRO && String(r["SUMINISTRO"]||"").trim()!==F.SUMINISTRO) return false;
-    if(F.SALA && String(r["SALA DE CONTROL"]||"").trim()!==F.SALA) return false;
-    if(F.LABOR && String(r["LABOR_POSTURA"]||"").trim()!==F.LABOR) return false;
-    if(F.CNC2 && String(r["CNC _NIVEL 2"]||"").trim()!==F.CNC2) return false;
-    if(F.CNC1 && String(r["CNC _NIVEL 1"]||"").trim()!==F.CNC1) return false;
-    if(F.RESP && String(r["RESPONSABLE_CNC"]||"").trim()!==F.RESP) return false;
-    if(F.FECHA && String(r["FECHA"]||"").trim()!==F.FECHA) return false;
-    if(F.PLAN && String(r["PLANIFICADO"]||"").trim()!==F.PLAN) return false;
-    if(F.SUMI && String(r["SUMINISTRADO"]||"").trim()!==F.SUMI) return false;
-    if(F.PEND && String(r["PENDIENTE"]||"").trim()!==F.PEND) return false;
-
-    if(q){
-      const blob = Object.values(r).join(" ").toLowerCase();
-      if(!blob.includes(q)) return false;
+  const q = $("q").value.trim();
+  const pick = (id)=>$(id).value;
+  filtered = raw.filter(r=>{
+    if(!textMatch(r,q)) return false;
+    const rules = [
+      ["fMES","MES"],["fSEMANA","SEMANA"],["fTURNO","TURNO"],["fGRUPO","GRUPO"],
+      ["fMINA","MINA"],["fGRADO","GRADO"],["fSUMINISTRO","SUMINISTRO"],["fSALA","SALA DE CONTROL"],
+      ["fLABOR","LABOR_POSTURA"],["fCNC1","CNC _NIVEL 1"],["fCNC2","CNC _NIVEL 2"],
+      ["fRESP","RESPONSABLE_CNC"],["fFECHA","FECHA"]
+    ];
+    for(const [fid,col] of rules){
+      const v = pick(fid);
+      if(v && String(r[col]||"").trim() !== v) return false;
     }
     return true;
   });
-
   renderAll();
 }
 
-/** ===================== RENDER ===================== **/
-function destroyChart(key){
-  if(charts[key]){ charts[key].destroy(); charts[key]=null; }
+function clearFilters(){
+  $("q").value="";
+  ["fMES","fSEMANA","fTURNO","fGRUPO","fMINA","fGRADO","fSUMINISTRO","fSALA","fLABOR","fCNC1","fCNC2","fRESP","fFECHA"]
+    .forEach(id=>$(id).value="");
+  applyFilters();
 }
-function renderKpis(){
-  $("kRows").textContent = fmt(filtered.length);
-  const sumPlan = filtered.reduce((a,r)=>a+toNum(r["PLANIFICADO"]),0);
-  const sumSumi = filtered.reduce((a,r)=>a+toNum(r["SUMINISTRADO"]),0);
-  const sumPend = filtered.reduce((a,r)=>a+toNum(r["PENDIENTE"]),0);
-  const sumRech = filtered.reduce((a,r)=>a+toNum(r["RECHAZADO"]),0);
-  $("kPlan").textContent = fmt(sumPlan);
-  $("kSumi").textContent = fmt(sumSumi);
-  $("kPend").textContent = fmt(sumPend);
-  $("kRech").textContent = fmt(sumRech);
 
-  const counts = {};
-  filtered.forEach(r=>{
-    const k=String(r["CNC _NIVEL 1"]||"").trim();
-    if(!k) return;
-    counts[k]=(counts[k]||0)+1;
-  });
-  let top="-", topv=0;
-  Object.entries(counts).forEach(([k,v])=>{ if(v>topv){top=k;topv=v;} });
+/** =========================
+ *  RENDER
+ *  ========================= */
+function renderKpis(){
+  $("kCount").textContent = String(filtered.length);
+  const sum = (col)=> filtered.reduce((a,r)=>a+toNumber(r[col]),0);
+  $("kPlan").textContent = String(Math.round(sum("PLANIFICADO")*100)/100);
+  $("kSumi").textContent = String(Math.round(sum("SUMINISTRADO")*100)/100);
+  $("kPend").textContent = String(Math.round(sum("PENDIENTE")*100)/100);
+
+  const top = groupCount(filtered, "CNC _NIVEL 1")[0]?.[0] ?? "-";
   $("kTop").textContent = top;
 }
+
+function makeOrUpdateChart(key, cfg){
+  if(charts[key]){ charts[key].data = cfg.data; charts[key].options = cfg.options; charts[key].update(); return; }
+  charts[key] = new Chart($(key), cfg);
+}
+
 function renderCharts(){
-  // TOP 10 CNC1
-  const cnc1Counts={};
-  filtered.forEach(r=>{
-    const k=String(r["CNC _NIVEL 1"]||"").trim();
-    if(!k) return;
-    cnc1Counts[k]=(cnc1Counts[k]||0)+1;
-  });
-  const top10 = Object.entries(cnc1Counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  destroyChart("top");
-  charts.top = new Chart($("chTop"),{
+  // CNC1 top10
+  const cnc = groupCount(filtered, "CNC _NIVEL 1").slice(0,10);
+  makeOrUpdateChart("chCnc1",{
     type:"bar",
-    data:{ labels: top10.map(x=>x[0]), datasets:[{ label:"Cantidad", data: top10.map(x=>x[1]) }]},
-    options:{ responsive:true, plugins:{ legend:{display:false}}, scales:{x:{ticks:{maxRotation:50,minRotation:25}}}}
+    data:{ labels: cnc.map(x=>x[0]), datasets:[{ label:"Cantidad", data: cnc.map(x=>x[1]) }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}},
+      scales:{ x:{ ticks:{ maxRotation:30, minRotation:0 } }, y:{ beginAtZero:true, ticks:{ precision:0 } } }
+    }
   });
 
-  // Resp distrib
-  const respCounts={};
-  filtered.forEach(r=>{
-    const k=String(r["RESPONSABLE_CNC"]||"").trim();
-    if(!k) return;
-    respCounts[k]=(respCounts[k]||0)+1;
-  });
-  const resp = Object.entries(respCounts).sort((a,b)=>b[1]-a[1]);
-  destroyChart("resp");
-  charts.resp = new Chart($("chResp"),{
+  // Responsable donut
+  const resp = groupCount(filtered, "RESPONSABLE_CNC").slice(0,8);
+  makeOrUpdateChart("chResp",{
     type:"doughnut",
-    data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }]},
-    options:{ responsive:true, plugins:{ legend:{position:"bottom"}}}
+    data:{ labels: resp.map(x=>x[0]), datasets:[{ data: resp.map(x=>x[1]) }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom" } } }
   });
 
-  // Mina plan vs sum
-  const minaAgg={};
-  filtered.forEach(r=>{
-    const m=String(r["MINA"]||"").trim()||"(Sin mina)";
-    minaAgg[m]=minaAgg[m]||{plan:0,sumi:0};
-    minaAgg[m].plan += toNum(r["PLANIFICADO"]);
-    minaAgg[m].sumi += toNum(r["SUMINISTRADO"]);
-  });
-  const mina = Object.entries(minaAgg).sort((a,b)=>b[1].plan-a[1].plan).slice(0,12);
-  destroyChart("mina");
-  charts.mina = new Chart($("chMina"),{
+  // Mina sums
+  const minas = uniq(filtered.map(r=>r["MINA"])).sort((a,b)=>a.localeCompare(b,"es"));
+  const plan = minas.map(m=> filtered.filter(r=>String(r["MINA"]||"")===m).reduce((a,r)=>a+toNumber(r["PLANIFICADO"]),0));
+  const sumi = minas.map(m=> filtered.filter(r=>String(r["MINA"]||"")===m).reduce((a,r)=>a+toNumber(r["SUMINISTRADO"]),0));
+  makeOrUpdateChart("chMina",{
     type:"bar",
-    data:{
-      labels: mina.map(x=>x[0]),
-      datasets:[
-        { label:"Planificado", data: mina.map(x=>x[1].plan) },
-        { label:"Suministrado", data: mina.map(x=>x[1].sumi) }
-      ]
-    },
-    options:{ responsive:true, plugins:{ legend:{position:"bottom"}}, scales:{x:{ticks:{maxRotation:45,minRotation:20}}}}
+    data:{ labels: minas, datasets:[
+      { label:"Planificado", data: plan },
+      { label:"Suministrado", data: sumi },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true}} }
   });
 
-  // Fecha plan vs sum
-  const fechaAgg={};
-  filtered.forEach(r=>{
-    const f=String(r["FECHA"]||"").trim()||"(Sin fecha)";
-    fechaAgg[f]=fechaAgg[f]||{plan:0,sumi:0};
-    fechaAgg[f].plan += toNum(r["PLANIFICADO"]);
-    fechaAgg[f].sumi += toNum(r["SUMINISTRADO"]);
-  });
-  const fechas = Object.entries(fechaAgg).sort((a,b)=>a[0].localeCompare(b[0],"es")).slice(-20);
-  destroyChart("fecha");
-  charts.fecha = new Chart($("chFecha"),{
+  // Fecha sums
+  const fechas = uniq(filtered.map(r=>safeDateIso(r["FECHA"]))).sort();
+  const planF = fechas.map(d=> filtered.filter(r=>safeDateIso(r["FECHA"])===d).reduce((a,r)=>a+toNumber(r["PLANIFICADO"]),0));
+  const sumiF = fechas.map(d=> filtered.filter(r=>safeDateIso(r["FECHA"])===d).reduce((a,r)=>a+toNumber(r["SUMINISTRADO"]),0));
+  makeOrUpdateChart("chFecha",{
     type:"line",
-    data:{
-      labels: fechas.map(x=>x[0]),
-      datasets:[
-        { label:"Planificado", data: fechas.map(x=>x[1].plan), tension:.35 },
-        { label:"Suministrado", data: fechas.map(x=>x[1].sumi), tension:.35 }
-      ]
-    },
-    options:{ responsive:true, plugins:{ legend:{position:"bottom"}}}
+    data:{ labels: fechas, datasets:[
+      { label:"Planificado", data: planF, tension:0.25 },
+      { label:"Suministrado", data: sumiF, tension:0.25 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true}} }
   });
 }
+
 function renderTable(){
-  const th=$("th"), tb=$("tb");
-  th.innerHTML=""; tb.innerHTML="";
-  const cols = HEADERS; // usamos los headers esperados
-  cols.forEach(h=>{
-    const c=document.createElement("th"); c.textContent=h; th.appendChild(c);
-  });
-  // solo primeras 200 filas por rendimiento
-  filtered.slice(0,200).forEach(r=>{
-    const tr=document.createElement("tr");
-    cols.forEach(h=>{
-      const td=document.createElement("td");
-      // en CSV algunos encabezados vienen sin acentos o distinto; intentamos por nombre exacto
-      td.textContent = (r[h] ?? r[h.replaceAll("_"," ")] ?? r[h.replaceAll(" ","_")] ?? "");
-      tr.appendChild(td);
+  const thead = $("thead");
+  const tbody = $("tbody");
+
+  const cols = Object.keys(raw[0] || {});
+  // si existe ID, lo dejamos; si no, igual mostramos todo.
+  const showCols = cols.length ? cols : COLS;
+
+  // header
+  thead.innerHTML = "<tr>" + showCols.map(c=>`<th>${c}</th>`).join("") + "<th>Acciones</th></tr>";
+
+  // body (limit to 250 for performance)
+  const rows = filtered.slice(0,250);
+  tbody.innerHTML = rows.map(r=>{
+    const id = (r["ID"]||"").trim();
+    const tds = showCols.map(c=>{
+      const v = r[c] ?? "";
+      return `<td>${escapeHtml(String(v))}</td>`;
+    }).join("");
+    const btns = `
+      <div class="actions">
+        <button class="mini" data-act="edit" data-id="${escapeAttr(id)}">Editar</button>
+        <button class="mini danger" data-act="del" data-id="${escapeAttr(id)}">Eliminar</button>
+      </div>`;
+    return `<tr>${tds}<td>${btns}</td></tr>`;
+  }).join("");
+
+  // bind action clicks
+  tbody.querySelectorAll("button[data-act]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const act=b.getAttribute("data-act");
+      const id=b.getAttribute("data-id")||"";
+      if(act==="edit") openEdit(id);
+      if(act==="del") doDelete(id);
     });
-    tb.appendChild(tr);
   });
 }
+
+function escapeHtml(s){
+  return s.replace(/[&<>"]/g, ch=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[ch]));
+}
+function escapeAttr(s){
+  return String(s).replace(/"/g,"&quot;");
+}
+
 function renderAll(){
   renderKpis();
   renderCharts();
   renderTable();
 }
 
-/** ===================== MODAL FORM ===================== **/
-function openModal(){
-  $("modalBack").style.display="flex";
-  buildForm();
-}
-function closeModal(){ $("modalBack").style.display="none"; $("saveStatus").textContent=""; $("saveStatus").className="status"; }
-
-function buildForm(){
-  const grid=$("formGrid");
-  grid.innerHTML="";
-
-  HEADERS.forEach(h=>{
-    const field=document.createElement("div");
-    field.className="field";
-    const label=document.createElement("label");
-    label.textContent = h;
-    field.appendChild(label);
-
-    let input;
-    if(h==="FECHA"){
-      input=document.createElement("input");
-      input.type="date";
-      // default hoy
-      const d=new Date();
-      const iso=d.toISOString().slice(0,10);
-      input.value=iso;
-    }else if(h.startsWith("HORA ")){
-      input=document.createElement("input");
-      input.type="time";
-      input.value="";
-    }else if(FORM_SELECT_FIELDS.has(h)){
-      input=document.createElement("select");
-      const valuesFromCsv = uniqueSorted(rawRows.map(r=>r[h]).filter(Boolean));
-      const values = valuesFromCsv.length ? valuesFromCsv : (CATALOG[h] || []);
-      const o0=document.createElement("option"); o0.value=""; o0.textContent="Seleccione…"; input.appendChild(o0);
-      values.forEach(v=>{
-        const o=document.createElement("option"); o.value=v; o.textContent=v; input.appendChild(o);
-      });
-    }else{
-      input=document.createElement("input");
-      // num for some columns
-      const numericCols = new Set(["PLANIFICADO","SUMINISTRADO","PENDIENTE","RECHAZADO","REAGENDADO","ELIMINADO","NÚMERO GUÍA"]);
-      input.type = numericCols.has(h) ? "number" : "text";
-      if(numericCols.has(h)) input.step="any";
-      input.placeholder=h;
-    }
-
-    input.id="in_"+h;
-    field.appendChild(input);
-    grid.appendChild(field);
+/** =========================
+ *  FORM DROPDOWNS (from CSV)
+ *  ========================= */
+function buildFormDropdowns(){
+  // make map col -> unique values from raw
+  const uniqMap = {};
+  Object.keys(FORM_SELECTS).forEach(col=>{
+    uniqMap[col] = uniq(raw.map(r=>r[col])).sort((a,b)=>a.localeCompare(b,"es"));
   });
-}
-
-function setSaveStatus(msg, ok=true){
-  const el=$("saveStatus");
-  el.textContent=msg;
-  el.className="status "+(ok?"ok":"bad");
-}
-
-function rowFromForm(){
-  const obj={};
-  HEADERS.forEach(h=>{
-    const el=$("in_"+h);
-    if(!el) return;
-    let v=el.value ?? "";
-    // formatea fecha dd-mm-yyyy para igualar tu estilo (si prefieres ISO, bórralo)
-    if(h==="FECHA" && v){
-      const [yy,mm,dd]=v.split("-");
-      v = `${dd}-${mm}-${yy}`;
-      // también rellena MES/SEMANA si están vacíos
-      try{
-        const d=new Date(`${yy}-${mm}-${dd}T00:00:00`);
-        const mes=d.toLocaleString("es-CL",{month:"long"});
-        if(!$("in_MES").value) $("in_MES").value = mes.charAt(0).toUpperCase()+mes.slice(1);
-        // semana ISO simple
-        const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-        const dayNum=tmp.getUTCDay()||7;
-        tmp.setUTCDate(tmp.getUTCDate()+4-dayNum);
-        const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
-        const week=Math.ceil((((tmp-yearStart)/86400000)+1)/7);
-        if(!$("in_SEMANA").value) $("in_SEMANA").value = String(week);
-      }catch(_){}
-    }
-    obj[h]=v;
-  });
-  return obj;
-}
-
-// Guardar: enviamos POST a Apps Script. Como GitHub Pages, usamos no-cors (no podemos leer respuesta),
-// y ADEMÁS agregamos la fila localmente para que se vea al tiro en el dashboard (aunque el CSV tarde).
-async function saveRow(){
-  const payload = rowFromForm();
-
-  setSaveStatus("Enviando…", true);
-
-  try{
-    await fetch(WEBAPP_URL, {
-      method:"POST",
-      mode:"no-cors",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-
-    // Insertar local para que aparezca inmediatamente
-    const localObj={};
-    // construimos con llaves exactas esperadas por filtros
-    Object.keys(payload).forEach(k=> localObj[k]=payload[k]);
-    rawRows.push(localObj);
-
-    // reconstruye opciones y aplica filtros
-    buildFilterOptions();
-    applyFilters();
-
-    setSaveStatus("✅ Enviado. Actualizado en pantalla. (Si tu CSV publicado tarda, se verá igual aquí).", true);
-    // intenta recargar CSV por si ya refrescó
-    setTimeout(()=>loadData(), 1200);
-
-  }catch(e){
-    setSaveStatus("❌ Error de red al enviar. Revisa la URL /exec y permisos.", false);
+  for(const [col, selId] of Object.entries(FORM_SELECTS)){
+    const el = $(selId);
+    if(!el) continue;
+    setOptionsForm(el, uniqMap[col]);
   }
 }
 
-/** ===================== WIRE ===================== **/
-function wire(){
-  // filtros
-  ["q","fMES","fSEMANA","fTURNO","fGRUPO","fMINA","fGRADO","fSUMINISTRO","fSALA","fLABOR","fCNC2","fCNC1","fRESP","fFECHA","fPLAN","fSUMI","fPEND"]
-    .forEach(id=>{
-      const el=$(id);
-      if(!el) return;
-      el.addEventListener(id==="q" ? "input" : "change", ()=>applyFilters());
-    });
-
-  $("btnClear").addEventListener("click", ()=>{
-    $("q").value="";
-    document.querySelectorAll("select").forEach(s=>{ if(s.id.startsWith("f")) s.value="__ALL__"; });
-    $("fFECHA").value="__ALL__";
-    applyFilters();
-  });
-
-  $("btnRefresh").addEventListener("click", ()=>loadData());
-  $("btnNew").addEventListener("click", ()=>openModal());
-  $("btnClose").addEventListener("click", ()=>closeModal());
-  $("modalBack").addEventListener("click", (e)=>{ if(e.target.id==="modalBack") closeModal(); });
-  $("btnSave").addEventListener("click", ()=>saveRow());
+/** =========================
+ *  MODAL: NEW / EDIT
+ *  ========================= */
+function openModal(){
+  $("backdrop").style.display="flex";
+}
+function closeModal(){
+  $("backdrop").style.display="none";
+  $("saveMsg").textContent="";
+  $("saveMsg").className="msg";
+}
+function resetForm(){
+  $("iID").value="";
+  $("iFECHA").value="";
+  ["iPLANIFICADO","iSUMINISTRADO","iPENDIENTE","iRECHAZADO","iREAGENDADO","iELIMINADO"].forEach(id=>$(id).value="0");
+  ["iNUMERO_GUIA","iHORA_SALIDA_PLANTA","iHORA_LLEGADA_OBRA","iHORA_INICIO_DESCARGA","iHORA_TERMINO_DESCARGA"].forEach(id=>$(id).value="");
+  Object.values(FORM_SELECTS).forEach(id=>{ if($(id)) $(id).value=""; });
 }
 
-wire();
-loadData();
+function openNew(){
+  $("modalTitle").textContent="Nuevo Registro";
+  resetForm();
+  openModal();
+}
 
+function openEdit(id){
+  if(!id){
+    alert("Este CSV no trae columna ID. Para editar, el Apps Script debe agregar la columna ID y el CSV debe publicarse desde esa misma hoja.");
+    return;
+  }
+  const r = raw.find(x => String(x["ID"]||"").trim()===id);
+  if(!r){ alert("No se encontró el registro."); return; }
+  $("modalTitle").textContent="Editar Registro (ID: " + id + ")";
+  $("iID").value = id;
+
+  $("iFECHA").value = safeDateIso(r["FECHA"]);
+  // selects
+  Object.entries(FORM_SELECTS).forEach(([col, selId])=>{
+    if($(selId)) $(selId).value = String(r[col]||"").trim();
+  });
+  // numbers/text
+  $("iPLANIFICADO").value = String(r["PLANIFICADO"] ?? "0");
+  $("iSUMINISTRADO").value = String(r["SUMINISTRADO"] ?? "0");
+  $("iPENDIENTE").value = String(r["PENDIENTE"] ?? "0");
+  $("iRECHAZADO").value = String(r["RECHAZADO"] ?? "0");
+  $("iREAGENDADO").value = String(r["REAGENDADO"] ?? "0");
+  $("iELIMINADO").value = String(r["ELIMINADO"] ?? "0");
+  $("iNUMERO_GUIA").value = String(r["NÚMERO GUÍA"] ?? "");
+  $("iHORA_SALIDA_PLANTA").value = String(r["HORA SALIDA PLANTA"] ?? "");
+  $("iHORA_LLEGADA_OBRA").value = String(r["HORA LLEGADA OBRA"] ?? "");
+  $("iHORA_INICIO_DESCARGA").value = String(r["HORA INICIO DESCARGA"] ?? "");
+  $("iHORA_TERMINO_DESCARGA").value = String(r["HORA TERMINO DESCARGA"] ?? "");
+
+  openModal();
+}
+
+function collectForm(){
+  // IMPORTANT: keys must match script headers (same text)
+  const data = {
+    "FECHA": $("iFECHA").value ? $("iFECHA").value : "",
+    "MES": $("iMES").value,
+    "SEMANA": $("iSEMANA").value,
+    "TURNO": $("iTURNO").value,
+    "GRUPO": $("iGRUPO").value,
+    "MINA": $("iMINA").value,
+    "LABOR_POSTURA": $("iLABOR_POSTURA").value,
+    "GRADO": $("iGRADO").value,
+    "SUMINISTRO": $("iSUMINISTRO").value,
+    "PLANIFICADO": $("iPLANIFICADO").value,
+    "SUMINISTRADO": $("iSUMINISTRADO").value,
+    "PENDIENTE": $("iPENDIENTE").value,
+    "RECHAZADO": $("iRECHAZADO").value,
+    "REAGENDADO": $("iREAGENDADO").value,
+    "ELIMINADO": $("iELIMINADO").value,
+    "NÚMERO GUÍA": $("iNUMERO_GUIA").value,
+    "HORA SALIDA PLANTA": $("iHORA_SALIDA_PLANTA").value,
+    "HORA LLEGADA OBRA": $("iHORA_LLEGADA_OBRA").value,
+    "HORA INICIO DESCARGA": $("iHORA_INICIO_DESCARGA").value,
+    "HORA TERMINO DESCARGA": $("iHORA_TERMINO_DESCARGA").value,
+    "CNC _NIVEL 2": $("iCNC_NIVEL_2").value,
+    "CNC _NIVEL 1": $("iCNC_NIVEL_1").value,
+    "RESPONSABLE_CNC": $("iRESPONSABLE_CNC").value,
+    "SALA DE CONTROL": $("iSALA_DE_CONTROL").value
+  };
+  return data;
+}
+
+/** =========================
+ *  SAVE / UPDATE / DELETE (Apps Script)
+ *  ========================= */
+async function sendToScript(payload){
+  if(!APP_SCRIPT_URL || APP_SCRIPT_URL.includes("REEMPLAZA")) throw new Error("Debes pegar tu APP_SCRIPT_URL en el index.html");
+  // IMPORTANTE: para evitar CORS en GitHub Pages, usamos no-cors (respuesta opaca)
+  await fetch(APP_SCRIPT_URL, {
+    method:"POST",
+    mode:"no-cors",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+async function save(){
+  $("saveMsg").textContent="Enviando…";
+  $("saveMsg").className="msg";
+  try{
+    const id = $("iID").value.trim();
+    const data = collectForm();
+    if(!data.FECHA) throw new Error("FECHA es obligatoria");
+    const payload = id ? { action:"update", id, data } : { action:"add", data };
+    await sendToScript(payload);
+
+    $("saveMsg").textContent="Guardado. Actualizando…";
+    $("saveMsg").className="msg ok";
+
+    await reloadData();
+    closeModal();
+  }catch(err){
+    $("saveMsg").textContent = "Error: " + String(err.message || err);
+    $("saveMsg").className="msg bad";
+  }
+}
+
+async function doDelete(id){
+  if(!id){ alert("Este CSV no trae columna ID. Para eliminar, necesitas ID."); return; }
+  if(!confirm("¿Eliminar el registro ID " + id + "?")) return;
+  try{
+    await sendToScript({ action:"delete", id });
+    await reloadData();
+  }catch(err){
+    alert("No se pudo eliminar: " + String(err.message || err));
+  }
+}
+
+/** =========================
+ *  PDF EXPORT
+ *  ========================= */
+async function exportPdf(){
+  const area = $("reportArea");
+  const node = document.querySelector(".wrap"); // exporta todo el dashboard
+  const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: "#0b1220" });
+  const imgData = canvas.toDataURL("image/png");
+  const { jsPDF } = window.jspdf;
+
+  // A4 landscape
+  const pdf = new jsPDF({ orientation:"landscape", unit:"pt", format:"a4" });
+  const pw = pdf.internal.pageSize.getWidth();
+  const ph = pdf.internal.pageSize.getHeight();
+
+  // fit
+  const ratio = Math.min(pw / canvas.width, ph / canvas.height);
+  const w = canvas.width * ratio;
+  const h = canvas.height * ratio;
+  const x = (pw - w)/2;
+  const y = (ph - h)/2;
+
+  pdf.addImage(imgData, "PNG", x, y, w, h);
+  pdf.save("Reporte_Hormigon_CNC_Xtreme.pdf");
+}
+
+/** =========================
+ *  INIT
+ *  ========================= */
+async function reloadData(){
+  $("status").textContent = "Cargando CSV…";
+  try{
+    raw = await fetchCsv();
+    lastFetchAt = Date.now();
+
+    // si la hoja no tiene ID, lo mostramos como aviso
+    const hasId = raw.length && Object.prototype.hasOwnProperty.call(raw[0], "ID");
+    $("status").innerHTML = hasId
+      ? `<span class="ok">CSV cargado: ${raw.length} filas.</span>`
+      : `<span class="bad">CSV cargado: ${raw.length} filas, pero falta columna <b>ID</b>. (Sin ID no se puede editar/eliminar)</span>`;
+
+    buildFilterOptions();
+    buildFormDropdowns();
+    applyFilters();
+  }catch(err){
+    $("status").innerHTML = `<span class="bad">Error de red: no se pudo leer el CSV.</span> <span class="hint">(${escapeHtml(String(err.message||err))})</span>`;
+    raw = [];
+    filtered = [];
+    renderAll();
+  }
+}
+
+function bindUi(){
+  // filter change
+  ["q","fMES","fSEMANA","fTURNO","fGRUPO","fMINA","fGRADO","fSUMINISTRO","fSALA","fLABOR","fCNC1","fCNC2","fRESP","fFECHA"]
+    .forEach(id=>$(id).addEventListener("input", applyFilters));
+  ["fMES","fSEMANA","fTURNO","fGRUPO","fMINA","fGRADO","fSUMINISTRO","fSALA","fLABOR","fCNC1","fCNC2","fRESP","fFECHA"]
+    .forEach(id=>$(id).addEventListener("change", applyFilters));
+
+  $("btnClear").addEventListener("click", clearFilters);
+  $("btnRefresh").addEventListener("click", reloadData);
+  $("btnPdf").addEventListener("click", exportPdf);
+  $("btnNew").addEventListener("click", openNew);
+  $("btnClose").addEventListener("click", closeModal);
+  $("backdrop").addEventListener("click", (e)=>{ if(e.target.id==="backdrop") closeModal(); });
+  $("btnSave").addEventListener("click", save);
+}
+
+bindUi();
+reloadData();
 </script>
 </body>
 </html>
