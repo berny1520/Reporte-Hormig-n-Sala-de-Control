@@ -6,38 +6,11 @@
   <title>Dashboard Seguimiento – Hormigón / CNC</title>
 
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-/* === FIX GRAFICOS: TAMAÑO CONTROLADO === */
-.chart-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  height: 320px;
-  max-height: 320px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.chart-card canvas {
-  width: 100% !important;
-  height: 240px !important;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-@media (max-width: 1100px) {
-  .charts-grid { grid-template-columns: 1fr; }
-  .chart-card { height: 280px; }
-  .chart-card canvas { height: 200px !important; }
-}
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
+  </script>
   <style>
+    /* === FIX GRAFICOS: TAMAÑO CONTROLADO (integrado) === */
+
     :root{
       --bg:#0b1220;
       --card:#ffffff;
@@ -49,7 +22,30 @@
       --radius:18px;
       --stroke:#e5e7eb;
     }
-    *{box-sizing:border-box}
+    
+    /* === Layout / Overflow fixes === */
+    html, body { overflow-x: hidden; }
+    .wrap { max-width: 1220px; margin: 22px auto 40px; padding: 0 14px; }
+
+    /* === Charts: compact and consistent === */
+    .panels, .panels2 { align-items: stretch; }
+    .panel{ min-height: 220px; }
+    .panel canvas{
+      width: 100% !important;
+      height: 170px !important;
+      display:block;
+    }
+    @media (max-width: 1050px){
+      .panel{ min-height: 210px; }
+      .panel canvas{ height: 160px !important; }
+    }
+
+    /* === KPI cards: compact === */
+    .cards{ gap:10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .card{ padding:10px 12px; min-height:74px; }
+    .card .v{ font-size:20px; margin-top:4px; line-height:1.05; }
+    .card:before{ right:-14px; top:-14px; width:74px; height:74px; }
+*{box-sizing:border-box}
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -93,7 +89,7 @@
     }
     .btn.primary{background: var(--brand); border-color: rgba(255,255,255,.0)}
     .btn:active{transform: translateY(1px)}
-    .grid{display:grid; gap:14px; margin-top:14px}
+    .grid{display:grid; gap:12px; margin-top:12px}
     .filters{
       background: var(--card); border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -154,7 +150,7 @@
     }
     .table h3{margin:0 0 10px;font-size:13px;color:#111827}
     .scroll{overflow:auto;border-radius:14px;border:1px solid #0b1220}
-    table{border-collapse:collapse; width:100%; min-width:980px; background:#0b1220; color:#fff}
+    table{border-collapse:collapse; width:100%; min-width:860px; background:#0b1220; color:#fff}
     th,td{padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.08); font-size:12px; white-space:nowrap}
     th{position:sticky; top:0; background:#0a1020; z-index:2; text-align:left}
     .hint{margin-top:10px;color:#fff;opacity:.75;font-size:12px}
@@ -170,9 +166,6 @@
     .formgrid{display:grid;gap:10px;grid-template-columns: repeat(4, 1fr)}
     @media (max-width: 1050px){.formgrid{grid-template-columns:1fr 1fr}}
     .footer-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
-  
-.panel canvas{width:100%!important;height:220px!important;}
-.panel2 canvas{width:100%!important;height:220px!important;}
 </style>
 </head>
 
