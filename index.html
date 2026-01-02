@@ -218,11 +218,6 @@
     body { position: relative; }
 
     /* Prevent any section from forcing width */
-    header, .wrap, .filters, .cards, .panels, .panels2, .panel, .tableWrap {
-      max-width: 100% !important;
-      overflow-x: hidden;
-    }
-
     /* Top bar/buttons should wrap instead of pushing width */
     .topbar, .actions { flex-wrap: wrap !important; }
     .actions { gap: 8px !important; }
@@ -252,14 +247,44 @@
     .tableWrap{ overflow-x:auto !important; }
     table{ width: 100% !important; }
 
-    /* === FULL WIDTH CONTENT (optional) === */
-    .wrap{ max-width: 100% !important; padding: 0 16px !important; }
-    .container-inner{ max-width: 1400px; margin: 0 auto; }
+    /* === V5: permitir desplazamiento horizontal SOLO donde corresponde === */
+
+    /* Mantén la página sin desborde general, pero NO bloquees los scrollers internos */
+    header, .wrap, .filters, .cards { max-width: 100% !important; }
+
+    /* Filas de gráficos como carrusel horizontal (desktop) */
+    .panels, .panels2{
+      display: grid !important;
+      grid-auto-flow: column !important;
+      grid-auto-columns: minmax(520px, 1fr) !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+      max-width: 100% !important;
+    }
+    .panels::-webkit-scrollbar, .panels2::-webkit-scrollbar{ height: 10px; }
+    .panel{ scroll-snap-align: start; }
+
+    /* En pantallas chicas, apilar (sin carrusel) */
+    @media (max-width: 980px){
+      .panels, .panels2{
+        grid-auto-flow: row !important;
+        grid-auto-columns: unset !important;
+        grid-template-columns: 1fr !important;
+        overflow-x: hidden !important;
+      }
+    }
+
+    /* Tabla: sí permite scroll horizontal */
+    .tableWrap{ overflow-x: auto !important; max-width: 100% !important; }
+
 </style>
 </head>
 
 <body>
-  <div class="wrap"><div class="container-inner">
+  <div class="wrap">
     <header>
       <div class="logo">
         <!-- PON TU LOGO EN LA MISMA CARPETA: logo_Xtreme.png -->
