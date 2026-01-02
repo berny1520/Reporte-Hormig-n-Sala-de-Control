@@ -7,61 +7,65 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root{
-    --bg1:#0b1020; --bg2:#1a0f1f;
-    --card:#0f172a; --panel:#0b1220; --white:#fff;
-    --muted:#aab3c5; --line:rgba(255,255,255,.08);
-    --accent:#ff4d4d; --good:#22c55e;
+    --bg:#f5f7fb;
+    --panel:#ffffff;
+    --border:#e6e9f2;
+    --text:#111827;
+    --muted:#6b7280;
+    --accent:#d7262f;      /* rojo Xtreme */
+    --accent2:#0b5ed7;     /* azul */
+    --shadow: 0 8px 24px rgba(16,24,40,.08);
+    --radius: 16px;
   }
   *{box-sizing:border-box}
   html,body{height:100%; overflow-x:hidden}
   body{
     margin:0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color:var(--white);
-    background: radial-gradient(1200px 600px at 20% 0%, rgba(255,255,255,.08), transparent 60%),
-                radial-gradient(900px 500px at 80% 0%, rgba(255,77,77,.10), transparent 55%),
-                linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:var(--text);
+    background:var(--bg);
   }
-  .wrap{max-width:1320px; margin:16px auto 28px; padding:0 14px;}
+  .wrap{max-width:1320px; margin:14px auto 26px; padding:0 14px;}
   header{
     display:flex; gap:14px; align-items:center; justify-content:space-between;
-    padding:12px 14px; border-radius:18px; background:rgba(0,0,0,.25); border:1px solid var(--line);
-    backdrop-filter: blur(10px);
+    padding:12px 14px; border-radius:var(--radius);
+    background:var(--panel); border:1px solid var(--border);
+    box-shadow: var(--shadow);
   }
   .brand{display:flex; gap:12px; align-items:center}
   .logoBox{
     width:128px; height:56px; border-radius:14px;
-    background:rgba(255,255,255,.08);
+    background:#fff;
+    border:1px solid var(--border);
     display:flex; align-items:center; justify-content:center;
-    font-weight:700; letter-spacing:.6px;
+    font-weight:800; letter-spacing:.6px;
   }
-  .titles h1{margin:0; font-size:19px; line-height:1.15}
+  .titles h1{margin:0; font-size:18px; line-height:1.15}
   .titles p{margin:2px 0 0; color:var(--muted); font-size:12px}
   .actions{display:flex; gap:8px; flex-wrap:wrap}
   button{
-    border:1px solid var(--line); background:rgba(255,255,255,.08);
-    color:#fff; padding:9px 11px; border-radius:12px; cursor:pointer;
+    border:1px solid var(--border); background:#fff;
+    color:var(--text); padding:9px 11px; border-radius:12px; cursor:pointer;
   }
-  button.primary{background:linear-gradient(135deg,#ff5a5a,#ff2f2f); border-color:transparent}
-  button.ghost{background:rgba(255,255,255,.06)}
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  button.ghost{background:#fff}
   button:active{transform:translateY(1px)}
-  .cfg{
-    margin-top:12px; padding:12px; border-radius:18px;
-    background:rgba(255,255,255,.06); border:1px solid var(--line);
+
+  .cfg, .filters{
+    margin-top:12px;
+    padding:12px;
+    border-radius:var(--radius);
+    background:var(--panel);
+    border:1px solid var(--border);
+    box-shadow: var(--shadow);
   }
   .cfgRow{display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:end}
   .cfg label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px}
   .cfg input{
     width:100%; height:40px; padding:0 12px; border-radius:12px;
-    background:rgba(0,0,0,.25); border:1px solid var(--line); color:#fff;
+    background:#fff; border:1px solid var(--border); color:var(--text);
   }
-  .ok{color:var(--good); font-weight:600; font-size:12px; margin-top:8px}
-  .err{color:#ffb4b4; font-weight:600; font-size:12px; margin-top:8px}
 
-  .filters{
-    margin-top:12px; padding:12px; border-radius:18px;
-    background:rgba(255,255,255,.04); border:1px solid var(--line);
-  }
   .filters .row{
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -70,8 +74,11 @@
   .field label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px}
   .field input,.field select{
     width:100%; height:38px; padding:0 10px; border-radius:12px;
-    background:rgba(0,0,0,.25); border:1px solid var(--line); color:#fff;
+    background:#fff; border:1px solid var(--border); color:var(--text);
   }
+
+  .ok{color:#0f8a3b; font-weight:700; font-size:12px; margin-top:8px}
+  .err{color:#b42318; font-weight:700; font-size:12px; margin-top:8px}
 
   .cards{
     margin-top:10px;
@@ -80,20 +87,21 @@
     gap:10px;
   }
   .card{
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
+    background:var(--panel);
+    border:1px solid var(--border);
     border-radius:14px;
     padding:10px 12px;
     min-height:72px;
     position:relative; overflow:hidden;
+    box-shadow: var(--shadow);
   }
   .card:before{
-    content:""; position:absolute; right:-14px; top:-14px;
-    width:72px; height:72px; border-radius:999px;
-    background:rgba(255,77,77,.12);
+    content:""; position:absolute; right:-16px; top:-16px;
+    width:76px; height:76px; border-radius:999px;
+    background:rgba(215,38,47,.10);
   }
-  .card .t{font-size:11px; color:#dce2f2; opacity:.92}
-  .card .v{font-size:20px; font-weight:800; margin-top:4px; line-height:1.05}
+  .card .t{font-size:11px; color:#374151}
+  .card .v{font-size:20px; font-weight:900; margin-top:4px; line-height:1.05}
   .card .s{font-size:11px; color:var(--muted); margin-top:2px}
 
   .panels{
@@ -104,45 +112,55 @@
   }
   @media (max-width:980px){ .panels{grid-template-columns:1fr;} }
   .panel{
-    background:rgba(255,255,255,.03);
-    border:1px solid var(--line);
-    border-radius:18px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
     padding:12px;
-    min-height:260px;
+    min-height:240px;
+    box-shadow: var(--shadow);
   }
-  .panel h3{margin:0 0 8px; font-size:12px; color:#eef2ff}
-  canvas{width:100%!important; height:190px!important; display:block}
+  .panel h3{margin:0 0 8px; font-size:12px; color:#111827}
+  canvas{width:100%!important; height:180px!important; display:block}
 
   .tablePanel{
     margin-top:10px;
-    background:rgba(255,255,255,.03);
-    border:1px solid var(--line);
-    border-radius:18px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
     padding:12px;
+    box-shadow: var(--shadow);
   }
   .tablePanel h3{margin:0 0 10px; font-size:12px}
-  .tableWrap{overflow:auto; max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.06)}
+  .tableWrap{
+    overflow:auto;
+    max-width:100%;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:#fff;
+  }
   table{
     border-collapse:collapse;
     width:max-content;
     min-width:1600px; /* fuerza barra lateral */
-    background:rgba(0,0,0,.22);
+    background:#fff;
   }
   th,td{
     padding:8px 10px;
-    border-bottom:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid var(--border);
     white-space:nowrap;
     font-size:12px;
+    color:#111827;
   }
   th{
     position:sticky; top:0;
-    background:rgba(10,14,26,.92);
+    background:#0b1220;
+    color:#fff;
     z-index:1;
     text-transform:uppercase;
     font-size:11px;
     letter-spacing:.4px;
   }
-  tr:hover td{background:rgba(255,255,255,.03)}
+  tr:hover td{background:#f7f8fc}
   .note{margin-top:8px; color:var(--muted); font-size:12px}
 </style>
 </head>
@@ -168,7 +186,7 @@
         <div>
           <label>URL CSV publicado (Google Sheets → Publicar en la web → CSV)</label>
           <input id="csvUrl" placeholder="Pega aquí el link ...output=csv" />
-          <div class="note">Tip: debe verse como <b>docs.google.com/spreadsheets/d/e/.../pub?...&output=csv</b> (no el link normal de editar).</div>
+          <div class="note">Debe verse como <b>docs.google.com/spreadsheets/d/e/.../pub?...&output=csv</b> (no el link de editar).</div>
           <div id="cfgMsg"></div>
         </div>
         <button class="primary" id="btnSaveUrl">Guardar</button>
@@ -185,15 +203,22 @@
         <div class="field"><label>MES</label><select id="f_mes"></select></div>
         <div class="field"><label>SEMANA</label><select id="f_semana"></select></div>
         <div class="field"><label>TURNO</label><select id="f_turno"></select></div>
+
         <div class="field"><label>GRADO</label><select id="f_grado"></select></div>
         <div class="field"><label>SUMINISTRO</label><select id="f_suministro"></select></div>
-        <div class="field"><label>SALA DE CONTROL</label><select id="f_sala"></select></div>
-        <div class="field"><label>CNC_NIVEL 1</label><select id="f_cnc1"></select></div>
-        <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"></select></div>
-        <div class="field"><label>FECHA</label><select id="f_fecha"></select></div>
-        <div class="field"><label>MINA</label><select id="f_mina"></select></div>
         <div class="field"><label>GRUPO</label><select id="f_grupo"></select></div>
+
+        <div class="field"><label>SALA_CONTROL</label><select id="f_sala"></select></div>
+        <div class="field"><label>MINA</label><select id="f_mina"></select></div>
+        <div class="field"><label>LABOR_POSTURA</label><select id="f_labor"></select></div>
+
+        <div class="field"><label>CNC_NIVEL_2</label><select id="f_cnc2"></select></div>
+        <div class="field"><label>CNC_NIVEL_1</label><select id="f_cnc1"></select></div>
+        <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"></select></div>
+
+        <div class="field"><label>FECHA</label><select id="f_fecha"></select></div>
       </div>
+
       <div class="ok" id="status"></div>
       <div class="err" id="error" style="display:none"></div>
     </section>
@@ -208,7 +233,7 @@
 
     <section class="panels">
       <div class="panel">
-        <h3>Incidentes por CNC_NIVEL 1 (TOP 10)</h3>
+        <h3>Incidentes por CNC_NIVEL_1 (TOP 10)</h3>
         <canvas id="ch_cnc1"></canvas>
       </div>
       <div class="panel">
@@ -239,21 +264,16 @@
   </div>
 
 <script>
-/** =======================
- *  CONFIG
- *  ======================= */
-const DEFAULT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv"; // opcional: pega aquí tu CSV para que cargue automático
+const DEFAULT_CSV_URL = "";
 const LS_KEY = "xtreme_hormigon_csv_url";
 
-/** =======================
- *  CSV PARSER (simple, robusto)
- *  ======================= */
+/* CSV parser */
 function parseCSV(text){
   const rows = [];
   let row = [], cur = "", inQuotes = false;
   for (let i=0;i<text.length;i++){
     const c = text[i], n = text[i+1];
-    if (c === '"' ){
+    if (c === '"'){
       if (inQuotes && n === '"'){ cur += '"'; i++; }
       else inQuotes = !inQuotes;
     } else if (c === ',' && !inQuotes){
@@ -267,27 +287,19 @@ function parseCSV(text){
     }
   }
   if (cur.length || row.length){ row.push(cur); rows.push(row); }
-  // remove empty trailing rows
   return rows.filter(r => r.some(v => (v||"").trim() !== ""));
 }
-
 function toNumber(v){
   if (v == null) return 0;
   const s = String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"").trim();
   const n = Number(s);
   return Number.isFinite(n) ? n : 0;
 }
+function fmt(n){ return new Intl.NumberFormat("es-CL",{maximumFractionDigits:0}).format(n); }
 
-function fmt(n){
-  return new Intl.NumberFormat("es-CL", { maximumFractionDigits: 0 }).format(n);
-}
-
-/** =======================
- *  STATE
- *  ======================= */
-let RAW = [];           // array of objects
-let COLS = [];          // headers
-let CH = {};            // charts
+let RAW = [];
+let COLS = [];
+let CH = {};
 
 const el = (id)=>document.getElementById(id);
 
@@ -299,38 +311,27 @@ function clearError(){
   el("error").style.display = "none";
   el("error").textContent = "";
 }
+function getCsvUrl(){ return localStorage.getItem(LS_KEY) || DEFAULT_CSV_URL || ""; }
+function setCsvUrl(url){ localStorage.setItem(LS_KEY, url); }
 
-/** =======================
- *  SOURCE (CSV URL)
- *  ======================= */
-function getCsvUrl(){
-  return localStorage.getItem(LS_KEY) || DEFAULT_CSV_URL || "";
-}
-function setCsvUrl(url){
-  localStorage.setItem(LS_KEY, url);
-}
-
-/** =======================
- *  LOAD DATA
- *  ======================= */
 async function loadData(){
   clearError();
   const url = getCsvUrl();
   if(!url){
-    showError("Falta configurar la URL CSV. Presiona “Configurar fuente” y pega el link CSV publicado.");
+    showError("https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv");
     el("status").textContent = "";
     return;
   }
   el("status").textContent = "Cargando CSV…";
   const res = await fetch(url, { cache:"no-store" });
-  if(!res.ok) throw new Error("No se pudo descargar CSV (" + res.status + ")");
+  if(!res.ok) throw new Error("No se pudo descargar CSV ("+res.status+")");
   const text = await res.text();
   const rows = parseCSV(text);
   if(rows.length < 2) throw new Error("CSV vacío o con formato inesperado.");
   COLS = rows[0].map(h => (h||"").trim());
   RAW = rows.slice(1).map(r => {
     const obj = {};
-    COLS.forEach((h, i) => obj[h] = (r[i] ?? "").trim());
+    COLS.forEach((h,i)=> obj[h] = (r[i] ?? "").trim());
     return obj;
   });
   el("status").textContent = "CSV cargado: " + RAW.length + " filas.";
@@ -338,29 +339,9 @@ async function loadData(){
   applyFilters();
 }
 
-/** =======================
- *  FILTERS
- *  ======================= */
-const FILTER_MAP = [
-  ["MES","f_mes"],
-  ["SEMANA","f_semana"],
-  ["TURNO","f_turno"],
-  ["GRADO","f_grado"],
-  ["SUMINISTRO","f_suministro"],
-  ["SALA DE CONTROL","f_sala"],
-  ["SALA_CONTROL","f_sala"],
-  ["CNC_NIVEL 1","f_cnc1"],
-  ["CNC_NIVEL_1","f_cnc1"],
-  ["RESPONSABLE_CNC","f_resp"],
-  ["FECHA","f_fecha"],
-  ["MINA","f_mina"],
-  ["GRUPO","f_grupo"]
-];
-
+/* Column matching helpers */
 function findCol(possible){
-  // exact match first
   if (COLS.includes(possible)) return possible;
-  // case-insensitive / underscores
   const norm = s => s.toLowerCase().replace(/\s+/g,"_");
   const p = norm(possible);
   for (const c of COLS){
@@ -368,7 +349,6 @@ function findCol(possible){
   }
   return null;
 }
-
 function setSelectOptions(sel, values){
   sel.innerHTML = "";
   const optAll = document.createElement("option");
@@ -376,30 +356,51 @@ function setSelectOptions(sel, values){
   optAll.textContent = "Todos";
   sel.appendChild(optAll);
   values.forEach(v=>{
-    const o = document.createElement("option");
-    o.value = v;
-    o.textContent = v;
+    const o=document.createElement("option");
+    o.value=v; o.textContent=v;
     sel.appendChild(o);
   });
 }
+const FILTER_MAP = [
+  ["MES","f_mes"],
+  ["SEMANA","f_semana"],
+  ["TURNO","f_turno"],
+  ["GRADO","f_grado"],
+  ["SUMINISTRO","f_suministro"],
+  ["GRUPO","f_grupo"],
+  ["SALA_CONTROL","f_sala"],
+  ["SALA DE CONTROL","f_sala"],
+  ["MINA","f_mina"],
+  ["LABOR_POSTURA","f_labor"],
+  ["LABOR POSTURA","f_labor"],
+  ["CNC_NIVEL_2","f_cnc2"],
+  ["CNC_NIVEL 2","f_cnc2"],
+  ["CNC_NIVEL_1","f_cnc1"],
+  ["CNC_NIVEL 1","f_cnc1"],
+  ["RESPONSABLE_CNC","f_resp"],
+  ["FECHA","f_fecha"]
+];
 
+function unique(arr){
+  return Array.from(new Set(arr.filter(Boolean)))
+    .sort((a,b)=>String(a).localeCompare(String(b),"es",{numeric:true}));
+}
 function buildFilters(){
-  // prepare selects
-  const colBySelect = {};
-  for (const [colName, selId] of FILTER_MAP){
+  // build only those that exist in CSV; hide missing fields (label+select container)
+  FILTER_MAP.forEach(([colName, selId])=>{
+    const sel = el(selId);
+    if(!sel) return;
     const col = findCol(colName);
-    if (!col) continue;
-    colBySelect[selId] = col;
-  }
-
-  const unique = (arr)=>Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),"es",{numeric:true}));
-
-  for (const selId of Object.keys(colBySelect)){
-    const col = colBySelect[selId];
+    const field = sel.closest(".field");
+    if(!col){
+      if(field) field.style.display = "none";
+      return;
+    }
+    if(field) field.style.display = "";
     const values = unique(RAW.map(r=>r[col]));
-    setSelectOptions(el(selId), values);
-    el(selId).onchange = applyFilters;
-  }
+    setSelectOptions(sel, values);
+    sel.onchange = applyFilters;
+  });
 
   el("q").oninput = debounce(applyFilters, 150);
 }
@@ -407,7 +408,6 @@ function buildFilters(){
 function debounce(fn, ms){
   let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
 }
-
 function rowMatchesText(r, q){
   if(!q) return true;
   const s = q.toLowerCase();
@@ -420,16 +420,17 @@ function rowMatchesText(r, q){
 
 function applyFilters(){
   if(!RAW.length) return;
+  const q = (el("q").value||"").trim();
 
-  const q = (el("q").value || "").trim();
-  // map select->col
+  // active filter values per real column
   const active = {};
-  for (const [colName, selId] of FILTER_MAP){
+  FILTER_MAP.forEach(([colName, selId])=>{
     const col = findCol(colName);
-    if(!col) continue;
-    const v = el(selId)?.value || "";
+    const sel = el(selId);
+    if(!col || !sel) return;
+    const v = sel.value || "";
     if(v) active[col] = v;
-  }
+  });
 
   const filtered = RAW.filter(r=>{
     if(!rowMatchesText(r,q)) return false;
@@ -446,14 +447,11 @@ function applyFilters(){
 
 function clearFilters(){
   el("q").value = "";
-  ["f_mes","f_semana","f_turno","f_grado","f_suministro","f_sala","f_cnc1","f_resp","f_fecha","f_mina","f_grupo"]
-    .forEach(id=>{ if(el(id)) el(id).value=""; });
+  FILTER_MAP.forEach(([,selId])=>{ const s=el(selId); if(s) s.value=""; });
   applyFilters();
 }
 
-/** =======================
- *  KPIs
- *  ======================= */
+/* KPIs */
 function renderKPIs(rows){
   el("k_regs").textContent = fmt(rows.length);
 
@@ -473,93 +471,8 @@ function renderKPIs(rows){
   el("k_rech").textContent = fmt(sRech);
 }
 
-/** =======================
- *  CHARTS
- *  ======================= */
-function destroyChart(key){
-  if(CH[key]){ CH[key].destroy(); delete CH[key]; }
-}
-function renderCharts(rows){
-  // defaults
-  Chart.defaults.maintainAspectRatio = false;
-  Chart.defaults.responsive = true;
-
-  const cCnc1 = findCol("CNC_NIVEL 1") || findCol("CNC_NIVEL_1") || findCol("CNC_NIVEL1");
-  const cResp = findCol("RESPONSABLE_CNC");
-  const cMina = findCol("MINA");
-  const cFecha = findCol("FECHA");
-  const cPlan = findCol("PLANIFICADO") || findCol("m3_PLANIFICADO") || findCol("M3_PLANIFICADO");
-  const cSum  = findCol("SUMINISTRADO") || findCol("m3_SUMINISTRADO") || findCol("M3_SUMINISTRADO");
-
-  // 1) TOP CNC1
-  destroyChart("cnc1");
-  const top = topN(countBy(rows, cCnc1), 10);
-  CH.cnc1 = new Chart(el("ch_cnc1"), {
-    type:"bar",
-    data:{ labels: top.labels, datasets:[{ label:"Registros", data: top.values }] },
-    options:{
-      plugins:{ legend:{display:false}},
-      scales:{
-        x:{ ticks:{ color:"#cbd5e1"} , grid:{ color:"rgba(255,255,255,.06)" } },
-        y:{ ticks:{ color:"#cbd5e1"} , grid:{ color:"rgba(255,255,255,.06)" } }
-      }
-    }
-  });
-
-  // 2) Responsables
-  destroyChart("resp");
-  const dist = topN(countBy(rows, cResp), 8);
-  CH.resp = new Chart(el("ch_resp"),{
-    type:"doughnut",
-    data:{ labels: dist.labels, datasets:[{ data: dist.values }] },
-    options:{
-      plugins:{ legend:{ position:"bottom", labels:{ color:"#cbd5e1", boxWidth:10 } } }
-    }
-  });
-
-  // 3) Mina plan vs sum
-  destroyChart("mina");
-  const byMina = sumByKey(rows, cMina, cPlan, cSum, 12);
-  CH.mina = new Chart(el("ch_mina"),{
-    type:"bar",
-    data:{
-      labels: byMina.labels,
-      datasets:[
-        { label:"Planificado", data: byMina.plan },
-        { label:"Suministrado", data: byMina.sum }
-      ]
-    },
-    options:{
-      plugins:{ legend:{ position:"bottom", labels:{ color:"#cbd5e1", boxWidth:10 } } },
-      scales:{
-        x:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } },
-        y:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } }
-      }
-    }
-  });
-
-  // 4) Fecha plan vs sum (línea)
-  destroyChart("fecha");
-  const byFecha = sumByDate(rows, cFecha, cPlan, cSum, 35);
-  CH.fecha = new Chart(el("ch_fecha"),{
-    type:"line",
-    data:{
-      labels: byFecha.labels,
-      datasets:[
-        { label:"Planificado", data: byFecha.plan, tension:.25 },
-        { label:"Suministrado", data: byFecha.sum, tension:.25 }
-      ]
-    },
-    options:{
-      plugins:{ legend:{ position:"bottom", labels:{ color:"#cbd5e1", boxWidth:10 } } },
-      scales:{
-        x:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } },
-        y:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } }
-      }
-    }
-  });
-}
-
+/* Charts */
+function destroyChart(key){ if(CH[key]){ CH[key].destroy(); delete CH[key]; } }
 function countBy(rows, col){
   const m = new Map();
   if(!col) return m;
@@ -595,37 +508,88 @@ function sumByDate(rows, dateCol, planCol, sumCol, n=35){
     if(sumCol) cur.sum += toNumber(r[sumCol]);
     m.set(d, cur);
   });
-  const labels = Array.from(m.keys()).sort((a,b)=>new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'))).slice(-n);
-  return {
-    labels,
-    plan: labels.map(d=>Math.round((m.get(d)||{plan:0}).plan)),
-    sum: labels.map(d=>Math.round((m.get(d)||{sum:0}).sum)),
-  };
+  const labels = Array.from(m.keys()).sort((a,b)=>{
+    // supports dd/mm/yyyy or yyyy-mm-dd
+    const pa = a.includes("/") ? a.split("/").reverse().join("-") : a;
+    const pb = b.includes("/") ? b.split("/").reverse().join("-") : b;
+    return new Date(pa) - new Date(pb);
+  }).slice(-n);
+  return { labels, plan: labels.map(d=>Math.round((m.get(d)||{plan:0}).plan)), sum: labels.map(d=>Math.round((m.get(d)||{sum:0}).sum)) };
 }
 
-/** =======================
- *  TABLE
- *  ======================= */
+function renderCharts(rows){
+  Chart.defaults.maintainAspectRatio = false;
+  Chart.defaults.responsive = true;
+
+  const cCnc1 = findCol("CNC_NIVEL_1") || findCol("CNC_NIVEL 1");
+  const cResp = findCol("RESPONSABLE_CNC");
+  const cMina = findCol("MINA");
+  const cFecha = findCol("FECHA");
+  const cPlan = findCol("PLANIFICADO") || findCol("m3_PLANIFICADO") || findCol("M3_PLANIFICADO");
+  const cSum  = findCol("SUMINISTRADO") || findCol("m3_SUMINISTRADO") || findCol("M3_SUMINISTRADO");
+
+  destroyChart("cnc1");
+  const top = topN(countBy(rows, cCnc1), 10);
+  CH.cnc1 = new Chart(el("ch_cnc1"), {
+    type:"bar",
+    data:{ labels: top.labels, datasets:[{ label:"Registros", data: top.values }] },
+    options:{
+      plugins:{ legend:{display:false}},
+      scales:{
+        x:{ ticks:{ color:"#374151"} , grid:{ color:"rgba(17,24,39,.10)" } },
+        y:{ ticks:{ color:"#374151"} , grid:{ color:"rgba(17,24,39,.10)" } }
+      }
+    }
+  });
+
+  destroyChart("resp");
+  const dist = topN(countBy(rows, cResp), 8);
+  CH.resp = new Chart(el("ch_resp"),{
+    type:"doughnut",
+    data:{ labels: dist.labels, datasets:[{ data: dist.values }] },
+    options:{ plugins:{ legend:{ position:"bottom", labels:{ color:"#374151", boxWidth:10 } } } }
+  });
+
+  destroyChart("mina");
+  const byMina = sumByKey(rows, cMina, cPlan, cSum, 12);
+  CH.mina = new Chart(el("ch_mina"),{
+    type:"bar",
+    data:{ labels: byMina.labels, datasets:[{ label:"Planificado", data: byMina.plan },{ label:"Suministrado", data: byMina.sum }] },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#374151", boxWidth:10 } } },
+      scales:{
+        x:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } },
+        y:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } }
+      }
+    }
+  });
+
+  destroyChart("fecha");
+  const byFecha = sumByDate(rows, cFecha, cPlan, cSum, 35);
+  CH.fecha = new Chart(el("ch_fecha"),{
+    type:"line",
+    data:{ labels: byFecha.labels, datasets:[{ label:"Planificado", data: byFecha.plan, tension:.25 },{ label:"Suministrado", data: byFecha.sum, tension:.25 }] },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#374151", boxWidth:10 } } },
+      scales:{
+        x:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } },
+        y:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } }
+      }
+    }
+  });
+}
+
+/* Table */
+function escapeHtml(s){ return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
 function renderTable(rows){
   const tbl = el("tbl");
-  // header
   let thead = "<thead><tr>" + COLS.map(h=>`<th>${escapeHtml(h)}</th>`).join("") + "</tr></thead>";
-  // body (limit for performance)
-  const limit = 500; // keep fast; you can raise
-  const bodyRows = rows.slice(0, limit).map(r=>{
-    return "<tr>" + COLS.map(h=>`<td>${escapeHtml(r[h] ?? "")}</td>`).join("") + "</tr>";
-  }).join("");
-  let tbody = "<tbody>" + bodyRows + "</tbody>";
-  tbl.innerHTML = thead + tbody;
+  const limit = 700;
+  const bodyRows = rows.slice(0, limit).map(r=>"<tr>"+COLS.map(h=>`<td>${escapeHtml(r[h] ?? "")}</td>`).join("")+"</tr>").join("");
+  tbl.innerHTML = thead + "<tbody>"+bodyRows+"</tbody>";
 }
 
-function escapeHtml(s){
-  return String(s ?? "").replace(/[&<>"']/g, (m)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-}
-
-/** =======================
- *  UI
- *  ======================= */
+/* UI */
 el("btnRefresh").onclick = ()=>loadData().catch(e=>showError(e.message));
 el("btnClear").onclick = clearFilters;
 el("btnConfig").onclick = ()=>{
@@ -636,7 +600,6 @@ el("btnConfig").onclick = ()=>{
 el("btnSaveUrl").onclick = ()=>{
   const url = (el("csvUrl").value||"").trim();
   const msg = el("cfgMsg");
-  msg.className = "";
   if(!url || !url.includes("output=csv")){
     msg.innerHTML = '<div class="err">Pega un link CSV publicado (debe contener <b>output=csv</b>).</div>';
     return;
@@ -645,13 +608,7 @@ el("btnSaveUrl").onclick = ()=>{
   msg.innerHTML = '<div class="ok">Guardado ✅. Presiona “Actualizar”.</div>';
 };
 
-window.addEventListener("DOMContentLoaded", ()=>{
-  // preload URL if exists
-  const url = getCsvUrl();
-  if(url) el("csvUrl").value = url;
-  // auto-load
-  loadData().catch(e=>showError(e.message));
-});
+window.addEventListener("DOMContentLoaded", ()=> loadData().catch(e=>showError(e.message)));
 </script>
 </body>
 </html>
