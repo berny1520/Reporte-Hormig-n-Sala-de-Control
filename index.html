@@ -1,833 +1,657 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard Seguimiento Operadores</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --primary: #d9232d;  /* rojo Xtreme */
-      --primary-soft: #ffe5e7;
-      --dark: #222;
-      --bg: #f2f4f7;
-      --card-bg: #ffffff;
-      --text-main: #222;
-      --text-muted: #777;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dashboard Seguimiento – Hormigón / CNC</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg1:#0b1020; --bg2:#1a0f1f;
+    --card:#0f172a; --panel:#0b1220; --white:#fff;
+    --muted:#aab3c5; --line:rgba(255,255,255,.08);
+    --accent:#ff4d4d; --good:#22c55e;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%; overflow-x:hidden}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--white);
+    background: radial-gradient(1200px 600px at 20% 0%, rgba(255,255,255,.08), transparent 60%),
+                radial-gradient(900px 500px at 80% 0%, rgba(255,77,77,.10), transparent 55%),
+                linear-gradient(135deg,var(--bg1),var(--bg2));
+  }
+  .wrap{max-width:1320px; margin:16px auto 28px; padding:0 14px;}
+  header{
+    display:flex; gap:14px; align-items:center; justify-content:space-between;
+    padding:12px 14px; border-radius:18px; background:rgba(0,0,0,.25); border:1px solid var(--line);
+    backdrop-filter: blur(10px);
+  }
+  .brand{display:flex; gap:12px; align-items:center}
+  .logoBox{
+    width:128px; height:56px; border-radius:14px;
+    background:rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; letter-spacing:.6px;
+  }
+  .titles h1{margin:0; font-size:19px; line-height:1.15}
+  .titles p{margin:2px 0 0; color:var(--muted); font-size:12px}
+  .actions{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    border:1px solid var(--line); background:rgba(255,255,255,.08);
+    color:#fff; padding:9px 11px; border-radius:12px; cursor:pointer;
+  }
+  button.primary{background:linear-gradient(135deg,#ff5a5a,#ff2f2f); border-color:transparent}
+  button.ghost{background:rgba(255,255,255,.06)}
+  button:active{transform:translateY(1px)}
+  .cfg{
+    margin-top:12px; padding:12px; border-radius:18px;
+    background:rgba(255,255,255,.06); border:1px solid var(--line);
+  }
+  .cfgRow{display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:end}
+  .cfg label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px}
+  .cfg input{
+    width:100%; height:40px; padding:0 12px; border-radius:12px;
+    background:rgba(0,0,0,.25); border:1px solid var(--line); color:#fff;
+  }
+  .ok{color:var(--good); font-weight:600; font-size:12px; margin-top:8px}
+  .err{color:#ffb4b4; font-weight:600; font-size:12px; margin-top:8px}
 
-    * {
-      box-sizing: border-box;
-    }
+  .filters{
+    margin-top:12px; padding:12px; border-radius:18px;
+    background:rgba(255,255,255,.04); border:1px solid var(--line);
+  }
+  .filters .row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap:10px; align-items:end;
+  }
+  .field label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px}
+  .field input,.field select{
+    width:100%; height:38px; padding:0 10px; border-radius:12px;
+    background:rgba(0,0,0,.25); border:1px solid var(--line); color:#fff;
+  }
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text-main);
-    }
+  .cards{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap:10px;
+  }
+  .card{
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px;
+    min-height:72px;
+    position:relative; overflow:hidden;
+  }
+  .card:before{
+    content:""; position:absolute; right:-14px; top:-14px;
+    width:72px; height:72px; border-radius:999px;
+    background:rgba(255,77,77,.12);
+  }
+  .card .t{font-size:11px; color:#dce2f2; opacity:.92}
+  .card .v{font-size:20px; font-weight:800; margin-top:4px; line-height:1.05}
+  .card .s{font-size:11px; color:var(--muted); margin-top:2px}
 
-    header {
-      background: var(--dark);
-      color: #fff;
-      padding: 10px 30px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
+  .panels{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:980px){ .panels{grid-template-columns:1fr;} }
+  .panel{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:12px;
+    min-height:260px;
+  }
+  .panel h3{margin:0 0 8px; font-size:12px; color:#eef2ff}
+  canvas{width:100%!important; height:190px!important; display:block}
 
-    header > div {
-      max-width: 1500px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    header img {
-      height: 55px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    header .subtitle {
-      font-size: 13px;
-      color: #ccc;
-      margin-top: 3px;
-    }
-
-    .container {
-      max-width: 1500px;
-      margin: 15px auto 40px;
-      padding: 0 10px 20px;
-    }
-
-    /* Barra de filtros */
-    .filters-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 15px;
-      align-items: center;
-      background: var(--card-bg);
-      padding: 12px 16px;
-      border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      margin-bottom: 18px;
-      font-size: 13px;
-    }
-    .filters-bar .group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .filters-bar label {
-      font-weight: bold;
-      margin-right: 2px;
-    }
-    .filters-bar input,
-    .filters-bar select {
-      padding: 5px 7px;
-      font-size: 13px;
-      border-radius: 5px;
-      border: 1px solid #d0d4da;
-      min-width: 140px;
-    }
-    .filters-bar button {
-      padding: 6px 11px;
-      font-size: 13px;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.05s ease, box-shadow 0.1s ease;
-    }
-    .filters-bar button:active {
-      transform: translateY(1px);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-    }
-    .btn-secondary {
-      background: #6c757d;
-      color: #fff;
-    }
-    .btn-pdf {
-      background: #d9534f;
-      color: #fff;
-    }
-
-    .filters-bar .right {
-      margin-left: auto;
-      display: flex;
-      gap: 8px;
-    }
-
-    /* KPIs */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .kpi-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 10px 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    .kpi-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: var(--primary);
-    }
-    .kpi-title {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .kpi-value {
-      font-size: 21px;
-      font-weight: bold;
-    }
-    .kpi-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .kpi-extra {
-      font-size: 11px;
-      color: var(--primary);
-      font-weight: bold;
-      position: absolute;
-      right: 10px;
-      top: 8px;
-    }
-
-    /* GRÁFICOS */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-    }
-
-    .chart-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 16px 18px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      height: 400px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chart-card.wide {
-      grid-column: 1 / -1;   /* ocupa todo el ancho */
-      height: 420px;
-    }
-
-    .chart-card h3 {
-      margin: 0 0 12px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .chart-card canvas {
-      width: 100% !important;
-      height: calc(100% - 20px) !important;
-    }
-
-    @media (max-width: 950px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
-      .chart-card,
-      .chart-card.wide {
-        grid-column: 1 / -1;
-        height: 360px;
-      }
-    }
-
-    /* Tabla */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 5px;
-      font-size: 12px;
-      background: var(--card-bg);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    }
-    th, td {
-      padding: 6px 8px;
-      border-bottom: 1px solid #eee;
-      white-space: nowrap;
-    }
-    th {
-      background: #f4f6f8;
-      text-align: left;
-    }
-    tr:nth-child(even) td {
-      background: #fafafa;
-    }
-    tr:hover td {
-      background: #e9f3ff;
-    }
-
-    /* Impresión */
-    @media print {
-      body {
-        background: #fff;
-      }
-      header {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .filters-bar {
-        display: none;
-      }
-      button {
-        display: none;
-      }
-      .container {
-        max-width: 100%;
-        margin: 0;
-        padding: 0 5mm;
-      }
-    }
-  
-/* ===== FIX SCROLL LATERAL SOLO TABLA ===== */
-html, body {
-  overflow-x: hidden !important; /* página NO se desborda */
-}
-
-/* contenedor principal como dashboard seguimiento */
-.wrap, .container, .dashboard {
-  max-width: 1280px !important;
-  margin: 0 auto !important;
-}
-
-/* === TABLA === */
-.tableWrap, .table-container, .table-scroll {
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  max-width: 100% !important;
-  scrollbar-width: auto;
-}
-
-.tableWrap::-webkit-scrollbar,
-.table-container::-webkit-scrollbar,
-.table-scroll::-webkit-scrollbar {
-  height: 10px;
-}
-
-.tableWrap::-webkit-scrollbar-thumb,
-.table-container::-webkit-scrollbar-thumb,
-.table-scroll::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 6px;
-}
-
-table {
-  min-width: 1600px !important; /* fuerza scroll horizontal */
-  width: max-content !important;
-}
-
-/* === GRÁFICOS === */
-.panel canvas {
-  max-width: 100% !important;
-  height: 220px !important;
-}
+  .tablePanel{
+    margin-top:10px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:12px;
+  }
+  .tablePanel h3{margin:0 0 10px; font-size:12px}
+  .tableWrap{overflow:auto; max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.06)}
+  table{
+    border-collapse:collapse;
+    width:max-content;
+    min-width:1600px; /* fuerza barra lateral */
+    background:rgba(0,0,0,.22);
+  }
+  th,td{
+    padding:8px 10px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    white-space:nowrap;
+    font-size:12px;
+  }
+  th{
+    position:sticky; top:0;
+    background:rgba(10,14,26,.92);
+    z-index:1;
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:.4px;
+  }
+  tr:hover td{background:rgba(255,255,255,.03)}
+  .note{margin-top:8px; color:var(--muted); font-size:12px}
 </style>
 </head>
 <body>
-
-<header>
-  <div>
-    <img src="logo_Xtreme.png" alt="Xtreme Mining" />
-    <div>
-      <h1>Dashboard Seguimiento Operadores – Capacitación y Certificación</h1>
-      <div class="subtitle">
-        Creado por Bernardo Ojeda Molina – Jefe de Innovación y Formación
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logoBox">XTREME</div>
+        <div class="titles">
+          <h1>Dashboard Seguimiento – Hormigón / CNC</h1>
+          <p>Xtreme Mining · Fuente: Google Sheets (CSV publicado)</p>
+        </div>
       </div>
-    </div>
+      <div class="actions">
+        <button class="ghost" id="btnConfig">Configurar fuente</button>
+        <button class="ghost" id="btnClear">Limpiar filtros</button>
+        <button class="primary" id="btnRefresh">Actualizar</button>
+      </div>
+    </header>
+
+    <section class="cfg" id="cfgBox" style="display:none">
+      <div class="cfgRow">
+        <div>
+          <label>URL CSV publicado (Google Sheets → Publicar en la web → CSV)</label>
+          <input id="csvUrl" placeholder="Pega aquí el link ...output=csv" />
+          <div class="note">Tip: debe verse como <b>docs.google.com/spreadsheets/d/e/.../pub?...&output=csv</b> (no el link normal de editar).</div>
+          <div id="cfgMsg"></div>
+        </div>
+        <button class="primary" id="btnSaveUrl">Guardar</button>
+      </div>
+    </section>
+
+    <section class="filters">
+      <div class="row">
+        <div class="field">
+          <label>Buscar (texto libre)</label>
+          <input id="q" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." />
+        </div>
+
+        <div class="field"><label>MES</label><select id="f_mes"></select></div>
+        <div class="field"><label>SEMANA</label><select id="f_semana"></select></div>
+        <div class="field"><label>TURNO</label><select id="f_turno"></select></div>
+        <div class="field"><label>GRADO</label><select id="f_grado"></select></div>
+        <div class="field"><label>SUMINISTRO</label><select id="f_suministro"></select></div>
+        <div class="field"><label>SALA DE CONTROL</label><select id="f_sala"></select></div>
+        <div class="field"><label>CNC_NIVEL 1</label><select id="f_cnc1"></select></div>
+        <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"></select></div>
+        <div class="field"><label>FECHA</label><select id="f_fecha"></select></div>
+        <div class="field"><label>MINA</label><select id="f_mina"></select></div>
+        <div class="field"><label>GRUPO</label><select id="f_grupo"></select></div>
+      </div>
+      <div class="ok" id="status"></div>
+      <div class="err" id="error" style="display:none"></div>
+    </section>
+
+    <section class="cards">
+      <div class="card"><div class="t">REGISTROS FILTRADOS</div><div class="v" id="k_regs">0</div><div class="s">Total visible según filtros</div></div>
+      <div class="card"><div class="t">m³ PLANIFICADO (suma)</div><div class="v" id="k_plan">0</div><div class="s">Suma columna PLANIFICADO</div></div>
+      <div class="card"><div class="t">m³ SUMINISTRADO (suma)</div><div class="v" id="k_sum">0</div><div class="s">Suma columna SUMINISTRADO</div></div>
+      <div class="card"><div class="t">PENDIENTE (suma)</div><div class="v" id="k_pend">0</div><div class="s">Suma columna PENDIENTE</div></div>
+      <div class="card"><div class="t">RECHAZADO (suma)</div><div class="v" id="k_rech">0</div><div class="s">Suma columna RECHAZADO</div></div>
+    </section>
+
+    <section class="panels">
+      <div class="panel">
+        <h3>Incidentes por CNC_NIVEL 1 (TOP 10)</h3>
+        <canvas id="ch_cnc1"></canvas>
+      </div>
+      <div class="panel">
+        <h3>Distribución por RESPONSABLE_CNC</h3>
+        <canvas id="ch_resp"></canvas>
+      </div>
+    </section>
+
+    <section class="panels">
+      <div class="panel">
+        <h3>m³ por MINA (Planificado vs Suministrado)</h3>
+        <canvas id="ch_mina"></canvas>
+      </div>
+      <div class="panel">
+        <h3>m³ por FECHA (Planificado vs Suministrado)</h3>
+        <canvas id="ch_fecha"></canvas>
+      </div>
+    </section>
+
+    <section class="tablePanel">
+      <h3>Detalle (todas las columnas)</h3>
+      <div class="tableWrap">
+        <table id="tbl"></table>
+      </div>
+      <div class="note">La barra lateral aparece aquí para ver todas las columnas (la página no se desborda).</div>
+    </section>
+
   </div>
-</header>
-
-<div class="container">
-
-  <!-- BARRA DE FILTROS -->
-  <div class="filters-bar">
-    <div class="group">
-      <label for="filtro-rut">RUT:</label>
-      <input id="filtro-rut" type="text" placeholder="Ej: 12521561-0">
-      <button class="btn-primary" onclick="aplicarFiltros()">Buscar</button>
-    </div>
-
-    <div class="group">
-      <label for="filtro-estado">Estado:</label>
-      <select id="filtro-estado" onchange="aplicarFiltros()">
-        <option value="TODOS">Todos</option>
-        <option value="CERRADO">Cerrado</option>
-        <option value="PROCESO">Proceso</option>
-        <option value="APROBADO">Aprobado</option>
-        <option value="SIN RESPUESTA">Sin respuesta</option>
-      </select>
-    </div>
-
-    <div class="group">
-      <label for="filtro-equipo">Equipo:</label>
-      <select id="filtro-equipo" onchange="aplicarFiltros()">
-        <option value="TODOS">Todos</option>
-      </select>
-    </div>
-
-    <div class="right">
-      <button class="btn-secondary" onclick="limpiarFiltros()">Limpiar filtros</button>
-      <button class="btn-pdf" onclick="exportarPDF()">Exportar PDF</button>
-    </div>
-  </div>
-
-  <!-- KPIs -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-title">Solicitudes registradas</div>
-      <div class="kpi-value" id="kpi-total-registros">0</div>
-      <div class="kpi-sub">Total filas con concepto</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Operadores únicos</div>
-      <div class="kpi-value" id="kpi-operadores-unicos">0</div>
-      <div class="kpi-sub">Por RUT / Nombre</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Cantidad total</div>
-      <div class="kpi-value" id="kpi-cantidad-total">0</div>
-      <div class="kpi-sub">Suma columna CANTIDAD</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Cerrados</div>
-      <div class="kpi-extra" id="kpi-cerrados-pct">0%</div>
-      <div class="kpi-value" id="kpi-cerrados">0</div>
-      <div class="kpi-sub">Estado CERRADO</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">En proceso</div>
-      <div class="kpi-extra" id="kpi-proceso-pct">0%</div>
-      <div class="kpi-value" id="kpi-proceso">0</div>
-      <div class="kpi-sub">Estado PROCESO</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-title">Sin respuesta</div>
-      <div class="kpi-extra" id="kpi-sin-respuesta-pct">0%</div>
-      <div class="kpi-value" id="kpi-sin-respuesta">0</div>
-      <div class="kpi-sub">Estado SIN RESPUESTA</div>
-    </div>
-  </div>
-
-  <!-- GRÁFICOS -->
-  <div class="charts-grid">
-    <div class="chart-card wide">
-      <h3>Cantidad por concepto</h3>
-      <canvas id="chartConcepto"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Registros por estado</h3>
-      <canvas id="chartEstado"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Cantidad por equipo (unidades)</h3>
-      <canvas id="chartEquipo"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Cantidad por fecha de cierre</h3>
-      <canvas id="chartFecha"></canvas>
-    </div>
-    <div class="chart-card">
-      <h3>Operadores únicos por equipo</h3>
-      <canvas id="chartEquipoOperadores"></canvas>
-    </div>
-  </div>
-
-  <!-- TABLA DETALLE -->
-  <table id="tabla-detalle">
-    <thead>
-      <tr>
-        <th>RUT</th>
-        <th>Nombre</th>
-        <th>Contrato</th>
-        <th>Equipo</th>
-        <th>Solicitante</th>
-        <th>Responsable</th>
-        <th>Fecha cierre</th>
-        <th>Concepto</th>
-        <th>Cantidad</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
 
 <script>
-  // URL CSV de la hoja publicada
-  const CSV_URL =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSMDU7-l9lRW2zs5qXHCoIn33DXxwyfV9-TApzYTF0UNzyTCE6QxsPeUl_Y9K1JIMAoOdBeShtfviPj/pub?gid=1169506111&single=true&output=csv";
+/** =======================
+ *  CONFIG
+ *  ======================= */
+const DEFAULT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv"; // opcional: pega aquí tu CSV para que cargue automático
+const LS_KEY = "xtreme_hormigon_csv_url";
 
-  let registrosBase = [];
-  let registrosActuales = [];
+/** =======================
+ *  CSV PARSER (simple, robusto)
+ *  ======================= */
+function parseCSV(text){
+  const rows = [];
+  let row = [], cur = "", inQuotes = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
+    if (c === '"' ){
+      if (inQuotes && n === '"'){ cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (c === ',' && !inQuotes){
+      row.push(cur); cur="";
+    } else if ((c === '\n' || c === '\r') && !inQuotes){
+      if (c === '\r' && n === '\n') i++;
+      row.push(cur); rows.push(row);
+      row=[]; cur="";
+    } else {
+      cur += c;
+    }
+  }
+  if (cur.length || row.length){ row.push(cur); rows.push(row); }
+  // remove empty trailing rows
+  return rows.filter(r => r.some(v => (v||"").trim() !== ""));
+}
 
-  let chartConcepto, chartEstado, chartEquipo, chartFecha, chartEquipoOperadores;
+function toNumber(v){
+  if (v == null) return 0;
+  const s = String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"").trim();
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
 
-  // Guarda la última versión cruda del CSV para detectar cambios
-  let lastCsvRaw = "";
+function fmt(n){
+  return new Intl.NumberFormat("es-CL", { maximumFractionDigits: 0 }).format(n);
+}
 
-  // CONFIGURACIÓN GLOBAL CHART.JS (mejora estética)
-  Chart.defaults.maintainAspectRatio = false;
-  Chart.defaults.font.family = "Arial, sans-serif";
-  Chart.defaults.plugins.legend.position = "bottom";
-  Chart.defaults.plugins.legend.labels.usePointStyle = true;
-  Chart.defaults.plugins.legend.labels.pointStyle = "circle";
+/** =======================
+ *  STATE
+ *  ======================= */
+let RAW = [];           // array of objects
+let COLS = [];          // headers
+let CH = {};            // charts
 
-  document.addEventListener("DOMContentLoaded", () => {
-    cargarDatos(false);        // primera carga
-    iniciarAutoActualizacion(); // luego refresca solo
+const el = (id)=>document.getElementById(id);
+
+function showError(msg){
+  el("error").style.display = "block";
+  el("error").textContent = msg;
+}
+function clearError(){
+  el("error").style.display = "none";
+  el("error").textContent = "";
+}
+
+/** =======================
+ *  SOURCE (CSV URL)
+ *  ======================= */
+function getCsvUrl(){
+  return localStorage.getItem(LS_KEY) || DEFAULT_CSV_URL || "";
+}
+function setCsvUrl(url){
+  localStorage.setItem(LS_KEY, url);
+}
+
+/** =======================
+ *  LOAD DATA
+ *  ======================= */
+async function loadData(){
+  clearError();
+  const url = getCsvUrl();
+  if(!url){
+    showError("Falta configurar la URL CSV. Presiona “Configurar fuente” y pega el link CSV publicado.");
+    el("status").textContent = "";
+    return;
+  }
+  el("status").textContent = "Cargando CSV…";
+  const res = await fetch(url, { cache:"no-store" });
+  if(!res.ok) throw new Error("No se pudo descargar CSV (" + res.status + ")");
+  const text = await res.text();
+  const rows = parseCSV(text);
+  if(rows.length < 2) throw new Error("CSV vacío o con formato inesperado.");
+  COLS = rows[0].map(h => (h||"").trim());
+  RAW = rows.slice(1).map(r => {
+    const obj = {};
+    COLS.forEach((h, i) => obj[h] = (r[i] ?? "").trim());
+    return obj;
+  });
+  el("status").textContent = "CSV cargado: " + RAW.length + " filas.";
+  buildFilters();
+  applyFilters();
+}
+
+/** =======================
+ *  FILTERS
+ *  ======================= */
+const FILTER_MAP = [
+  ["MES","f_mes"],
+  ["SEMANA","f_semana"],
+  ["TURNO","f_turno"],
+  ["GRADO","f_grado"],
+  ["SUMINISTRO","f_suministro"],
+  ["SALA DE CONTROL","f_sala"],
+  ["SALA_CONTROL","f_sala"],
+  ["CNC_NIVEL 1","f_cnc1"],
+  ["CNC_NIVEL_1","f_cnc1"],
+  ["RESPONSABLE_CNC","f_resp"],
+  ["FECHA","f_fecha"],
+  ["MINA","f_mina"],
+  ["GRUPO","f_grupo"]
+];
+
+function findCol(possible){
+  // exact match first
+  if (COLS.includes(possible)) return possible;
+  // case-insensitive / underscores
+  const norm = s => s.toLowerCase().replace(/\s+/g,"_");
+  const p = norm(possible);
+  for (const c of COLS){
+    if (norm(c) === p) return c;
+  }
+  return null;
+}
+
+function setSelectOptions(sel, values){
+  sel.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value = "";
+  optAll.textContent = "Todos";
+  sel.appendChild(optAll);
+  values.forEach(v=>{
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+
+function buildFilters(){
+  // prepare selects
+  const colBySelect = {};
+  for (const [colName, selId] of FILTER_MAP){
+    const col = findCol(colName);
+    if (!col) continue;
+    colBySelect[selId] = col;
+  }
+
+  const unique = (arr)=>Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),"es",{numeric:true}));
+
+  for (const selId of Object.keys(colBySelect)){
+    const col = colBySelect[selId];
+    const values = unique(RAW.map(r=>r[col]));
+    setSelectOptions(el(selId), values);
+    el(selId).onchange = applyFilters;
+  }
+
+  el("q").oninput = debounce(applyFilters, 150);
+}
+
+function debounce(fn, ms){
+  let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+}
+
+function rowMatchesText(r, q){
+  if(!q) return true;
+  const s = q.toLowerCase();
+  for(const c of COLS){
+    const v = (r[c]||"").toString().toLowerCase();
+    if(v.includes(s)) return true;
+  }
+  return false;
+}
+
+function applyFilters(){
+  if(!RAW.length) return;
+
+  const q = (el("q").value || "").trim();
+  // map select->col
+  const active = {};
+  for (const [colName, selId] of FILTER_MAP){
+    const col = findCol(colName);
+    if(!col) continue;
+    const v = el(selId)?.value || "";
+    if(v) active[col] = v;
+  }
+
+  const filtered = RAW.filter(r=>{
+    if(!rowMatchesText(r,q)) return false;
+    for(const [col,val] of Object.entries(active)){
+      if(String(r[col]||"") !== val) return false;
+    }
+    return true;
   });
 
-  // Auto-actualización cada X ms
-  function iniciarAutoActualizacion() {
-    const INTERVALO_MS = 60000;  // 60 segundos; puedes bajarlo a 15000 si quieres 15 s
-    setInterval(() => {
-      cargarDatos(true);       // true = recarga automática
-    }, INTERVALO_MS);
-  }
+  renderKPIs(filtered);
+  renderCharts(filtered);
+  renderTable(filtered);
+}
 
-  // Parser CSV simple con comillas
-  function parseCSV(text) {
-    const rows = [];
-    let current = [];
-    let value = "";
-    let insideQuotes = false;
+function clearFilters(){
+  el("q").value = "";
+  ["f_mes","f_semana","f_turno","f_grado","f_suministro","f_sala","f_cnc1","f_resp","f_fecha","f_mina","f_grupo"]
+    .forEach(id=>{ if(el(id)) el(id).value=""; });
+  applyFilters();
+}
 
-    for (let i = 0; i < text.length; i++) {
-      const ch = text[i];
-      const next = text[i + 1];
+/** =======================
+ *  KPIs
+ *  ======================= */
+function renderKPIs(rows){
+  el("k_regs").textContent = fmt(rows.length);
 
-      if (insideQuotes) {
-        if (ch === '"' && next === '"') {
-          value += '"';
-          i++;
-        } else if (ch === '"') {
-          insideQuotes = false;
-        } else {
-          value += ch;
-        }
-      } else {
-        if (ch === '"') {
-          insideQuotes = true;
-        } else if (ch === ",") {
-          current.push(value);
-          value = "";
-        } else if (ch === "\r") {
-          // nada
-        } else if (ch === "\n") {
-          current.push(value);
-          rows.push(current);
-          current = [];
-          value = "";
-        } else {
-          value += ch;
-        }
+  const cPlan = findCol("PLANIFICADO") || findCol("m3_PLANIFICADO") || findCol("M3_PLANIFICADO");
+  const cSum  = findCol("SUMINISTRADO") || findCol("m3_SUMINISTRADO") || findCol("M3_SUMINISTRADO");
+  const cPend = findCol("PENDIENTE");
+  const cRech = findCol("RECHAZADO");
+
+  const sPlan = cPlan ? rows.reduce((a,r)=>a+toNumber(r[cPlan]),0) : 0;
+  const sSum  = cSum  ? rows.reduce((a,r)=>a+toNumber(r[cSum]),0)  : 0;
+  const sPend = cPend ? rows.reduce((a,r)=>a+toNumber(r[cPend]),0) : 0;
+  const sRech = cRech ? rows.reduce((a,r)=>a+toNumber(r[cRech]),0) : 0;
+
+  el("k_plan").textContent = fmt(sPlan);
+  el("k_sum").textContent  = fmt(sSum);
+  el("k_pend").textContent = fmt(sPend);
+  el("k_rech").textContent = fmt(sRech);
+}
+
+/** =======================
+ *  CHARTS
+ *  ======================= */
+function destroyChart(key){
+  if(CH[key]){ CH[key].destroy(); delete CH[key]; }
+}
+function renderCharts(rows){
+  // defaults
+  Chart.defaults.maintainAspectRatio = false;
+  Chart.defaults.responsive = true;
+
+  const cCnc1 = findCol("CNC_NIVEL 1") || findCol("CNC_NIVEL_1") || findCol("CNC_NIVEL1");
+  const cResp = findCol("RESPONSABLE_CNC");
+  const cMina = findCol("MINA");
+  const cFecha = findCol("FECHA");
+  const cPlan = findCol("PLANIFICADO") || findCol("m3_PLANIFICADO") || findCol("M3_PLANIFICADO");
+  const cSum  = findCol("SUMINISTRADO") || findCol("m3_SUMINISTRADO") || findCol("M3_SUMINISTRADO");
+
+  // 1) TOP CNC1
+  destroyChart("cnc1");
+  const top = topN(countBy(rows, cCnc1), 10);
+  CH.cnc1 = new Chart(el("ch_cnc1"), {
+    type:"bar",
+    data:{ labels: top.labels, datasets:[{ label:"Registros", data: top.values }] },
+    options:{
+      plugins:{ legend:{display:false}},
+      scales:{
+        x:{ ticks:{ color:"#cbd5e1"} , grid:{ color:"rgba(255,255,255,.06)" } },
+        y:{ ticks:{ color:"#cbd5e1"} , grid:{ color:"rgba(255,255,255,.06)" } }
       }
     }
-    if (value.length > 0 || current.length > 0) {
-      current.push(value);
-      rows.push(current);
+  });
+
+  // 2) Responsables
+  destroyChart("resp");
+  const dist = topN(countBy(rows, cResp), 8);
+  CH.resp = new Chart(el("ch_resp"),{
+    type:"doughnut",
+    data:{ labels: dist.labels, datasets:[{ data: dist.values }] },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#cbd5e1", boxWidth:10 } } }
     }
-    return rows;
-  }
+  });
 
-  // Carga de datos
-  async function cargarDatos(desdeAuto = false) {
-    try {
-      const res  = await fetch(CSV_URL);
-      const text = await res.text();
-
-      // Si es recarga automática y el CSV es igual al anterior, no hacemos nada
-      if (desdeAuto && text === lastCsvRaw) {
-        console.log("Sin cambios en la base, no se actualiza el dashboard.");
-        return;
-      }
-      lastCsvRaw = text;
-
-      const rows = parseCSV(text);
-      if (!rows.length) return;
-
-      // Columna 1 = RUT (columna A está vacía)
-      const dataRows = rows.filter((c, i) => {
-        if (i === 0) return false;        // encabezados
-        if (!c[1]) return false;          // sin RUT
-        if (c[1].toString().toUpperCase() === "RUT") return false;
-        return true;
-      });
-
-      registrosBase = dataRows
-        .map(c => ({
-          rut:        c[1]  || "",
-          nombre:     c[2]  || "",
-          contrato:   c[3]  || "",
-          equipo:     c[4]  || "",
-          solicitante:c[5]  || "",
-          responsable:c[6]  || "",
-          fecha:      c[7]  || "",
-          concepto:   c[8]  || "",
-          cantidad:   Number(c[9]  || 0),
-          estado:     (c[10] || "").toUpperCase()
-        }))
-        .filter(r => r.concepto !== "" && (r.rut !== "" || r.nombre !== ""));
-
-      console.log(
-        desdeAuto
-          ? "Registros recargados automáticamente: " + registrosBase.length
-          : "Registros cargados: " + registrosBase.length
-      );
-
-      poblarFiltroEquipos(registrosBase);
-      aplicarFiltros(); // respeta los filtros actuales
-
-    } catch (err) {
-      console.error("Error cargando datos:", err);
-      if (!desdeAuto) {
-        alert("No se pudo leer la base desde Google Sheets.");
+  // 3) Mina plan vs sum
+  destroyChart("mina");
+  const byMina = sumByKey(rows, cMina, cPlan, cSum, 12);
+  CH.mina = new Chart(el("ch_mina"),{
+    type:"bar",
+    data:{
+      labels: byMina.labels,
+      datasets:[
+        { label:"Planificado", data: byMina.plan },
+        { label:"Suministrado", data: byMina.sum }
+      ]
+    },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#cbd5e1", boxWidth:10 } } },
+      scales:{
+        x:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } },
+        y:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } }
       }
     }
-  }
+  });
 
-  function poblarFiltroEquipos(reg) {
-    const selectEquipo = document.getElementById("filtro-equipo");
-    const valorActual = selectEquipo.value || "TODOS";
-
-    selectEquipo.innerHTML = '<option value="TODOS">Todos</option>';
-    const equipos = Array.from(new Set(reg.map(r => r.equipo || "Sin dato"))).sort();
-    equipos.forEach(eq => {
-      const opt = document.createElement("option");
-      opt.value = eq;
-      opt.textContent = eq;
-      selectEquipo.appendChild(opt);
-    });
-
-    // Mantener la selección si sigue existiendo
-    if ([...selectEquipo.options].some(o => o.value === valorActual)) {
-      selectEquipo.value = valorActual;
+  // 4) Fecha plan vs sum (línea)
+  destroyChart("fecha");
+  const byFecha = sumByDate(rows, cFecha, cPlan, cSum, 35);
+  CH.fecha = new Chart(el("ch_fecha"),{
+    type:"line",
+    data:{
+      labels: byFecha.labels,
+      datasets:[
+        { label:"Planificado", data: byFecha.plan, tension:.25 },
+        { label:"Suministrado", data: byFecha.sum, tension:.25 }
+      ]
+    },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#cbd5e1", boxWidth:10 } } },
+      scales:{
+        x:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } },
+        y:{ ticks:{ color:"#cbd5e1" }, grid:{ color:"rgba(255,255,255,.06)" } }
+      }
     }
+  });
+}
+
+function countBy(rows, col){
+  const m = new Map();
+  if(!col) return m;
+  rows.forEach(r=>{
+    const k = (r[col]||"(vacío)").trim() || "(vacío)";
+    m.set(k, (m.get(k)||0)+1);
+  });
+  return m;
+}
+function topN(map, n){
+  const arr = Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  return { labels: arr.map(x=>x[0]), values: arr.map(x=>x[1]) };
+}
+function sumByKey(rows, keyCol, planCol, sumCol, n=12){
+  const m = new Map();
+  rows.forEach(r=>{
+    const k = keyCol ? ((r[keyCol]||"(sin)")+ "") : "(sin)";
+    const cur = m.get(k) || {plan:0,sum:0};
+    if(planCol) cur.plan += toNumber(r[planCol]);
+    if(sumCol) cur.sum += toNumber(r[sumCol]);
+    m.set(k, cur);
+  });
+  const arr = Array.from(m.entries()).sort((a,b)=>(b[1].plan+b[1].sum)-(a[1].plan+a[1].sum)).slice(0,n);
+  return { labels: arr.map(x=>x[0]), plan: arr.map(x=>Math.round(x[1].plan)), sum: arr.map(x=>Math.round(x[1].sum)) };
+}
+function sumByDate(rows, dateCol, planCol, sumCol, n=35){
+  const m = new Map();
+  rows.forEach(r=>{
+    const d = dateCol ? (r[dateCol]||"") : "";
+    if(!d) return;
+    const cur = m.get(d) || {plan:0,sum:0};
+    if(planCol) cur.plan += toNumber(r[planCol]);
+    if(sumCol) cur.sum += toNumber(r[sumCol]);
+    m.set(d, cur);
+  });
+  const labels = Array.from(m.keys()).sort((a,b)=>new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'))).slice(-n);
+  return {
+    labels,
+    plan: labels.map(d=>Math.round((m.get(d)||{plan:0}).plan)),
+    sum: labels.map(d=>Math.round((m.get(d)||{sum:0}).sum)),
+  };
+}
+
+/** =======================
+ *  TABLE
+ *  ======================= */
+function renderTable(rows){
+  const tbl = el("tbl");
+  // header
+  let thead = "<thead><tr>" + COLS.map(h=>`<th>${escapeHtml(h)}</th>`).join("") + "</tr></thead>";
+  // body (limit for performance)
+  const limit = 500; // keep fast; you can raise
+  const bodyRows = rows.slice(0, limit).map(r=>{
+    return "<tr>" + COLS.map(h=>`<td>${escapeHtml(r[h] ?? "")}</td>`).join("") + "</tr>";
+  }).join("");
+  let tbody = "<tbody>" + bodyRows + "</tbody>";
+  tbl.innerHTML = thead + tbody;
+}
+
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, (m)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+}
+
+/** =======================
+ *  UI
+ *  ======================= */
+el("btnRefresh").onclick = ()=>loadData().catch(e=>showError(e.message));
+el("btnClear").onclick = clearFilters;
+el("btnConfig").onclick = ()=>{
+  const box = el("cfgBox");
+  box.style.display = (box.style.display==="none") ? "block" : "none";
+  el("csvUrl").value = getCsvUrl();
+};
+el("btnSaveUrl").onclick = ()=>{
+  const url = (el("csvUrl").value||"").trim();
+  const msg = el("cfgMsg");
+  msg.className = "";
+  if(!url || !url.includes("output=csv")){
+    msg.innerHTML = '<div class="err">Pega un link CSV publicado (debe contener <b>output=csv</b>).</div>';
+    return;
   }
+  setCsvUrl(url);
+  msg.innerHTML = '<div class="ok">Guardado ✅. Presiona “Actualizar”.</div>';
+};
 
-  function aplicarFiltros() {
-    if (!registrosBase.length) return;
-
-    const rutBusqueda = document.getElementById("filtro-rut").value.trim();
-    const estadoSel   = document.getElementById("filtro-estado").value;
-    const equipoSel   = document.getElementById("filtro-equipo").value;
-
-    let datos = registrosBase.slice();
-
-    if (rutBusqueda) {
-      const rutLower = rutBusqueda.toLowerCase();
-      datos = datos.filter(r =>
-        (r.rut || "").toLowerCase().includes(rutLower)
-      );
-    }
-
-    if (estadoSel !== "TODOS") {
-      datos = datos.filter(r => r.estado === estadoSel);
-    }
-
-    if (equipoSel !== "TODOS") {
-      datos = datos.filter(r => r.equipo === equipoSel);
-    }
-
-    registrosActuales = datos;
-
-    actualizarKPIs(registrosActuales);
-    dibujarTabla(registrosActuales);
-    dibujarGraficos(registrosActuales);
-  }
-
-  function limpiarFiltros() {
-    document.getElementById("filtro-rut").value = "";
-    document.getElementById("filtro-estado").value = "TODOS";
-    document.getElementById("filtro-equipo").value = "TODOS";
-    aplicarFiltros();
-  }
-
-  function exportarPDF() {
-    window.print();
-  }
-
-  function actualizarKPIs(reg) {
-    const total = reg.length;
-    const totalCantidad = reg.reduce((s, r) => s + (r.cantidad || 0), 0);
-
-    const setEstado = estado =>
-      reg.filter(r => r.estado === estado).length;
-
-    const cerrados      = setEstado("CERRADO");
-    const proceso       = setEstado("PROCESO");
-    const sinRespuesta  = setEstado("SIN RESPUESTA");
-
-    const operadoresUnicos = new Set(reg.map(r => r.rut || r.nombre)).size;
-
-    const pct = n => total ? ((n / total) * 100).toFixed(1) + "%" : "0%";
-
-    document.getElementById("kpi-total-registros").textContent   = total;
-    document.getElementById("kpi-cantidad-total").textContent    = totalCantidad;
-    document.getElementById("kpi-operadores-unicos").textContent = operadoresUnicos;
-
-    document.getElementById("kpi-cerrados").textContent          = cerrados;
-    document.getElementById("kpi-proceso").textContent           = proceso;
-    document.getElementById("kpi-sin-respuesta").textContent     = sinRespuesta;
-
-    document.getElementById("kpi-cerrados-pct").textContent      = pct(cerrados);
-    document.getElementById("kpi-proceso-pct").textContent       = pct(proceso);
-    document.getElementById("kpi-sin-respuesta-pct").textContent = pct(sinRespuesta);
-  }
-
-  function dibujarTabla(reg) {
-    const tbody = document.querySelector("#tabla-detalle tbody");
-    tbody.innerHTML = "";
-    reg.forEach(r => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.rut}</td>
-        <td>${r.nombre}</td>
-        <td>${r.contrato}</td>
-        <td>${r.equipo}</td>
-        <td>${r.solicitante}</td>
-        <td>${r.responsable}</td>
-        <td>${r.fecha}</td>
-        <td>${r.concepto}</td>
-        <td>${r.cantidad}</td>
-        <td>${r.estado}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  function agrupar(reg, clave, usarCantidad = false) {
-    const map = {};
-    reg.forEach(r => {
-      const key = r[clave] || "Sin dato";
-      if (!map[key]) map[key] = 0;
-      map[key] += usarCantidad ? (r.cantidad || 0) : 1;
-    });
-    const labels = Object.keys(map);
-    const values = labels.map(l => map[l]);
-    return { labels, values };
-  }
-
-  function agruparUnicos(reg, claveAgrupar, claveUnico) {
-    const map = {};
-    reg.forEach(r => {
-      const grupo = r[claveAgrupar] || "Sin dato";
-      const id    = r[claveUnico]   || "";
-      if (!map[grupo]) map[grupo] = new Set();
-      if (id) map[grupo].add(id);
-    });
-    const labels = Object.keys(map);
-    const values = labels.map(l => map[l].size);
-    return { labels, values };
-  }
-
-  function dibujarGraficos(reg) {
-    const concepto = agrupar(reg, "concepto", true);
-    const estado   = agrupar(reg, "estado", false);
-    const equipo   = agrupar(reg, "equipo", true);
-    const fecha    = agrupar(reg, "fecha", true);
-    const equipoOps= agruparUnicos(reg, "equipo", "rut");
-
-    const ctxConcepto = document.getElementById("chartConcepto").getContext("2d");
-    const ctxEstado   = document.getElementById("chartEstado").getContext("2d");
-    const ctxEquipo   = document.getElementById("chartEquipo").getContext("2d");
-    const ctxFecha    = document.getElementById("chartFecha").getContext("2d");
-    const ctxEqOps    = document.getElementById("chartEquipoOperadores").getContext("2d");
-
-    if (chartConcepto) chartConcepto.destroy();
-    if (chartEstado)   chartEstado.destroy();
-    if (chartEquipo)   chartEquipo.destroy();
-    if (chartFecha)    chartFecha.destroy();
-    if (chartEquipoOperadores) chartEquipoOperadores.destroy();
-
-    const palette = {
-      primary: "#d9232d",
-      primaryLight: "#f7c1c4",
-      blue: "#3498db",
-      blueLight: "#d6e9f8",
-      orange: "#f5a623",
-      green: "#2ecc71"
-    };
-
-    chartConcepto = new Chart(ctxConcepto, {
-      type: "bar",
-      data: {
-        labels: concepto.labels,
-        datasets: [{
-          label: "Cantidad",
-          data: concepto.values,
-          backgroundColor: palette.blueLight,
-          borderColor: palette.blue,
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true, ticks: { precision: 0 } }
-        }
-      }
-    });
-
-    chartEstado = new Chart(ctxEstado, {
-      type: "doughnut",
-      data: {
-        labels: estado.labels,
-        datasets: [{
-          data: estado.values,
-          backgroundColor: [palette.primary, palette.orange, palette.blueLight],
-          borderWidth: 1
-        }]
-      }
-    });
-
-    chartEquipo = new Chart(ctxEquipo, {
-      type: "bar",
-      data: {
-        labels: equipo.labels,
-        datasets: [{
-          label: "Cantidad total",
-          data: equipo.values,
-          backgroundColor: palette.primarySoft,
-          borderColor: palette.primary,
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          x: { ticks: { maxRotation: 45, minRotation: 45 } },
-          y: { beginAtZero: true, ticks: { precision: 0 } }
-        }
-      }
-    });
-
-    chartFecha = new Chart(ctxFecha, {
-      type: "line",
-      data: {
-        labels: fecha.labels,
-        datasets: [{
-          label: "Cantidad",
-          data: fecha.values,
-          borderColor: palette.blue,
-          backgroundColor: palette.blueLight,
-          borderWidth: 2,
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true, ticks: { precision: 0 } }
-        }
-      }
-    });
-
-    chartEquipoOperadores = new Chart(ctxEqOps, {
-      type: "bar",
-      data: {
-        labels: equipoOps.labels,
-        datasets: [{
-          label: "Operadores únicos",
-          data: equipoOps.values,
-          backgroundColor: palette.green,
-          borderColor: "#1e874b",
-          borderWidth: 2
-        }]
-      },
-      options: {
-        scales: {
-          x: { ticks: { maxRotation: 45, minRotation: 45 } },
-          y: { beginAtZero: true, ticks: { precision: 0 } }
-        }
-      }
-    });
-  }
+window.addEventListener("DOMContentLoaded", ()=>{
+  // preload URL if exists
+  const url = getCsvUrl();
+  if(url) el("csvUrl").value = url;
+  // auto-load
+  loadData().catch(e=>showError(e.message));
+});
 </script>
-
 </body>
 </html>
