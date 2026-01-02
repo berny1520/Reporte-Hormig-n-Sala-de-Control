@@ -166,6 +166,51 @@
     .formgrid{display:grid;gap:10px;grid-template-columns: repeat(4, 1fr)}
     @media (max-width: 1050px){.formgrid{grid-template-columns:1fr 1fr}}
     .footer-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
+
+    /* === COMPACT MODE (v2) === */
+    html, body { overflow-x: hidden !important; }
+    body { margin:0; }
+    .wrap { max-width: 1180px !important; margin: 16px auto 26px !important; padding: 0 12px !important; }
+
+    /* Reduce big header spacing */
+    header { padding: 12px 14px !important; }
+    .topbar { gap: 10px !important; }
+    .brand { gap: 10px !important; }
+    .logoBox { width: 120px !important; height: 54px !important; }
+    h1 { font-size: 18px !important; line-height: 1.15 !important; margin: 0 0 4px 0 !important; }
+
+    /* Filters container tighter */
+    .filters { padding: 12px 12px !important; }
+    .filters .row { gap: 10px !important; }
+    .filters label { font-size: 11px !important; margin-bottom: 6px !important; }
+    .filters input, .filters select { height: 38px !important; }
+
+    /* KPI cards tighter */
+    .cards{ gap:10px !important; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important; margin-top: 10px !important;}
+    .card{ padding:10px 12px !important; min-height:68px !important; border-radius: 12px !important; overflow:hidden !important; }
+    .card .t{ font-size:11px !important; }
+    .card .v{ font-size:19px !important; margin-top:3px !important; line-height:1.05 !important; }
+    .card:before{ right:-12px !important; top:-12px !important; width:64px !important; height:64px !important; }
+
+    /* Charts: force smaller height */
+    .panels, .panels2 { gap: 10px !important; }
+    .panel { padding: 12px 12px !important; border-radius: 14px !important; min-height: 190px !important; }
+    .panel h3 { font-size: 12px !important; margin: 0 0 8px 0 !important; }
+    .panel canvas{
+      width:100% !important;
+      height:140px !important;
+      max-height:140px !important;
+      display:block;
+    }
+    @media (max-width: 1050px){
+      .panel{ min-height: 180px !important; }
+      .panel canvas{ height:130px !important; max-height:130px !important; }
+    }
+
+    /* Table: avoid forcing width */
+    .tableWrap { overflow-x:auto; }
+    table{ min-width: 760px !important; }
+
 </style>
 </head>
 
