@@ -7,412 +7,608 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root{
-    --bg:#f5f7fb; --panel:#ffffff; --border:#e6e9f2;
-    --text:#111827; --muted:#6b7280; --accent:#d7262f;
-    --shadow: 0 8px 24px rgba(16,24,40,.08); --radius:16px;
+    --bg:#f5f7fb;
+    --panel:#ffffff;
+    --border:#e6e9f2;
+    --text:#111827;
+    --muted:#6b7280;
+    --accent:#d7262f;      /* rojo Xtreme */
+    --accent2:#0b5ed7;     /* azul */
+    --shadow: 0 8px 24px rgba(16,24,40,.08);
+    --radius: 16px;
   }
   *{box-sizing:border-box}
   html,body{height:100%; overflow-x:hidden}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:var(--bg)}
-  .wrap{max-width:1320px;margin:14px auto 26px;padding:0 14px}
-  header{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--radius);background:var(--panel);border:1px solid var(--border);box-shadow:var(--shadow)}
-  .brand{display:flex;gap:12px;align-items:center;min-width:0}
-  .logoBox{width:148px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto}
-  .logoBox img{width:100%;height:100%;object-fit:contain;display:block}
-  .logoFallback{font-weight:900;letter-spacing:.6px;color:#111827}
-  .titles{min-width:0}
-  .titles h1{margin:0;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .titles p{margin:2px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-  button{border:1px solid var(--border);background:#fff;color:var(--text);padding:9px 11px;border-radius:12px;cursor:pointer}
-  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--text);
+    background:var(--bg);
+  }
+  .wrap{max-width:1320px; margin:14px auto 26px; padding:0 14px;}
+  header{
+    display:flex; gap:14px; align-items:center; justify-content:space-between;
+    padding:12px 14px; border-radius:var(--radius);
+    background:var(--panel); border:1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .brand{display:flex; gap:12px; align-items:center}
+  .logoBox{
+    width:128px; height:56px; border-radius:14px;
+    background:#fff;
+    border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; letter-spacing:.6px;
+  }
+  .titles h1{margin:0; font-size:18px; line-height:1.15}
+  .titles p{margin:2px 0 0; color:var(--muted); font-size:12px}
+  .actions{display:flex; gap:8px; flex-wrap:wrap}
+  button{
+    border:1px solid var(--border); background:#fff;
+    color:var(--text); padding:9px 11px; border-radius:12px; cursor:pointer;
+  }
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  button.ghost{background:#fff}
   button:active{transform:translateY(1px)}
-  .cfg,.filters{margin-top:12px;padding:12px;border-radius:var(--radius);background:var(--panel);border:1px solid var(--border);box-shadow:var(--shadow)}
-  .cfgGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media (max-width:980px){.cfgGrid{grid-template-columns:1fr}}
-  .cfg label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
-  .cfg input{width:100%;height:40px;padding:0 12px;border-radius:12px;background:#fff;border:1px solid var(--border);color:var(--text)}
-  .cfgActions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-  .filters .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;align-items:end}
-  .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
-  .field input,.field select{width:100%;height:38px;padding:0 10px;border-radius:12px;background:#fff;border:1px solid var(--border);color:var(--text)}
-  .field select:disabled{opacity:.6}
-  .ok{color:#0f8a3b;font-weight:700;font-size:12px;margin-top:8px}
-  .err{color:#b42318;font-weight:700;font-size:12px;margin-top:8px}
-  .cards{margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:10px 12px;min-height:72px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
-  .card:before{content:"";position:absolute;right:-16px;top:-16px;width:76px;height:76px;border-radius:999px;background:rgba(215,38,47,.10)}
-  .card .t{font-size:11px;color:#374151}
-  .card .v{font-size:20px;font-weight:900;margin-top:4px;line-height:1.05}
-  .card .s{font-size:11px;color:var(--muted);margin-top:2px}
-  .panels{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media (max-width:980px){.panels{grid-template-columns:1fr}}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px;min-height:240px;box-shadow:var(--shadow)}
-  .panel h3{margin:0 0 8px;font-size:12px;color:#111827}
-  canvas{width:100%!important;height:180px!important;display:block}
-  .tablePanel{margin-top:10px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
-  .tablePanel h3{margin:0 0 10px;font-size:12px}
-  .tableWrap{overflow:auto;max-width:100%;border-radius:14px;border:1px solid var(--border);background:#fff}
-  table{border-collapse:collapse;width:max-content;min-width:1600px;background:#fff}
-  th,td{padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;font-size:12px;color:#111827}
-  th{position:sticky;top:0;background:#0b1220;color:#fff;z-index:1;text-transform:uppercase;font-size:11px;letter-spacing:.4px}
+
+  .cfg, .filters{
+    margin-top:12px;
+    padding:12px;
+    border-radius:var(--radius);
+    background:var(--panel);
+    border:1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .cfgRow{display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:end}
+  .cfg label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px}
+  .cfg input{
+    width:100%; height:40px; padding:0 12px; border-radius:12px;
+    background:#fff; border:1px solid var(--border); color:var(--text);
+  }
+
+  .filters .row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap:10px; align-items:end;
+  }
+  .field label{display:block; font-size:11px; color:var(--muted); margin-bottom:6px}
+  .field input,.field select{
+    width:100%; height:38px; padding:0 10px; border-radius:12px;
+    background:#fff; border:1px solid var(--border); color:var(--text);
+  }
+
+  .ok{color:#0f8a3b; font-weight:700; font-size:12px; margin-top:8px}
+  .err{color:#b42318; font-weight:700; font-size:12px; margin-top:8px}
+
+  .cards{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap:10px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:10px 12px;
+    min-height:72px;
+    position:relative; overflow:hidden;
+    box-shadow: var(--shadow);
+  }
+  .card:before{
+    content:""; position:absolute; right:-16px; top:-16px;
+    width:76px; height:76px; border-radius:999px;
+    background:rgba(215,38,47,.10);
+  }
+  .card .t{font-size:11px; color:#374151}
+  .card .v{font-size:20px; font-weight:900; margin-top:4px; line-height:1.05}
+  .card .s{font-size:11px; color:var(--muted); margin-top:2px}
+
+  .panels{
+    margin-top:10px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:980px){ .panels{grid-template-columns:1fr;} }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px;
+    min-height:240px;
+    box-shadow: var(--shadow);
+  }
+  .panel h3{margin:0 0 8px; font-size:12px; color:#111827}
+  canvas{width:100%!important; height:180px!important; display:block}
+
+  .tablePanel{
+    margin-top:10px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px;
+    box-shadow: var(--shadow);
+  }
+  .tablePanel h3{margin:0 0 10px; font-size:12px}
+  .tableWrap{
+    overflow:auto;
+    max-width:100%;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:#fff;
+  }
+  table{
+    border-collapse:collapse;
+    width:max-content;
+    min-width:1600px; /* fuerza barra lateral */
+    background:#fff;
+  }
+  th,td{
+    padding:8px 10px;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+    font-size:12px;
+    color:#111827;
+  }
+  th{
+    position:sticky; top:0;
+    background:#0b1220;
+    color:#fff;
+    z-index:1;
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:.4px;
+  }
   tr:hover td{background:#f7f8fc}
-  .note{margin-top:8px;color:var(--muted);font-size:12px}
+  .note{margin-top:8px; color:var(--muted); font-size:12px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <div class="logo_Xtreme" id="logo_Xtreme"><span class="logo_Xtreme" id="logo_Xtreme">XTREME</span></div>
-      <div class="titles">
-        <h1>Dashboard Seguimiento – Hormigón / CNC</h1>
-        <p>Xtreme Mining · Fuente: Google Sheets (CSV publicado)</p>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo_Xtreme</div>
+        <div class="titles">
+          <h1>Dashboard Seguimiento – Hormigón / CNC</h1>
+          <p>Xtreme Mining · Fuente: Google Sheets (CSV publicado)</p>
+        </div>
       </div>
-    </div>
-    <div class="actions">
-      <button id="btnConfig">Configurar fuente</button>
-      <button id="btnClear">Limpiar filtros</button>
-      <button class="primary" id="btnRefresh">Actualizar</button>
-    </div>
-  </header>
-
-  <section class="cfg" id="cfgBox" style="display:none">
-    <div class="cfgGrid">
-      <div>
-        <label>URL CSV publicado</label>
-        <input id="csvUrl" placeholder="Pega aquí el link ...output=csv" />
-        <div class="note">Debe contener <b>output=csv</b>.</div>
+      <div class="actions">
+        <button class="ghost" id="btnConfig">Configurar fuente</button>
+        <button class="ghost" id="btnClear">Limpiar filtros</button>
+        <button class="primary" id="btnRefresh">Actualizar</button>
       </div>
-      <div>
-        <label>Logo (opcional): URL pública o ruta local (ej: <b>logo_xtreme.png</b>)</label>
-        <input id="logoUrl" placeholder="Ej: logo_xtreme.png" />
-        <div class="note">Si usas archivo local, déjalo en la misma carpeta del HTML.</div>
+    </header>
+
+    <section class="cfg" id="cfgBox" style="display:none">
+      <div class="cfgRow">
+        <div>
+          <label>URL CSV publicado (Google Sheets → Publicar en la web → CSV)</label>
+          <input id="csvUrl" placeholder="Pega aquí el link ...output=csv" />
+          <div class="note">Debe verse como <b>docs.google.com/spreadsheets/d/e/.../pub?...&output=csv</b> (no el link de editar).</div>
+          <div id="cfgMsg"></div>
+        </div>
+        <button class="primary" id="btnSaveUrl">Guardar</button>
       </div>
-    </div>
-    <div class="cfgActions">
-      <button class="primary" id="btnSaveCfg">Guardar</button>
-    </div>
-    <div id="cfgMsg"></div>
-  </section>
+    </section>
 
-  <section class="filters">
-    <div class="row">
-      <div class="field"><label>Buscar (texto libre)</label><input id="q" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." /></div>
-      <div class="field"><label>GRADO</label><select id="f_grado"></select></div>
-      <div class="field"><label>SUMINISTRO</label><select id="f_suministro"></select></div>
-      <div class="field"><label>TURNO</label><select id="f_turno"></select></div>
-      <div class="field"><label>GRUPO</label><select id="f_grupo"></select></div>
-      <div class="field"><label>SALA_CONTROL</label><select id="f_sala"></select></div>
-      <div class="field"><label>MINA</label><select id="f_mina"></select></div>
-      <div class="field"><label>LABOR_POSTURA</label><select id="f_labor"></select></div>
-      <div class="field"><label>CNC_NIVEL 2</label><select id="f_cnc2"></select></div>
-      <div class="field"><label>CNC_NIVEL 1</label><select id="f_cnc1"></select></div>
-      <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"></select></div>
-      <div class="field"><label>MES</label><select id="f_mes"></select></div>
-      <div class="field"><label>SEMANA</label><select id="f_semana"></select></div>
-      <div class="field"><label>FECHA</label><select id="f_fecha"></select></div>
-    </div>
-    <div class="ok" id="status"></div>
-    <div class="err" id="error" style="display:none"></div>
-  </section>
+    <section class="filters">
+      <div class="row">
+        <div class="field">
+          <label>Buscar (texto libre)</label>
+          <input id="q" placeholder="Ej: 'ESMERALDA', 'Ruta', 'C-23'..." />
+        </div>
 
-  <section class="cards">
-    <div class="card"><div class="t">REGISTROS FILTRADOS</div><div class="v" id="k_regs">0</div><div class="s">Total visible según filtros</div></div>
-    <div class="card"><div class="t">m³ PLANIFICADO (suma)</div><div class="v" id="k_plan">0</div><div class="s">Suma columna PLANIFICADO</div></div>
-    <div class="card"><div class="t">m³ SUMINISTRADO (suma)</div><div class="v" id="k_sum">0</div><div class="s">Suma columna SUMINISTRADO</div></div>
-    <div class="card"><div class="t">PENDIENTE (suma)</div><div class="v" id="k_pend">0</div><div class="s">Suma columna PENDIENTE</div></div>
-    <div class="card"><div class="t">RECHAZADO (suma)</div><div class="v" id="k_rech">0</div><div class="s">Suma columna RECHAZADO</div></div>
-  </section>
+        <div class="field"><label>MES</label><select id="f_mes"></select></div>
+        <div class="field"><label>SEMANA</label><select id="f_semana"></select></div>
+        <div class="field"><label>TURNO</label><select id="f_turno"></select></div>
 
-  <section class="panels">
-    <div class="panel"><h3>Incidentes por CNC_NIVEL 1 (TOP 10)</h3><canvas id="ch_cnc1"></canvas></div>
-    <div class="panel"><h3>Distribución por RESPONSABLE_CNC</h3><canvas id="ch_resp"></canvas></div>
-  </section>
+        <div class="field"><label>GRADO</label><select id="f_grado"></select></div>
+        <div class="field"><label>SUMINISTRO</label><select id="f_suministro"></select></div>
+        <div class="field"><label>GRUPO</label><select id="f_grupo"></select></div>
 
-  <section class="panels">
-    <div class="panel"><h3>m³ por MINA (Planificado vs Suministrado)</h3><canvas id="ch_mina"></canvas></div>
-    <div class="panel"><h3>m³ por FECHA (Planificado vs Suministrado)</h3><canvas id="ch_fecha"></canvas></div>
-  </section>
+        <div class="field"><label>SALA_CONTROL</label><select id="f_sala"></select></div>
+        <div class="field"><label>MINA</label><select id="f_mina"></select></div>
+        <div class="field"><label>LABOR_POSTURA</label><select id="f_labor"></select></div>
 
-  <section class="tablePanel">
-    <h3>Detalle (todas las columnas)</h3>
-    <div class="tableWrap"><table id="tbl"></table></div>
-    <div class="note">La barra lateral aparece en esta tabla para ver todas las columnas.</div>
-  </section>
-</div>
+        <div class="field"><label>CNC_NIVEL_2</label><select id="f_cnc2"></select></div>
+        <div class="field"><label>CNC_NIVEL_1</label><select id="f_cnc1"></select></div>
+        <div class="field"><label>RESPONSABLE_CNC</label><select id="f_resp"></select></div>
+
+        <div class="field"><label>FECHA</label><select id="f_fecha"></select></div>
+      </div>
+
+      <div class="ok" id="status"></div>
+      <div class="err" id="error" style="display:none"></div>
+    </section>
+
+    <section class="cards">
+      <div class="card"><div class="t">REGISTROS FILTRADOS</div><div class="v" id="k_regs">0</div><div class="s">Total visible según filtros</div></div>
+      <div class="card"><div class="t">m³ PLANIFICADO (suma)</div><div class="v" id="k_plan">0</div><div class="s">Suma columna PLANIFICADO</div></div>
+      <div class="card"><div class="t">m³ SUMINISTRADO (suma)</div><div class="v" id="k_sum">0</div><div class="s">Suma columna SUMINISTRADO</div></div>
+      <div class="card"><div class="t">PENDIENTE (suma)</div><div class="v" id="k_pend">0</div><div class="s">Suma columna PENDIENTE</div></div>
+      <div class="card"><div class="t">RECHAZADO (suma)</div><div class="v" id="k_rech">0</div><div class="s">Suma columna RECHAZADO</div></div>
+    </section>
+
+    <section class="panels">
+      <div class="panel">
+        <h3>Incidentes por CNC_NIVEL_1 (TOP 10)</h3>
+        <canvas id="ch_cnc1"></canvas>
+      </div>
+      <div class="panel">
+        <h3>Distribución por RESPONSABLE_CNC</h3>
+        <canvas id="ch_resp"></canvas>
+      </div>
+    </section>
+
+    <section class="panels">
+      <div class="panel">
+        <h3>m³ por MINA (Planificado vs Suministrado)</h3>
+        <canvas id="ch_mina"></canvas>
+      </div>
+      <div class="panel">
+        <h3>m³ por FECHA (Planificado vs Suministrado)</h3>
+        <canvas id="ch_fecha"></canvas>
+      </div>
+    </section>
+
+    <section class="tablePanel">
+      <h3>Detalle (todas las columnas)</h3>
+      <div class="tableWrap">
+        <table id="tbl"></table>
+      </div>
+      <div class="note">La barra lateral aparece aquí para ver todas las columnas (la página no se desborda).</div>
+    </section>
+
+  </div>
 
 <script>
 const DEFAULT_CSV_URL = "";
-const LS_KEY_URL  = "xtreme_hormigon_csv_url";
-const LS_KEY_LOGO = "xtreme_hormigon_logo_url";
+const LS_KEY = "xtreme_hormigon_csv_url";
 
+/* CSV parser */
 function parseCSV(text){
-  const rows=[]; let row=[], cur="", inQ=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i], n=text[i+1];
-    if(c==='"'){ if(inQ && n==='"'){cur+='"'; i++;} else inQ=!inQ; }
-    else if(c===',' && !inQ){ row.push(cur); cur=""; }
-    else if((c==='\n' || c==='\r') && !inQ){ if(c==='\r'&&n==='\n') i++; row.push(cur); rows.push(row); row=[]; cur=""; }
-    else cur+=c;
+  const rows = [];
+  let row = [], cur = "", inQuotes = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
+    if (c === '"'){
+      if (inQuotes && n === '"'){ cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (c === ',' && !inQuotes){
+      row.push(cur); cur="";
+    } else if ((c === '\n' || c === '\r') && !inQuotes){
+      if (c === '\r' && n === '\n') i++;
+      row.push(cur); rows.push(row);
+      row=[]; cur="";
+    } else {
+      cur += c;
+    }
   }
-  if(cur.length || row.length){ row.push(cur); rows.push(row); }
-  return rows.filter(r=>r.some(v=>(v||"").trim()!==""));
+  if (cur.length || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(v => (v||"").trim() !== ""));
 }
 function toNumber(v){
-  if(v==null) return 0;
-  const s=String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"").trim();
-  const n=Number(s); return Number.isFinite(n)?n:0;
+  if (v == null) return 0;
+  const s = String(v).replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"").trim();
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
 }
 function fmt(n){ return new Intl.NumberFormat("es-CL",{maximumFractionDigits:0}).format(n); }
 
-let RAW=[], COLS=[], COL_MAP=new Map(), CH={};
-const el=(id)=>document.getElementById(id);
+let RAW = [];
+let COLS = [];
+let CH = {};
 
-function cleanHeader(s){
-  return String(s??"").replace(/^\uFEFF/,"").replace(/\u00A0/g," ").trim().replace(/\s+/g," ");
+const el = (id)=>document.getElementById(id);
+
+function showError(msg){
+  el("error").style.display = "block";
+  el("error").textContent = msg;
 }
-function norm(s){ return cleanHeader(s).toLowerCase().replace(/\s+/g,"_"); }
-
-function showError(msg){ el("error").style.display="block"; el("error").textContent=msg; }
-function clearError(){ el("error").style.display="none"; el("error").textContent=""; }
-
-function getCsvUrl(){ return localStorage.getItem(LS_KEY_URL) || DEFAULT_CSV_URL || ""; }
-function setCsvUrl(url){ localStorage.setItem(LS_KEY_URL, url); }
-function getLogoUrl(){ return localStorage.getItem(LS_KEY_LOGO) || ""; }
-function setLogoUrl(url){ localStorage.setItem(LS_KEY_LOGO, url); }
-
-function applyLogo(){
-  const box=el("logoBox"); const fallback=el("logoFallback");
-  const url=getLogoUrl(); box.innerHTML="";
-  if(url){
-    const img=document.createElement("img");
-    img.src=url; img.alt="Logo";
-    img.onerror=()=>{ box.innerHTML=""; box.appendChild(fallback); };
-    box.appendChild(img);
-  } else box.appendChild(fallback);
+function clearError(){
+  el("error").style.display = "none";
+  el("error").textContent = "";
 }
+function getCsvUrl(){ return localStorage.getItem(LS_KEY) || DEFAULT_CSV_URL || ""; }
+function setCsvUrl(url){ localStorage.setItem(LS_KEY, url); }
 
 async function loadData(){
-  clearError(); applyLogo();
-  const url=getCsvUrl();
-  if(!url){ showError("https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv"); el("status").textContent=""; return; }
-  el("status").textContent="Cargando CSV…";
-  const res=await fetch(url,{cache:"no-store"});
+  clearError();
+  const url = getCsvUrl();
+  if(!url){
+    showError("https://docs.google.com/spreadsheets/d/e/2PACX-1vTQpnX_1KJzAhOEvVGx_AaCV-FfoLl37pOHX5S4MZY_IejaX78BBgGLFR8fn2AzwmwEQWdpL5Ln2kI2/pub?gid=1538363274&single=true&output=csv");
+    el("status").textContent = "";
+    return;
+  }
+  el("status").textContent = "Cargando CSV…";
+  const res = await fetch(url, { cache:"no-store" });
   if(!res.ok) throw new Error("No se pudo descargar CSV ("+res.status+")");
-  const text=await res.text();
-  const rows=parseCSV(text);
-  if(rows.length<2) throw new Error("CSV vacío o con formato inesperado.");
-  const headers=rows[0].map(h=>cleanHeader(h));
-  COLS=headers;
-  COL_MAP=new Map();
-  headers.forEach(h=>COL_MAP.set(norm(h), h));
-  RAW=rows.slice(1).map(r=>{
-    const o={};
-    headers.forEach((h,i)=> o[h]=(r[i]??"").trim());
-    return o;
+  const text = await res.text();
+  const rows = parseCSV(text);
+  if(rows.length < 2) throw new Error("CSV vacío o con formato inesperado.");
+  COLS = rows[0].map(h => (h||"").trim());
+  RAW = rows.slice(1).map(r => {
+    const obj = {};
+    COLS.forEach((h,i)=> obj[h] = (r[i] ?? "").trim());
+    return obj;
   });
-  el("status").textContent="CSV cargado: "+RAW.length+" filas.";
+  el("status").textContent = "CSV cargado: " + RAW.length + " filas.";
   buildFilters();
   applyFilters();
 }
 
-function findCol(...candidates){
-  for(const cand of candidates){
-    const k=norm(cand);
-    if(COL_MAP.has(k)) return COL_MAP.get(k);
+/* Column matching helpers */
+function findCol(possible){
+  if (COLS.includes(possible)) return possible;
+  const norm = s => s.toLowerCase().replace(/\s+/g,"_");
+  const p = norm(possible);
+  for (const c of COLS){
+    if (norm(c) === p) return c;
   }
   return null;
 }
-function unique(arr){
-  return Array.from(new Set(arr.filter(v=>(v??"").toString().trim()!=="").map(v=>v.toString().trim())))
-    .sort((a,b)=>String(a).localeCompare(String(b),"es",{numeric:true}));
-}
 function setSelectOptions(sel, values){
-  sel.innerHTML="";
-  const all=document.createElement("option"); all.value=""; all.textContent="Todos"; sel.appendChild(all);
-  values.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; sel.appendChild(o); });
+  sel.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value = "";
+  optAll.textContent = "Todos";
+  sel.appendChild(optAll);
+  values.forEach(v=>{
+    const o=document.createElement("option");
+    o.value=v; o.textContent=v;
+    sel.appendChild(o);
+  });
 }
-const FILTERS=[
-  {sel:"f_grado", cols:["GRADO"]},
-  {sel:"f_suministro", cols:["SUMINISTRO"]},
-  {sel:"f_turno", cols:["TURNO"]},
-  {sel:"f_grupo", cols:["GRUPO"]},
-  {sel:"f_sala", cols:["SALA_CONTROL","SALA CONTROL","SALA_DE_CONTROL","SALA DE CONTROL"]},
-  {sel:"f_mina", cols:["MINA"]},
-  {sel:"f_labor", cols:["LABOR_POSTURA","LABOR POSTURA"]},
-  {sel:"f_cnc2", cols:["CNC_NIVEL 2","CNC_NIVEL_2","CNC NIVEL 2"]},
-  {sel:"f_cnc1", cols:["CNC_NIVEL 1","CNC_NIVEL_1","CNC NIVEL 1"]},
-  {sel:"f_resp", cols:["RESPONSABLE_CNC","RESPONSABLE CNC"]},
-  {sel:"f_mes", cols:["MES"]},
-  {sel:"f_semana", cols:["SEMANA"]},
-  {sel:"f_fecha", cols:["FECHA"]},
+const FILTER_MAP = [
+  ["MES","f_mes"],
+  ["SEMANA","f_semana"],
+  ["TURNO","f_turno"],
+  ["GRADO","f_grado"],
+  ["SUMINISTRO","f_suministro"],
+  ["GRUPO","f_grupo"],
+  ["SALA_CONTROL","f_sala"],
+  ["SALA DE CONTROL","f_sala"],
+  ["MINA","f_mina"],
+  ["LABOR_POSTURA","f_labor"],
+  ["LABOR POSTURA","f_labor"],
+  ["CNC_NIVEL_2","f_cnc2"],
+  ["CNC_NIVEL 2","f_cnc2"],
+  ["CNC_NIVEL_1","f_cnc1"],
+  ["CNC_NIVEL 1","f_cnc1"],
+  ["RESPONSABLE_CNC","f_resp"],
+  ["FECHA","f_fecha"]
 ];
 
-function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
-
-function buildFilters(){
-  FILTERS.forEach(f=>{
-    const sel=el(f.sel);
-    const col=findCol(...f.cols);
-    if(!col){ sel.disabled=true; setSelectOptions(sel,[]); return; }
-    sel.disabled=false;
-    setSelectOptions(sel, unique(RAW.map(r=>r[col])));
-    sel.onchange=applyFilters;
-  });
-  el("q").oninput = debounce(applyFilters,150);
+function unique(arr){
+  return Array.from(new Set(arr.filter(Boolean)))
+    .sort((a,b)=>String(a).localeCompare(String(b),"es",{numeric:true}));
 }
-function rowMatchesText(r,q){
+function buildFilters(){
+  // build only those that exist in CSV; hide missing fields (label+select container)
+  FILTER_MAP.forEach(([colName, selId])=>{
+    const sel = el(selId);
+    if(!sel) return;
+    const col = findCol(colName);
+    const field = sel.closest(".field");
+    if(!col){
+      if(field) field.style.display = "none";
+      return;
+    }
+    if(field) field.style.display = "";
+    const values = unique(RAW.map(r=>r[col]));
+    setSelectOptions(sel, values);
+    sel.onchange = applyFilters;
+  });
+
+  el("q").oninput = debounce(applyFilters, 150);
+}
+
+function debounce(fn, ms){
+  let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+}
+function rowMatchesText(r, q){
   if(!q) return true;
-  const s=q.toLowerCase();
+  const s = q.toLowerCase();
   for(const c of COLS){
-    const v=(r[c]||"").toString().toLowerCase();
+    const v = (r[c]||"").toString().toLowerCase();
     if(v.includes(s)) return true;
   }
   return false;
 }
+
 function applyFilters(){
   if(!RAW.length) return;
-  const q=(el("q").value||"").trim();
-  const active={};
-  FILTERS.forEach(f=>{
-    const sel=el(f.sel);
-    if(!sel || sel.disabled) return;
-    const col=findCol(...f.cols);
-    if(!col) return;
-    const v=sel.value||"";
-    if(v) active[col]=v;
+  const q = (el("q").value||"").trim();
+
+  // active filter values per real column
+  const active = {};
+  FILTER_MAP.forEach(([colName, selId])=>{
+    const col = findCol(colName);
+    const sel = el(selId);
+    if(!col || !sel) return;
+    const v = sel.value || "";
+    if(v) active[col] = v;
   });
-  const filtered=RAW.filter(r=>{
+
+  const filtered = RAW.filter(r=>{
     if(!rowMatchesText(r,q)) return false;
     for(const [col,val] of Object.entries(active)){
-      if(String(r[col]||"")!==val) return false;
+      if(String(r[col]||"") !== val) return false;
     }
     return true;
   });
+
   renderKPIs(filtered);
   renderCharts(filtered);
   renderTable(filtered);
 }
+
 function clearFilters(){
-  el("q").value="";
-  FILTERS.forEach(f=>{ const s=el(f.sel); if(s && !s.disabled) s.value=""; });
+  el("q").value = "";
+  FILTER_MAP.forEach(([,selId])=>{ const s=el(selId); if(s) s.value=""; });
   applyFilters();
 }
 
+/* KPIs */
 function renderKPIs(rows){
-  el("k_regs").textContent=fmt(rows.length);
-  const cPlan=findCol("PLANIFICADO","m3_PLANIFICADO","M3_PLANIFICADO");
-  const cSum=findCol("SUMINISTRADO","m3_SUMINISTRADO","M3_SUMINISTRADO");
-  const cPend=findCol("PENDIENTE");
-  const cRech=findCol("RECHAZADO");
-  el("k_plan").textContent=fmt(cPlan?rows.reduce((a,r)=>a+toNumber(r[cPlan]),0):0);
-  el("k_sum").textContent =fmt(cSum ?rows.reduce((a,r)=>a+toNumber(r[cSum]),0):0);
-  el("k_pend").textContent=fmt(cPend?rows.reduce((a,r)=>a+toNumber(r[cPend]),0):0);
-  el("k_rech").textContent=fmt(cRech?rows.reduce((a,r)=>a+toNumber(r[cRech]),0):0);
+  el("k_regs").textContent = fmt(rows.length);
+
+  const cPlan = findCol("PLANIFICADO") || findCol("m3_PLANIFICADO") || findCol("M3_PLANIFICADO");
+  const cSum  = findCol("SUMINISTRADO") || findCol("m3_SUMINISTRADO") || findCol("M3_SUMINISTRADO");
+  const cPend = findCol("PENDIENTE");
+  const cRech = findCol("RECHAZADO");
+
+  const sPlan = cPlan ? rows.reduce((a,r)=>a+toNumber(r[cPlan]),0) : 0;
+  const sSum  = cSum  ? rows.reduce((a,r)=>a+toNumber(r[cSum]),0)  : 0;
+  const sPend = cPend ? rows.reduce((a,r)=>a+toNumber(r[cPend]),0) : 0;
+  const sRech = cRech ? rows.reduce((a,r)=>a+toNumber(r[cRech]),0) : 0;
+
+  el("k_plan").textContent = fmt(sPlan);
+  el("k_sum").textContent  = fmt(sSum);
+  el("k_pend").textContent = fmt(sPend);
+  el("k_rech").textContent = fmt(sRech);
 }
 
+/* Charts */
 function destroyChart(key){ if(CH[key]){ CH[key].destroy(); delete CH[key]; } }
-function countBy(rows,col){
-  const m=new Map(); if(!col) return m;
-  rows.forEach(r=>{ const k=((r[col]||"(vacío)")+"").trim()||"(vacío)"; m.set(k,(m.get(k)||0)+1); });
+function countBy(rows, col){
+  const m = new Map();
+  if(!col) return m;
+  rows.forEach(r=>{
+    const k = (r[col]||"(vacío)").trim() || "(vacío)";
+    m.set(k, (m.get(k)||0)+1);
+  });
   return m;
 }
-function topN(map,n){
-  const arr=Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,n);
-  return {labels:arr.map(x=>x[0]), values:arr.map(x=>x[1])};
+function topN(map, n){
+  const arr = Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  return { labels: arr.map(x=>x[0]), values: arr.map(x=>x[1]) };
 }
-function sumByKey(rows,keyCol,planCol,sumCol,n=12){
-  const m=new Map();
+function sumByKey(rows, keyCol, planCol, sumCol, n=12){
+  const m = new Map();
   rows.forEach(r=>{
-    const k=keyCol?((r[keyCol]||"(sin)")+""):"(sin)";
-    const cur=m.get(k)||{plan:0,sum:0};
-    if(planCol) cur.plan+=toNumber(r[planCol]);
-    if(sumCol) cur.sum+=toNumber(r[sumCol]);
-    m.set(k,cur);
+    const k = keyCol ? ((r[keyCol]||"(sin)")+ "") : "(sin)";
+    const cur = m.get(k) || {plan:0,sum:0};
+    if(planCol) cur.plan += toNumber(r[planCol]);
+    if(sumCol) cur.sum += toNumber(r[sumCol]);
+    m.set(k, cur);
   });
-  const arr=Array.from(m.entries()).sort((a,b)=>(b[1].plan+b[1].sum)-(a[1].plan+a[1].sum)).slice(0,n);
-  return {labels:arr.map(x=>x[0]), plan:arr.map(x=>Math.round(x[1].plan)), sum:arr.map(x=>Math.round(x[1].sum))};
+  const arr = Array.from(m.entries()).sort((a,b)=>(b[1].plan+b[1].sum)-(a[1].plan+a[1].sum)).slice(0,n);
+  return { labels: arr.map(x=>x[0]), plan: arr.map(x=>Math.round(x[1].plan)), sum: arr.map(x=>Math.round(x[1].sum)) };
 }
-function sumByDate(rows,dateCol,planCol,sumCol,n=35){
-  const m=new Map();
+function sumByDate(rows, dateCol, planCol, sumCol, n=35){
+  const m = new Map();
   rows.forEach(r=>{
-    const d=dateCol?(r[dateCol]||""):""; if(!d) return;
-    const cur=m.get(d)||{plan:0,sum:0};
-    if(planCol) cur.plan+=toNumber(r[planCol]);
-    if(sumCol) cur.sum+=toNumber(r[sumCol]);
-    m.set(d,cur);
+    const d = dateCol ? (r[dateCol]||"") : "";
+    if(!d) return;
+    const cur = m.get(d) || {plan:0,sum:0};
+    if(planCol) cur.plan += toNumber(r[planCol]);
+    if(sumCol) cur.sum += toNumber(r[sumCol]);
+    m.set(d, cur);
   });
-  const labels=Array.from(m.keys()).sort((a,b)=>{
-    const pa=a.includes("/")?a.split("/").reverse().join("-"):a;
-    const pb=b.includes("/")?b.split("/").reverse().join("-"):b;
-    return new Date(pa)-new Date(pb);
+  const labels = Array.from(m.keys()).sort((a,b)=>{
+    // supports dd/mm/yyyy or yyyy-mm-dd
+    const pa = a.includes("/") ? a.split("/").reverse().join("-") : a;
+    const pb = b.includes("/") ? b.split("/").reverse().join("-") : b;
+    return new Date(pa) - new Date(pb);
   }).slice(-n);
-  return {labels, plan:labels.map(d=>Math.round((m.get(d)||{plan:0}).plan)), sum:labels.map(d=>Math.round((m.get(d)||{sum:0}).sum))};
+  return { labels, plan: labels.map(d=>Math.round((m.get(d)||{plan:0}).plan)), sum: labels.map(d=>Math.round((m.get(d)||{sum:0}).sum)) };
 }
 
 function renderCharts(rows){
-  Chart.defaults.maintainAspectRatio=false;
-  Chart.defaults.responsive=true;
-  const cCnc1=findCol("CNC_NIVEL 1","CNC_NIVEL_1","CNC NIVEL 1");
-  const cResp=findCol("RESPONSABLE_CNC","RESPONSABLE CNC");
-  const cMina=findCol("MINA");
-  const cFecha=findCol("FECHA");
-  const cPlan=findCol("PLANIFICADO","m3_PLANIFICADO","M3_PLANIFICADO");
-  const cSum=findCol("SUMINISTRADO","m3_SUMINISTRADO","M3_SUMINISTRADO");
+  Chart.defaults.maintainAspectRatio = false;
+  Chart.defaults.responsive = true;
+
+  const cCnc1 = findCol("CNC_NIVEL_1") || findCol("CNC_NIVEL 1");
+  const cResp = findCol("RESPONSABLE_CNC");
+  const cMina = findCol("MINA");
+  const cFecha = findCol("FECHA");
+  const cPlan = findCol("PLANIFICADO") || findCol("m3_PLANIFICADO") || findCol("M3_PLANIFICADO");
+  const cSum  = findCol("SUMINISTRADO") || findCol("m3_SUMINISTRADO") || findCol("M3_SUMINISTRADO");
 
   destroyChart("cnc1");
-  const top=topN(countBy(rows,cCnc1),10);
-  CH.cnc1=new Chart(el("ch_cnc1"),{type:"bar",data:{labels:top.labels,datasets:[{label:"Registros",data:top.values}]},
-    options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#374151"},grid:{color:"rgba(17,24,39,.10)"}},y:{ticks:{color:"#374151"},grid:{color:"rgba(17,24,39,.10)"}}}}});
+  const top = topN(countBy(rows, cCnc1), 10);
+  CH.cnc1 = new Chart(el("ch_cnc1"), {
+    type:"bar",
+    data:{ labels: top.labels, datasets:[{ label:"Registros", data: top.values }] },
+    options:{
+      plugins:{ legend:{display:false}},
+      scales:{
+        x:{ ticks:{ color:"#374151"} , grid:{ color:"rgba(17,24,39,.10)" } },
+        y:{ ticks:{ color:"#374151"} , grid:{ color:"rgba(17,24,39,.10)" } }
+      }
+    }
+  });
 
   destroyChart("resp");
-  const dist=topN(countBy(rows,cResp),8);
-  CH.resp=new Chart(el("ch_resp"),{type:"doughnut",data:{labels:dist.labels,datasets:[{data:dist.values}]},
-    options:{plugins:{legend:{position:"bottom",labels:{color:"#374151",boxWidth:10}}}}});
+  const dist = topN(countBy(rows, cResp), 8);
+  CH.resp = new Chart(el("ch_resp"),{
+    type:"doughnut",
+    data:{ labels: dist.labels, datasets:[{ data: dist.values }] },
+    options:{ plugins:{ legend:{ position:"bottom", labels:{ color:"#374151", boxWidth:10 } } } }
+  });
 
   destroyChart("mina");
-  const byMina=sumByKey(rows,cMina,cPlan,cSum,12);
-  CH.mina=new Chart(el("ch_mina"),{type:"bar",data:{labels:byMina.labels,datasets:[{label:"Planificado",data:byMina.plan},{label:"Suministrado",data:byMina.sum}]},
-    options:{plugins:{legend:{position:"bottom",labels:{color:"#374151",boxWidth:10}}},scales:{x:{ticks:{color:"#374151"},grid:{color:"rgba(17,24,39,.10)"}},y:{ticks:{color:"#374151"},grid:{color:"rgba(17,24,39,.10)"}}}}});
+  const byMina = sumByKey(rows, cMina, cPlan, cSum, 12);
+  CH.mina = new Chart(el("ch_mina"),{
+    type:"bar",
+    data:{ labels: byMina.labels, datasets:[{ label:"Planificado", data: byMina.plan },{ label:"Suministrado", data: byMina.sum }] },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#374151", boxWidth:10 } } },
+      scales:{
+        x:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } },
+        y:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } }
+      }
+    }
+  });
 
   destroyChart("fecha");
-  const byFecha=sumByDate(rows,cFecha,cPlan,cSum,35);
-  CH.fecha=new Chart(el("ch_fecha"),{type:"line",data:{labels:byFecha.labels,datasets:[{label:"Planificado",data:byFecha.plan,tension:.25},{label:"Suministrado",data:byFecha.sum,tension:.25}]},
-    options:{plugins:{legend:{position:"bottom",labels:{color:"#374151",boxWidth:10}}},scales:{x:{ticks:{color:"#374151"},grid:{color:"rgba(17,24,39,.10)"}},y:{ticks:{color:"#374151"},grid:{color:"rgba(17,24,39,.10)"}}}}});
+  const byFecha = sumByDate(rows, cFecha, cPlan, cSum, 35);
+  CH.fecha = new Chart(el("ch_fecha"),{
+    type:"line",
+    data:{ labels: byFecha.labels, datasets:[{ label:"Planificado", data: byFecha.plan, tension:.25 },{ label:"Suministrado", data: byFecha.sum, tension:.25 }] },
+    options:{
+      plugins:{ legend:{ position:"bottom", labels:{ color:"#374151", boxWidth:10 } } },
+      scales:{
+        x:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } },
+        y:{ ticks:{ color:"#374151" }, grid:{ color:"rgba(17,24,39,.10)" } }
+      }
+    }
+  });
 }
 
-function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
+/* Table */
+function escapeHtml(s){ return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
 function renderTable(rows){
-  const tbl=el("tbl");
-  const thead="<thead><tr>"+COLS.map(h=>"<th>"+escapeHtml(h)+"</th>").join("")+"</tr></thead>";
-  const limit=700;
-  const body=rows.slice(0,limit).map(r=>"<tr>"+COLS.map(h=>"<td>"+escapeHtml(r[h]??"")+"</td>").join("")+"</tr>").join("");
-  tbl.innerHTML=thead+"<tbody>"+body+"</tbody>";
+  const tbl = el("tbl");
+  let thead = "<thead><tr>" + COLS.map(h=>`<th>${escapeHtml(h)}</th>`).join("") + "</tr></thead>";
+  const limit = 700;
+  const bodyRows = rows.slice(0, limit).map(r=>"<tr>"+COLS.map(h=>`<td>${escapeHtml(r[h] ?? "")}</td>`).join("")+"</tr>").join("");
+  tbl.innerHTML = thead + "<tbody>"+bodyRows+"</tbody>";
 }
 
-el("btnRefresh").onclick=()=>loadData().catch(e=>showError(e.message));
-el("btnClear").onclick=clearFilters;
-el("btnConfig").onclick=()=>{
-  const box=el("cfgBox");
-  box.style.display=(box.style.display==="none")?"block":"none";
-  el("csvUrl").value=getCsvUrl();
-  el("logoUrl").value=getLogoUrl();
+/* UI */
+el("btnRefresh").onclick = ()=>loadData().catch(e=>showError(e.message));
+el("btnClear").onclick = clearFilters;
+el("btnConfig").onclick = ()=>{
+  const box = el("cfgBox");
+  box.style.display = (box.style.display==="none") ? "block" : "none";
+  el("csvUrl").value = getCsvUrl();
 };
-el("btnSaveCfg").onclick=()=>{
-  const url=(el("csvUrl").value||"").trim();
-  const logo=(el("logoUrl").value||"").trim();
-  const msg=el("cfgMsg");
+el("btnSaveUrl").onclick = ()=>{
+  const url = (el("csvUrl").value||"").trim();
+  const msg = el("cfgMsg");
   if(!url || !url.includes("output=csv")){
-    msg.innerHTML='<div class="err">Pega un link CSV publicado (debe contener <b>output=csv</b>).</div>';
+    msg.innerHTML = '<div class="err">Pega un link CSV publicado (debe contener <b>output=csv</b>).</div>';
     return;
   }
-  setCsvUrl(url); setLogoUrl(logo);
-  applyLogo();
-  msg.innerHTML='<div class="ok">Guardado ✅. Presiona “Actualizar”.</div>';
+  setCsvUrl(url);
+  msg.innerHTML = '<div class="ok">Guardado ✅. Presiona “Actualizar”.</div>';
 };
 
-window.addEventListener("DOMContentLoaded",()=>loadData().catch(e=>showError(e.message)));
+window.addEventListener("DOMContentLoaded", ()=> loadData().catch(e=>showError(e.message)));
 </script>
 </body>
 </html>
